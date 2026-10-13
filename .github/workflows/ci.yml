@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: 测试（Python ${{ matrix.python-version }}）
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: 跑测试
+        # 用 uv 临时装 pytest，不引入 requirements 文件
+        run: uv run --python ${{ matrix.python-version }} --with pytest python -m pytest tests/ -q
+        env:
+          PYTHONUTF8: "1"
+
+  lint:
+    name: 语法检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: 编译全部脚本（捕获语法错误）
+        run: |
+          find scripts -name "*.py" -print0 | xargs -0 uv run --python 3.12 python -m py_compile
+        env:
+          PYTHONUTF8: "1"
+
+      - name: 检查 SKILL 索引与 skill 仓库是否齐全
+        run: |
+          test -f README.md
+          test -f docs/pipeline.md
+          test -f docs/gates.md
+          test -f manuals/README.md
+          test -f scripts/README.md
+          echo "结构检查通过"

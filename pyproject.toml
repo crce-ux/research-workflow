@@ -1,0 +1,30 @@
+[project]
+name = "research-workflow"
+version = "0.1.0"
+description = "A research workflow from literature search to deliverable: pipeline, gates, manuals and tooling"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+# 脚本本身多数只用标准库；下面是按功能划分的可选依赖。
+[project.optional-dependencies]
+# 证据表生成（build_evtab / build_daily_ref）
+evidence = ["openpyxl>=3.1"]
+# 中文文献库取数（cnlit_search 走浏览器自动化）
+cnlit = ["DrissionPage>=4.1"]
+# 开发与测试
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py39"
+
+[tool.ruff.lint]
+# 脚本是工具性质：允许长 docstring、允许中文
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
