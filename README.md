@@ -1,5 +1,8 @@
 # research-workflow
 
+[![CI](https://github.com/crce-ux/research-workflow/actions/workflows/ci.yml/badge.svg)](https://github.com/crce-ux/research-workflow/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **一套从文献检索到成果交付的科研工作流**——带工具、带门禁、带判据。
 
 不是一份方法论综述，是**实际在跑的系统**：下面的每一步、每一道门、每一个脚本，
@@ -137,6 +140,28 @@ templates/
 **3. 覆盖要说出来。**
 凡是核查，报出 `可识别位置总数 N → 实际核查 M → 未能覆盖 K`。
 **只报「已检查」而不报「没检查什么」，等于假装覆盖完整。**
+
+---
+
+## 测试与 CI
+
+```bash
+uv run --with pytest python -m pytest tests/ -q     # 43 个测试
+```
+
+| 覆盖什么 | 为什么测它 |
+|---|---|
+| `check_language` 的规则 | 排他性断言必须有出处——**可客观验证**，值得锁死 |
+| `check_ref_citations` 的解析 | 编号解析错一位，双向核对就会大面积误报 |
+| `check_skill_structure` 本身 | **校验器也必须被校验**，否则它是没人管的裁判 |
+
+**不测什么**：启发式判据（如身份匹配）只测结构与选择器，不断言「某句话必须被抓」——
+那会把启发式当成硬规则来维护。
+
+CI 跑 Python 3.9 / 3.12 / 3.13 三个版本。每个配套 skill 仓库另有独立的结构校验 workflow。
+
+> ⚠️ **一个诚实的空白**：同类项目里，真正的 LLM 行为评估（eval）**没有可抄的 CI 实现**。
+> 本仓的立场是先把能自动化的锁死，行为评估留在本地人工做——**不假装它进了 CI**。
 
 ---
 
