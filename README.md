@@ -76,7 +76,7 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 | [`ai-writing-debug`](https://github.com/crce-ux/ai-writing-debug) | AI 写作痕迹诊断与修复 | 口语节拍 ≠ 口语化 |
 | [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | 文献调研 | **覆盖声明 N→M→K** + 裸被引必须归一 |
 | [`talk-readiness`](https://github.com/crce-ux/talk-readiness) | 汇报讲者侧 | 待核清零 + 磕巴判据 |
-| [`peer-review`](https://github.com/crce-ux/peer-review) | 同行评议 | TRS / EEG / ML 三份领域专属清单 |
+| [`peer-review`](https://github.com/crce-ux/peer-review) | 同行评议 | 领域核查**五层生成轴** + 三份样例（TRS / EEG / ML） |
 | [`study-design`](https://github.com/crce-ux/study-design) | 课题设计 | 没有证伪条件，就不是科学假设 |
 
 🔌 **工具怎么接** → [`docs/runtime.md`](docs/runtime.md)：能力 → 候选工具对照，以及**为什么不在 skill 里写死工具 ID**。
