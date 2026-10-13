@@ -1,0 +1,33 @@
+<!-- B3 三栏等宽：并列三类。三栏之间要有递进关系，不是随便三块。
+     画布 1600×900 ｜ 边距 61 ｜ 标题栏高 72（页高 8%）
+     字号(px)：大标语 147 ｜ 封面 122 ｜ 标题 60 ｜ 小标题 40 ｜ 正文 32 ｜ 图注·页脚 23
+     ⚠️ 字重只有 2 档（常规/粗）——PPTX 端 font-weight 折成布尔，见 ppt_style.WEIGHT
+     换主色：改 ppt_style.py 的 C['main']，然后重生成
+     交付前：grep "【说明】" 应清零
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="'Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC'">
+  <rect x="0" y="0" width="1600" height="900" fill="#FFFFFF"/>
+  <defs>
+    <linearGradient id="gBand" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#0046A4" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0046A4" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="gWash" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0" stop-color="#0046A4" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#0046A4" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1600" height="72" fill="#0046A4"/>
+  <rect x="61" y="20" width="4" height="32" fill="#FFFFFF"/>
+  <text x="81" y="48" font-size="40" fill="#FFFFFF" font-weight="700">B3</text>
+  <text x="139" y="48" font-size="40" fill="#FFFFFF" font-weight="700">三栏等宽</text>
+  <line x1="61" y1="836" x2="1539" y2="836" stroke="#E4E9EF" stroke-width="1.2"/>
+  <text x="61" y="866" font-size="23" fill="#9AA5B4">（项目名）· 汇报</text>
+  <text x="1539" y="866" font-size="23" fill="#9AA5B4" text-anchor="end">00</text>
+  <rect x="61" y="100" width="471" height="700" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="75" y="135.0" font-size="23" fill="#7A8698">【说明】第 1 栏</text>
+  <rect x="564" y="100" width="471" height="700" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="578" y="135.0" font-size="23" fill="#7A8698">【说明】第 2 栏</text>
+  <rect x="1067" y="100" width="471" height="700" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="1081" y="135.0" font-size="23" fill="#7A8698">【说明】第 3 栏</text>
+</svg>

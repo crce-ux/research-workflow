@@ -1,0 +1,24 @@
+<!-- 整页无栏（封面/结尾页）：不设标题栏与页脚，内容居中
+     配方 31｜⭐ 结尾页大标语。模板实测**结尾页字号比封面还大**（117@1280 > 97@1280 = 146px@1600），此前本库无此档。
+     画布 1600×900 ｜ 边距 61 ｜ 标题栏高 72（页高 8%）
+     字号(px)：大标语 147 ｜ 封面 122 ｜ 标题 60 ｜ 小标题 40 ｜ 正文 32 ｜ 图注·页脚 23
+     ⚠️ 字重只有 2 档（常规/粗）——PPTX 端 font-weight 折成布尔，见 ppt_style.WEIGHT
+     换主色：改 ppt_style.py 的 C['main']，然后重生成
+     交付前：grep "【说明】" 应清零
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="'Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC'">
+  <rect x="0" y="0" width="1600" height="900" fill="#FFFFFF"/>
+  <defs>
+    <linearGradient id="gBand" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#0046A4" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0046A4" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="gWash" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0" stop-color="#0046A4" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#0046A4" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <text x="800.0" y="460.0" font-size="147" fill="#0046A4" font-weight="700" text-anchor="middle">感谢各位专家</text>
+  <text x="800.0" y="546.0" font-size="40" fill="#333333" text-anchor="middle">请批评指正</text>
+</svg>

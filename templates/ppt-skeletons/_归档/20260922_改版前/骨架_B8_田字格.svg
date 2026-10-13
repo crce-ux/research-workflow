@@ -1,0 +1,24 @@
+<!-- B8 2×2 田字格：四条并列。常配浅底强调块(A5)。
+     画布 1600×900 ｜ 边距 40 ｜ 标题栏高 72（页高 8%）
+     字号(px)：标题 60 ｜ 小标题 40 ｜ 正文 32 ｜ 图注·页脚 23 ｜ 大数字 50
+     换主色：改 ppt_style.py 的 C['main']，然后重生成
+     交付前：grep "【说明】" 应清零
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="'Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC',sans-serif">
+  <rect x="0" y="0" width="1600" height="900" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="1600" height="72" fill="#123E6B"/>
+  <rect x="40" y="20" width="4" height="32" fill="#FFFFFF"/>
+  <text x="60" y="48" font-size="40" fill="#FFFFFF" font-weight="700">B8</text>
+  <text x="118" y="48" font-size="40" fill="#FFFFFF" font-weight="700">田字格</text>
+  <rect x="40" y="100" width="740" height="335" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="54" y="135.0" font-size="23" fill="#7A8698">【说明】左上</text>
+  <rect x="820" y="100" width="740" height="335" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="834" y="135.0" font-size="23" fill="#7A8698">【说明】右上</text>
+  <rect x="40" y="465" width="740" height="335" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="54" y="500.0" font-size="23" fill="#7A8698">【说明】左下</text>
+  <rect x="820" y="465" width="740" height="335" fill="none" stroke="#7A8698" stroke-width="1.6" stroke-dasharray="8,5"/>
+  <text x="834" y="500.0" font-size="23" fill="#7A8698">【说明】右下</text>
+  <line x1="40" y1="836" x2="1560" y2="836" stroke="#E4E9EF" stroke-width="1.2"/>
+  <text x="40" y="866" font-size="23" fill="#9AA5B4">屏状核 × 氯氮平 · 组会汇报</text>
+  <text x="1560" y="866" font-size="23" fill="#9AA5B4" text-anchor="end">00</text>
+</svg>
