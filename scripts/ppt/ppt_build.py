@@ -49,6 +49,15 @@ def _find_ppt_master():
     if env and os.path.exists(env):
         return env
     rel = os.path.join("ppt-master", "skills", "ppt-master", "scripts", "svg_to_pptx.py")
+
+    # 仓库本地的 vendor/（由 setup.sh 拉到；从脚本位置逐级向上找）
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(4):
+        c = os.path.join(d, "vendor", rel)
+        if os.path.exists(c):
+            return c
+        d = os.path.dirname(d)
+
     cands = [
         os.path.join(os.environ.get("APPDATA", ""), "CherryStudio", "Data", "Skills", rel),
         os.path.join(os.environ.get("APPDATA", ""), "CherryStudio", "Data", "Agents",

@@ -6,6 +6,9 @@
 > 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 > 分发映射见各 skill 的 `scripts/README.md`。
+>
+> ⚠️ `ppt/` 里的 `ppt_build.py` 依赖第三方的 `ppt-master`（**不在本仓**，Hugo He，MIT）。
+> 先跑一次 `bash scripts/ppt/setup.sh` 把它拉到 `vendor/`（不进 git）。
 
 ---
 
