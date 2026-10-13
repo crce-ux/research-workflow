@@ -1,6 +1,9 @@
 # 脚本索引
 
-**26 个脚本，按阶段分组。** 多数只用标准库，可直接跑。
+**27 个 Python 脚本 + 1 个 `ppt/setup.sh`，按阶段分组。** 多数只用标准库，可直接跑。
+
+> ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
+> （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
 > 📌 **这里是正本。**
 > 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review`），

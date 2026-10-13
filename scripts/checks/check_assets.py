@@ -208,12 +208,13 @@ def check_links(root, files, exclude, rep):
 
 # ------------------------------------------------- 2 脚本总数对账
 def check_script_count(root, exclude, rep):
-    readme = root / "_系统" / "_流程与工具" / "_scripts" / "README.md"
+    readme = root / "scripts" / "README.md"
     if not readme.exists():
-        rep.add(2, readme, 0, "`_scripts/README.md` 不存在——脚本总数无唯一出处")
+        rep.add(2, readme, 0, "`scripts/README.md` 不存在——脚本总数无唯一出处")
         return
-    scripts = sorted(p.name for p in
-                     (root / "_系统" / "_流程与工具" / "_scripts").glob("*.py"))
+    # ⚠️ 2026-10-14：原先写死 `_系统/_流程与工具/_scripts/`（扁平旧结构），本仓已改为
+    #    `scripts/<子目录>/`，导致此处取不到数（等于空跑）。改为递归扫 scripts/。
+    scripts = sorted(p.name for p in (root / "scripts").rglob("*.py"))
     actual = len(scripts)
 
     text = readme.read_text(encoding="utf-8", errors="replace")

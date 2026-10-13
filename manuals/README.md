@@ -12,7 +12,7 @@
 
 | 目录 | 份数 | 内容 |
 |---|---|---|
-| [`workflow/`](workflow/) | 7 | 各阶段流程手册——文献调研 / 汇报 / 论文 / 统计 / 课题设计 / 精读 / 全流程总纲 |
+| [`workflow/`](workflow/) | 6 | 各阶段流程手册——文献调研 / 汇报 / 论文 / 统计 / 课题设计 / 精读 |
 | [`checklists/`](checklists/) | 4 | 出稿前的清单——禁用词 / 内容自检 / 去味 / **出稿检查总表** |
 | [`templates/`](templates/) | 5 | 骨架与模板——新项目 / 工作日志 / 会话交接 / AI 声明 / 理解确认 |
 | [`ppt/`](ppt/) | 12 | PPT 工具链——手册 / 速查 / 视觉规范 / 版式配方库 / 底层规则 / 实测记录 |
@@ -27,7 +27,7 @@
 
 **如果你只读三份：**
 
-1. [`workflow/文献调研与汇报_全流程总纲.md`](workflow/) —— 整套流程的地图
+1. [`docs/pipeline.md`](../docs/pipeline.md) —— 整套流程的地图（P→A→B→C→D→E）
 2. [`checklists/出稿检查总表.md`](checklists/) —— 「现在该跑什么、判据是什么」的唯一入口
 3. [`writing/文本迭代自查流程.md`](writing/) —— 迭代式自查的完整方法（已沉淀为 [text-self-review](https://github.com/crce-ux/text-self-review)）
 
@@ -66,6 +66,9 @@
 ---
 
 ## 逐份索引
+
+> ⚠️ 各手册里提到的《**文献调研与汇报_全流程总纲**》是内部总纲，**未随本仓发布**；
+> 其等效内容见 [`docs/pipeline.md`](../docs/pipeline.md)（P→A→B→C→D→E）与 [`docs/gates.md`](../docs/gates.md)。
 
 > 49 份的完整清单。**加粗的**是建议优先读的。
 

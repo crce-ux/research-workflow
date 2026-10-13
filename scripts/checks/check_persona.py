@@ -92,6 +92,8 @@ KINDS = {
 SCENES = {
     "组会汇报": dict(hedge_max=8.0),
     "期刊审稿": dict(hedge_max=None),
+    "文献综述": dict(hedge_max=None),   # ⭐ 2026-10-14 补：身份是「领域内研究者」，可断言；
+                                        #    文档另有「机制细节须追到原始文献」一条，本表未实现，需人工。
     "回导师":   dict(hedge_max=20.0),
 }
 

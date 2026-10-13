@@ -66,6 +66,19 @@ CAS_CSV = os.path.join(DATA_DIR, "FQBJCR2025-UTF8.csv")
 JCR_CSV = os.path.join(DATA_DIR, "JCR2024-UTF8.csv")
 WARN_CSV = os.path.join(DATA_DIR, "GJQKYJMD2025.csv")
 
+# ⚠️ 2026-10-14：`_journal_data/` **不随本仓发布**（中科院分区 / JCR / 预警名单是授权数据）。
+#    缺它时过去是裸 traceback，读不出「到底缺什么、放哪儿」。改成可操作的失败。
+if not os.path.isdir(DATA_DIR):
+    sys.exit(
+        "[错误] 找不到期刊数据目录：\n"
+        f"    {DATA_DIR}\n"
+        "  请在该路径下放三份 **UTF-8** CSV：\n"
+        "    · FQBJCR2025-UTF8.csv   中科院分区 2025 升级版\n"
+        "    · JCR2024-UTF8.csv      JCR 2024\n"
+        "    · GJQKYJMD2025.csv      国际期刊预警名单 2025\n"
+        "  ⚠️ 这三份为授权数据，本仓不分发；只查单个已知刊名可用 --help 看轻量用法。"
+    )
+
 
 def norm_full(s):
     """完整规范化：**保留冒号后内容**，只去标点/压空格/转小写。
