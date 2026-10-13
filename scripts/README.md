@@ -39,7 +39,23 @@
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |
 | `check_metadata_leak.py` | **Office/PDF 隐藏元数据**（盲审泄露面） | 硬（对外场景） |
+| `check_skill_structure.py` | **Agent Skill 结构校验**（frontmatter / name / 正文长度 / 深链） | 硬（静态） |
 | `renumber_refs.py` | 参考文献重新编号 | — |
+
+### `check_skill_structure.py` —— 唯一可完全 CI 化的那一层
+
+按[官方 Agent Skills 规范](https://agentskills.io/specification)做**静态校验**：零依赖、不调模型、只读。
+
+```bash
+python scripts/checks/check_skill_structure.py --root <含多个 skill 的目录>
+python scripts/checks/check_skill_structure.py <单个skill目录> --strict
+```
+
+查：`name` 的格式/长度/与目录一致/不含保留词 · `description` 长度 ·
+frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否有可判定的 `Anti-Patterns`。
+
+> **为什么要它**：这是同类项目里唯一被多个仓库验证过、能完全进 CI 的一层。
+> 真正的 LLM 行为评估（eval）目前没有可抄的 CI 实现——见下文。
 
 > ⚠️ **脚本只做能自动化的那一半。** 语义判断必须人工过。
 > **命中 ≠ 要改**——写证据边界时「可能」是正确用法，写结论时才是逃避。
@@ -121,5 +137,16 @@ pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
 uv run --with pytest python -m pytest tests/ -q
 ```
 
-测试覆盖**可客观验证的判据**（排他性断言必须有出处、编号解析的边界）。
+测试覆盖**可客观验证的判据**（排他性断言必须有出处、编号解析的边界、结构校验规则）。
 启发式的判据（如身份匹配）**只测结构与选择器**——它们的最后一关永远是人。
+
+**测试本身也有一条纪律**：校验器必须被校验。`test_check_skill_structure.py` 用临时目录
+造出合规与不合规的 skill，断言规则确实生效——否则校验器就成了「没人管的裁判」。
+
+### 一个已知的空白
+
+同类项目里，**真正的 LLM 行为评估（eval）没有可抄的 CI 实现**——
+见到的都是结构校验、脚本单测、安全扫描。行为评估目前只能本地跑。
+
+本仓的立场：**先把能自动化的锁死（结构 + 单测），行为评估留在本地人工做**，
+不假装它进了 CI。
