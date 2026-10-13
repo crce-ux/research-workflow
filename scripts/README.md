@@ -65,8 +65,61 @@
 
 ---
 
+## 依赖
+
+**大部分脚本只用标准库。** 需要额外依赖的都写在下面。
+
+| 依赖 | 用于 | 类型 |
+|---|---|---|
+| `openpyxl` | `build_evtab.py` · `build_daily_ref.py` | pip |
+| `DrissionPage` | `cnlit_search.py`（浏览器自动化） | pip |
+| `Pillow` | `ppt_check.py` · `render_and_qa_pptx.py` · `render_templates.py` | pip |
+| `PyMuPDF`（`fitz`） | `check_metadata_leak.py` 读 PDF | pip |
+| `pywin32`（`win32com`） | `render_and_qa_pptx.py` —— **需 Windows + 已安装 PowerPoint** | pip |
+
+```bash
+# 只装你要用的那一组
+pip install openpyxl            # 证据表
+pip install DrissionPage        # 中文库取数
+pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
+```
+
+### ⚠️ 外部依赖：`ppt_build.py` 需要一个不在本仓的工具
+
+`ppt_build.py` 的最后一步（SVG → PPTX 合并）调用 **`ppt-master` 的 `svg_to_pptx.py`**——
+那是**不可替代的合并层**，本仓不包含。
+
+它按以下顺序查找：
+
+1. 环境变量 `PPT_MASTER`（指向 `svg_to_pptx.py`）
+2. 两个已知的技能目录
+
+**找不到会明确报错并给出可操作提示**，不会静默失败。
+
+> 只跑 `--only check` 或 `--only svg` 不需要它。
+
+### 需要网络的脚本
+
+`cnlit_search` · `fetch_abstracts_compare` · `pubmed_meta_fetch` · `quality_screen` · `verify_pmid_doi`
+
+其余脚本**完全离线**。`check_metadata_leak` 尤其适合离线环境——它处理的是本地文件。
+
+---
+
 ## 通用约定
 
 1. **脚本只做能自动化的那一半**——每个脚本的 docstring 里写清了它**不查什么**
 2. **覆盖要说出来**——报 `N → M → K`
 3. **静默失败比报错危险**——替换 / 改名 / 批量操作后要回读验证
+4. **同目录 import 自带 path bootstrap**——`ppt/` 下的脚本互相引用时，靠 `sys.path.insert(0, HERE)`，不依赖调用方式
+
+---
+
+## 测试
+
+```bash
+uv run --with pytest python -m pytest tests/ -q
+```
+
+测试覆盖**可客观验证的判据**（排他性断言必须有出处、编号解析的边界）。
+启发式的判据（如身份匹配）**只测结构与选择器**——它们的最后一关永远是人。

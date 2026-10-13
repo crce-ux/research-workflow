@@ -12,6 +12,11 @@ license = { text = "MIT" }
 evidence = ["openpyxl>=3.1"]
 # 中文文献库取数（cnlit_search 走浏览器自动化）
 cnlit = ["DrissionPage>=4.1"]
+# PPT 质检与元数据体检
+ppt = ["Pillow>=10.0"]
+pdf = ["PyMuPDF>=1.24"]
+# ⚠️ 仅 Windows：render_and_qa_pptx 需要本机已安装 PowerPoint
+win = ["pywin32>=306"]
 # 开发与测试
 dev = ["pytest>=8.0"]
 
