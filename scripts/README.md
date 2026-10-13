@@ -1,6 +1,6 @@
 # 脚本索引
 
-**28 个 Python 脚本 + 1 个 `ppt/setup.sh`，按阶段分组。** 多数只用标准库，可直接跑。
+**29 个 Python 脚本 + 1 个 `ppt/setup.sh`，按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -48,6 +48,7 @@
 | `check_language.py` | 回指 / **排他性断言** / 空泛量词 / 缩写 / 数字口径 | ② 硬，其余启发式 |
 | `check_persona.py` | 身份匹配（保守 / 越级 / 引据 / 回指 / 书面语 / 长句） | 全部启发式 |
 | `check_talk.py` | 讲者侧硬规则：待核清零 / 洗白词 / 每页 200–500 字 / 加粗 ≤3 / 总字数↔时长 / 制作稿七项 / 讲稿六样 | **可判定** |
+| `check_lit.py` | 证据表 12 列 / 对照列 NA / 同作者同年 a-b / IF 与分区须带年份版本 / 分区标题；覆盖声明 N→M→K 齐且相加对 | 硬；E6 为软 |
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |
 | `check_metadata_leak.py` | **Office/PDF 隐藏元数据**（盲审泄露面） | 硬（对外场景） |
