@@ -2,6 +2,11 @@
 
 **26 个脚本，按阶段分组。** 多数只用标准库，可直接跑。
 
+> 📌 **这里是正本。**
+> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review`），
+> 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
+> 分发映射见各 skill 的 `scripts/README.md`。
+
 ---
 
 ## literature/ · 检索与核验
