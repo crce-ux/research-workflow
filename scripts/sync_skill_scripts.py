@@ -29,7 +29,8 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # 正本目录（**相对正本仓**，不是相对库根）
-CANON_DIRS = ["scripts/checks", "scripts/literature", "scripts/evidence", "scripts/ppt"]
+CANON_DIRS = ["scripts/checks", "scripts/literature", "scripts/evidence",
+              "scripts/data", "scripts/ppt"]
 CANON_REPO = "research-workflow"        # 正本所在的仓名
 
 # ⚠️ 唯一一处改名映射：正本 skill_selfcheck.py → 分发名 selfcheck.py

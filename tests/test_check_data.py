@@ -23,10 +23,10 @@ VAR_OK = """# 变量字典
 """
 
 SAP_OK = """# SAP 偏离记录
-| 假设编号 | SAP 原定方法 | 实际执行方法 | 是否一致 | 原因 | 批准 |
-|---|---|---|---|---|---|
-| H1 | MMRM | MMRM | 一致 | - | - |
-| H2 | 多重插补 | 完整案例 | ⚠️ 偏离 | 某组 n<10，插补不稳定 | 统计师王 X |
+| 假设编号 | SAP 原定方法 | 实际执行方法 | 是否一致 | 原因 | 何时决定 | 批准 |
+|---|---|---|---|---|---|---|
+| H1 | MMRM | MMRM | 一致 | - | - | - |
+| H2 | 多重插补 | 完整案例 | ⚠️ 偏离 | 某组 n<10，插补不稳定 | 2026-09-30 锁库前 | 统计师王 X |
 """
 
 
@@ -56,9 +56,18 @@ def test_d3_sap_cols_missing():
     assert cd.d3_sap_cols(SAP_OK.replace("| 批准 |", "| 备注 |"), P("SAP_偏离记录.md"))
 
 
+def test_d3_needs_when_decided():
+    """⭐ 是**七**列。「谁批准」与「何时决定」是两件事——
+    事后补记的偏离与当场记录的偏离，可信度不同。漏「何时决定」要报出来。"""
+    bad = SAP_OK.replace("| 何时决定 ", "| ")
+    hits = cd.d3_sap_cols(bad, P("SAP_偏离记录.md"))
+    assert hits and "何时决定" in hits[0]
+
+
 def test_d4_deviation_row_must_be_filled():
     """标了偏离，但原因与批准人空着——这正是最贵的那个失误。"""
-    bad = SAP_OK.replace("| ⚠️ 偏离 | 某组 n<10，插补不稳定 | 统计师王 X |", "| ⚠️ 偏离 |  |  |")
+    bad = SAP_OK.replace("| ⚠️ 偏离 | 某组 n<10，插补不稳定 | 2026-09-30 锁库前 | 统计师王 X |",
+                         "| ⚠️ 偏离 |  |  |  |")
     hits = cd.d4_deviation_filled(bad, P("SAP_偏离记录.md"))
     assert hits and "偏离" in hits[0]
 
