@@ -122,7 +122,7 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 
 | 支线 | 自研 | 外部（已装） |
 |---|---|---|
-| **国自然** | 🔴 **无**（三份手册 595 行，是全库最大的无 skill 板块） | `nature-proposal-writer` |
+| **国自然** | ✅ `grant-diagnosis` | `nature-proposal-writer` |
 | **审稿** | ✅ `peer-review` | `nature-reviewer` · `academic-paper-reviewer` · `nature-response` |
 | 专利 | 🔴 **无** | `nature-paper-to-patent` |
 | 实验记录 | 🔴 **无** | `nature-experiment-log` |
@@ -145,11 +145,10 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 
 ---
 
-## 九、缺口清单（🔴 共 8 处）
+## 九、缺口清单（🔴 共 7 处）
 
 | # | 缺口 | 手册行数 | 急不急 |
 |---|---|---|---|
-| 2 | **国自然**（诊断 / 医学口 / 规则取用） | 595 | 🟡 申报季前 |
 | 3 | E6 投稿选刊 | 148 | 🟡 |
 | 5 | 取数·专项（中文库 / 政务库） | 243 | 🟢 |
 | 6 | 图表生成 | — | 🟢 外部够用 |
@@ -158,7 +157,7 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | 9 | 专利 | — | 🟢 外部够用 |
 | 10 | 实验记录 | — | 🟢 外部够用 |
 
-**合计约 1205 行手册没有 skill 承载。**
+**合计约 610 行手册没有 skill 承载。**
 
 ---
 
