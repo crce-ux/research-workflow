@@ -68,15 +68,13 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 
 ## 配套 skill（各自独立仓库）
 
-这套工作流里的**方法**已经沉淀成 **12 个**可安装的 skill：
+这套工作流里的**方法**已经沉淀成 **10 个**可安装的 skill：
 
 | Skill | 段 | 管什么 | 最硬的一条 |
 |---|---|---|---|
 | [`paper-reading`](https://github.com/crce-ux/paper-reading) | P | 日常精读 | 证据标签**两条轴**（归属 / 可信度）不能互相替代 |
-| [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | A | 文献调研 | **覆盖声明 N→M→K** + 裸被引必须归一 |
-| [`data-sources`](https://github.com/crce-ux/data-sources) | A | 非常规数据源 | 已证伪清单 · **法定披露 ≠ 申报状态** |
-| [`review-writing`](https://github.com/crce-ux/review-writing) | A | 综述成文 | **名头与配置必须自洽**（自称系统综述就得有 PRISMA） |
-| [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | B/E5 | AI 学术写作全流程 | 定贡献→核查链→**AI 边界** |
+| [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | A | 文献调研 · 取数 | **覆盖声明 N→M→K** + 裸被引必须归一 |
+| [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | B/E5 | AI 学术写作全流程（**论文 + 综述**） | 定贡献→核查链→**AI 边界** |
 | [`academic-slides`](https://github.com/crce-ux/academic-slides) | B/C | 学术汇报 PPT 全链路 | 待核清零 + 出片工具链 + 理解确认 |
 | [`study-design`](https://github.com/crce-ux/study-design) | D | 课题设计 | 没有证伪条件，就不是科学假设 |
 | [`data-pipeline`](https://github.com/crce-ux/data-pipeline) | E1–E4 | 数据管线 | **四类缺失码** · SAP 偏离必留痕 |

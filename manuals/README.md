@@ -46,10 +46,8 @@
 | 段 | 手册 | 沉淀成的 skill |
 |---|---|---|
 | P | `workflow/日常精读手册` | [paper-reading](https://github.com/crce-ux/paper-reading) |
-| A | `workflow/文献调研流程手册` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
-| A | `data-sources/手册_中文文献库取数`（中文库部分已并入 literature-pipeline §五）<br>`data-sources/手册_监管政务数据库取数` + `notes/调研_中文文献库通路_现成工具_20260922` | [data-sources](https://github.com/crce-ux/data-sources) |
-| A | （**无对应手册**——综述成文此前无人承载，2026-10-14 新建） | [review-writing](https://github.com/crce-ux/review-writing) |
-| B/E5 | `workflow/论文撰写流程` + `writing/反防御性写作` + `writing/标书去机器味` + `checklists/写作禁用词与句式清单` + `writing/代笔身份匹配` | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
+| A | `workflow/文献调研流程手册` + `data-sources/手册_中文文献库取数` + `data-sources/手册_监管政务数据库取数` + `notes/调研_中文文献库通路_现成工具_20260922` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
+| B/E5 | `workflow/论文撰写流程` + `writing/反防御性写作` + `writing/标书去机器味` + `checklists/写作禁用词与句式清单` + `writing/代笔身份匹配`（综述成文无对应手册，2026-10-14 补写） | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
 | B/C | `workflow/汇报PPT产出流程手册` + `ppt/`（12 份）+ `checklists/出稿检查总表` | [academic-slides](https://github.com/crce-ux/academic-slides) |
 | D | `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
 | E1–E4 | `workflow/数据与统计分析流程` | [data-pipeline](https://github.com/crce-ux/data-pipeline) |
@@ -58,7 +56,7 @@
 | 支线 | （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
 | 横向 | `writing/文本迭代自查流程` | [text-self-review](https://github.com/crce-ux/text-self-review) |
 
-> **共 12 个 skill。** 完整工序对照（含缺口与外部工具指针）见
+> **共 10 个 skill。** 完整工序对照（含缺口与外部工具指针）见
 > [`docs/skills.md`](../docs/skills.md)。
 
 **手册保留了 skill 里放不下的东西**：具体的命令、实测数据、踩坑记录、以及与具体项目绑定的案例。
