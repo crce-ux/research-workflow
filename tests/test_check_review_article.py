@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """check_review_article 的规则测试。
 
-锁的是 2026-08-08 那份核稿报告点名的第 1 条：
+锁的是 2026-08-08 核稿报告点名的第 1 条：
 **标题自称「系统综述」却零方法学透明性**——名不副实。
 """
 import pathlib
@@ -16,7 +16,7 @@ def run(text, tmp_path):
 
 
 def test_systematic_claim_without_methods_fires(tmp_path):
-    """他踩过的那个坑：标题说系统综述，全文没有检索策略/纳排/PRISMA。"""
+    """他踩过的坑：标题说系统综述，全文没有检索策略/纳排/PRISMA。"""
     hits, _ = run("# 精神分裂症体重管理：系统综述\n\n引言……\n\n## 一、引言\n一堆内容。\n",
                   tmp_path)
     assert any("R1" in h and "系统综述" in h for h in hits)
@@ -31,7 +31,7 @@ def test_systematic_claim_with_methods_passes(tmp_path):
 
 
 def test_narrative_review_needs_no_methods(tmp_path):
-    """叙述性综述**不**要求 PRISMA 那一套——不报。"""
+    """叙述性综述**不**要求 PRISMA 的成套要素——不报。"""
     hits, _ = run("# 某病研究进展：叙述性综述\n\n## 一、引言\n随便写写。\n", tmp_path)
     assert hits == []
 

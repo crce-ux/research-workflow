@@ -36,7 +36,7 @@ def test_total_counts_py_and_sh(tmp_path):
 
 
 def test_uses_the_total_not_a_component(tmp_path):
-    """⭐ 同一句里有 4 和 3 两个数——只认「脚本 N 个」句首那个。"""
+    """⭐ 同一句里有 4 和 3 两个数——只认「脚本 N 个」句首的数字。"""
     root = _tree(tmp_path, py=3, sh=1,
                  readme="**脚本 4 个（Python 3 个 + `setup.sh` 1 个）。**")
     assert _run(root) == []          # 旧实现可能挑到 3 而误报

@@ -94,7 +94,7 @@ def test_v6_confidential_section_without_marker(tmp_path):
 
 
 def test_references_tail_is_not_a_confidential_section(tmp_path):
-    """真实定稿以 References 结尾——那不是密评节，不该报 V6。"""
+    """真实定稿以 References 结尾——不是密评节，不该报 V6。"""
     hits, _ = run(BASE, tmp_path=tmp_path)
     assert not any("V6" in h for h in hits)
 

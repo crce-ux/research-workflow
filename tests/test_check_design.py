@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """check_design 的规则测试。
 
-一条铁律一个「会响」的用例。另锁两条实测踩过的坑：
+一条规则一个「会响」的用例。另锁两条实测踩过的坑：
 ① G6 必须全篇查（本库设计书用粗体伪标题，按章节切会漏）
 ② 风险表四列按表头查，不按正文关键词查
 """
@@ -133,7 +133,7 @@ def _run(tmp_path, text):
 
 
 def test_g7_threshold_without_source_fires(tmp_path):
-    """铁律 3 的核心：给了阈值，说不出依据。"""
+    """规则 3 的核心：给了阈值，说不出依据。"""
     hits, _ = _run(tmp_path, GOOD + "\n以 PANSS 减分率≥30% 为有效。\n")
     assert any("G7" in h for h in hits)
 
@@ -149,7 +149,7 @@ def test_g7_threshold_with_consensus_name_passes(tmp_path):
 
 
 def test_g7_skips_items_the_doc_already_flags_as_pending(tmp_path):
-    """⭐ 文档自己标了「待确认」的，不再重复报——那是已知未决，不是漏写。"""
+    """⭐ 文档自己标了「待确认」的，不再重复报——属已知未决，不是漏写。"""
     hits, _ = _run(tmp_path, GOOD + "\n待确认事项：PANSS 减分率≥20% 为有效。\n")
     assert not any("G7" in h for h in hits)
 
@@ -162,7 +162,7 @@ def test_g7_ignores_operational_thresholds(tmp_path):
 
 def test_missing_sections_are_reported_as_not_evaluated(tmp_path):
     """⚠️ 实测踩过：设想稿没有假设节/样本量节，四条规则会**全部静默跳过**，
-    屏幕上却显示「全过」——那是假象。必须把「没评到」说出来。"""
+    屏幕上却显示「全过」，属假象。必须把「没评到」说出来。"""
     p = tmp_path / "设计书.md"
     p.write_text("# 各设想的具体设计\n\n### D1 · 某个设想\n\n随便写写。\n", encoding="utf-8")
     hits, soft = cd.check(p)

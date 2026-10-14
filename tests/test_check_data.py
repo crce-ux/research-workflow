@@ -65,7 +65,7 @@ def test_d3_needs_when_decided():
 
 
 def test_d4_deviation_row_must_be_filled():
-    """标了偏离，但原因与批准人空着——这正是最贵的那个失误。"""
+    """标了偏离，但原因与批准人空着——这是代价最大的失误。"""
     bad = SAP_OK.replace("| ⚠️ 偏离 | 某组 n<10，插补不稳定 | 2026-09-30 锁库前 | 统计师王 X |",
                          "| ⚠️ 偏离 |  |  |  |")
     hits = cd.d4_deviation_filled(bad, P("SAP_偏离记录.md"))

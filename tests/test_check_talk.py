@@ -41,7 +41,7 @@ def test_bold_over_limit_is_flagged():
 
 
 def test_bold_in_notes_is_not_counted():
-    """⑥ 讲稿备注 里的加粗不算——那不是幻灯片上的字。"""
+    """⑥ 讲稿备注 里的加粗不算——不是幻灯片上的字。"""
     page = ("## S1 · 封面\n**③ 页面文字**：干净\n**⑥ 讲稿备注**："
             + " ".join(f"**要点{i}**" for i in range(5)))
     assert "加粗超限" not in _fails(page)
