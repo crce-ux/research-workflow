@@ -50,7 +50,7 @@
 | B/E5 | `workflow/论文撰写流程` + `writing/反防御性写作` + `writing/标书去机器味` + `checklists/写作禁用词与句式清单` + `writing/代笔身份匹配`（综述成文无对应手册，2026-10-14 补写） | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
 | B/C | `workflow/汇报PPT产出流程手册` + `ppt/`（12 份）+ `checklists/出稿检查总表` | [academic-slides](https://github.com/crce-ux/academic-slides) |
 | D | `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
-| E1–E4 | `workflow/数据与统计分析流程` | [data-pipeline](https://github.com/crce-ux/data-pipeline) |
+| E1–E4 | `workflow/数据与统计分析流程` | data-pipeline（私有仓） |
 | E6/E7 | `funding/SCI投稿_选刊流程`（+ 成果台账规范，手册另存） | [submission](https://github.com/crce-ux/submission) |
 | 支线 | `funding/国自然标书_诊断与架构手册` + `funding/国自然标书_医学口补充` + `funding/国自然_规则取用指引` | [grant-diagnosis](https://github.com/crce-ux/grant-diagnosis) |
 | 支线 | （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
