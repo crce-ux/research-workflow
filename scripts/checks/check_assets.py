@@ -231,6 +231,67 @@ def check_script_count(root, exclude, rep):
                 f"（差 {actual - declared:+d}）")
 
 
+# ------------------------------------------------- 6 skill 数对账
+# ⚠️ 2026-10-14 新增。当天一次扩张（6 → 12 个 skill）在同一份文档集里留下 **3 处**
+#    「N 个 skill」的旧数字（README / docs/runtime.md / manuals/README.md），
+#    而第 2 类只对**脚本**总数、不管 skill 数，于是全部漏网——**全是人肉扫出来的**。
+#    这条与第 2 类同源：**自称的数字 vs 实际的数量**。
+#
+# 🔴 判据要绑「谁在说」（设计纪律 7）——首版用宽松式 `(\d+) 个…skill`，
+#    8 个命中里 **5 个是误报**：「科研助手有 32 个 skill」「榜单 10 个 skill」
+#    「装 1 个 skill」「关闭 20 个…skill」说的都是**外部** skill 数。
+#    收窄为**只认本库自己的总量声明**（带限定词 配套/自研/可安装的，或「沉淀成…个」）。
+SKILL_COUNT_RES = [
+    re.compile(r"(\d+)\s*个\s*(?:配套|自研|本库|可安装的)\s*skill"),
+    re.compile(r"沉淀成\s*\*{0,2}(\d+)\s*\*{0,2}\s*个"),
+    re.compile(r"共\s*\*{0,2}(\d+)\s*\*{0,2}\s*个\s*skill"),
+]
+OURS = "crce-ux"          # 本项目的 GitHub 属主
+
+
+def _is_ours(d):
+    """靠 git remote 判归属。**判不了就算自己的**——宁可多算，也不漏计。"""
+    cfg = d / ".git" / "config"
+    if not cfg.is_file():
+        return True
+    try:
+        return OURS in cfg.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return True
+
+
+def count_skills(skills_root):
+    """实际 skill 数 = skills_root 下**属于本项目**、且含 SKILL.md 的目录。
+    ⚠️ 不过滤归属会把第三方的 `video-talkcraft` 算进来（12 → 13）。"""
+    if not skills_root.is_dir():
+        return None
+    return sum(1 for p in skills_root.iterdir()
+               if p.is_dir() and (p / "SKILL.md").is_file() and _is_ours(p))
+
+
+def check_skill_count(root, files, rep, skills_root):
+    actual = count_skills(skills_root)
+    if actual is None:
+        rep.add(6, skills_root, 0,
+                f"找不到 skill 仓目录（{skills_root}）——**本次未评**，不是查过了通过")
+        return
+    if actual == 0:
+        rep.add(6, skills_root, 0, "skill 仓目录下没有含 SKILL.md 的子目录——本次未评")
+        return
+    for md in files:
+        try:
+            lines = strip_code_blocks(md.read_text(encoding="utf-8", errors="replace"))
+        except Exception:
+            continue
+        for i, line in enumerate(lines, 1):
+            hit = next((m for rx in SKILL_COUNT_RES
+                        for m in [rx.search(line)] if m), None)
+            if hit and int(hit.group(1)) != actual:
+                rep.add(6, md, i,
+                        f"自称 {hit.group(1)} 个 skill，实际 {actual} 个"
+                        f"（差 {actual - int(hit.group(1)):+d}）：{line.strip()[:70]}")
+
+
 # ------------------------------------------------- 3 索引覆盖对账
 def check_index(root, exclude, rep):
     # ⚠️ 2026-10-14：原先写死 `_系统/_流程与工具/出稿检查总表.md`（扁平旧结构），
@@ -428,7 +489,9 @@ def main():
         description="资产静态完整性自检（死链 / 索引漂移 / 自称数字脱节）")
     ap.add_argument("--root", default=str(DEFAULT_ROOT), help="库根目录（默认《科研》根）")
     ap.add_argument("--only", type=int, default=0,
-                    help="只跑第 N 类（1 死链 / 2 脚本总数 / 3 索引 / 4 文档引用 / 5 跨文档重复）")
+                    help="只跑第 N 类（1 死链 / 2 脚本总数 / 3 索引 / 4 文档引用 / 5 跨文档重复 / 6 skill 数）")
+    ap.add_argument("--skills-root", default=None,
+                    help="含各 skill 仓的目录（默认取 --root 的上一级；第 6 类用）")
     ap.add_argument("--no-exclude", action="store_true",
                     help="不跳过 _归档 / _快照 / _work（默认跳过）")
     ap.add_argument("--quiet", action="store_true", help="只看汇总")
@@ -454,10 +517,15 @@ def main():
         check_filename_refs(root, files, rep)
     if run in (0, 5):
         check_cross_doc_dup(root, exclude, rep)
+    if run in (0, 6):
+        skills_root = (Path(args.skills_root).resolve() if args.skills_root
+                       else root.parent)
+        check_skill_count(root, files, rep, skills_root)
 
     titles = {1: "相对链接有效性", 2: "脚本总数对账", 3: "索引覆盖对账",
-              4: "文档引用有效性（提示级）", 5: "跨文档重复内容（提示级）"}
-    GATE = (1, 2, 3)   # 硬门禁：计入退出码
+              4: "文档引用有效性（提示级）", 5: "跨文档重复内容（提示级）",
+              6: "skill 数对账"}
+    GATE = (1, 2, 3, 6)   # 硬门禁：计入退出码
     SOFT = (4, 5)      # 软检查：只提示
 
     def show(cat, limit=40):

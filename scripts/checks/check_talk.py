@@ -22,6 +22,7 @@
 退出码 = 失败项数（0 = 全过）
 """
 import argparse
+import pathlib
 import re
 import sys
 
@@ -43,6 +44,8 @@ SIX_HINTS = [
     ("可压缩页", re.compile(r"可压缩页|不可压页")),
     ("页码对应", re.compile(r"页码对应|与内容稿.*对应")),
 ]
+# 文件名里出现这些，才认它可能是「汇报稿（内容稿）」
+HUIBAO_NAME = re.compile(r"讲稿|制作稿|汇报|PPT|幻灯片|slides", re.I)
 MY_PAGE = {
     "制作稿": re.compile(r"^##\s*[SB]\d+\s*·", re.M),
     "讲稿": re.compile(r"^#\s*\d{1,2}[_\.、 ]", re.M),
@@ -170,14 +173,22 @@ def main():
 
     kind = a.kind
     if kind is None:
-        # 先认「页格式」，再认内容——`# 01_封面` 这种讲稿页头很确定，
+        # 先认「页格式」，再认文件名——`# 01_封面` 这种讲稿页头很确定，
         # 而「用时表」不一定写着（实测：v1 讲稿就没有，导致误判成内容稿）。
         if SEVEN_RE.search(text):
             kind = "制作稿"
         elif MY_PAGE["讲稿"].search(text):
             kind = "讲稿"
-        else:
+        elif HUIBAO_NAME.search(pathlib.Path(a.doc).name):
             kind = "内容稿"
+        else:
+            # ⚠️ 2026-10-14：原先**兜底成「内容稿」并照跑**——于是《研究设计书》
+            #    这类普通文档也被按「每页 200–500 字 / 加粗 ≤3」量了一顿（实测一次 4 条）。
+            #    讲者侧的规则只对**汇报稿**有意义。看不出来就**明说未评**，不硬跑。
+            print(f"check_talk · {a.doc} · **本次未评**——看不出是汇报稿。")
+            print("  （无 制作稿/讲稿 页格式，文件名也没有「讲稿 / 制作稿 / 汇报 / PPT」。"
+                  "确是汇报稿就给 `--kind` 强制。）")
+            return 0
     if a.page_re:
         MY_PAGE[kind] = re.compile(a.page_re, re.M)
 

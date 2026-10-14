@@ -162,7 +162,15 @@ def main():
     p = pathlib.Path(a.path)
 
     if p.is_file():
-        files, skipped = [p], 0
+        # ⚠️ 2026-10-14：单文件模式原先**完全不做适用性判断**——把《研究设计书》当审稿意见查，
+        #    一次报出 60+ 条 V4（「第 N 条只提了问题、没给要作者做什么」）。
+        #    目录模式早就有这条门控，**单文件模式漏了**——同一条判据要豁免两处（设计纪律 6）。
+        fm = re.match(r"^---\n(.*?)\n---",
+                      p.read_text(encoding="utf-8", errors="replace"), re.S)
+        if p.name.startswith("审稿意见") or (fm and IS_REVIEW_FM.search(fm.group(1))):
+            files, skipped = [p], 0
+        else:
+            files, skipped = [], 1
     else:
         files, skipped = [], 0
         for f in sorted(p.rglob("*.md")):
@@ -175,8 +183,10 @@ def main():
     total, softs = 0, []
     print(f"check_review · {a.path} · 扫 {len(files)} 个文件")
     if skipped:
-        print(f"  （另跳过 {skipped} 个非审稿意见文件：调研记录 / 图表核查 等——"
-              f"目录模式只查文件名或 frontmatter 标了「审稿意见」的）")
+        print(f"  （跳过 {skipped} 个非审稿意见文件：调研记录 / 图表核查 / 设计书 等——"
+              f"只查文件名以「审稿意见」开头、或 frontmatter 标了 `type: 审稿意见` 的）")
+    if not files:
+        print("  ⚠️ 本次未评——不是查过了通过")
     for f in files:
         hits, soft = check(f)
         softs += soft
