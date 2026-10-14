@@ -43,7 +43,7 @@ E  执行产出      🟡 只到 E5（论文）· E1–E4 / E6 / E7 🔴
 
 | 工序 | 自研 | 外部（已装） |
 |---|---|---|
-| A1 检索 | ✅ `literature-pipeline` | `nature-academic-search` · `deep-research` · `opencite` · `pyzotero` |
+| A1 检索 | ✅ `literature-pipeline` **§〇 是唯一步骤入口** | 见其 §〇：常轨走本库脚本 · 重装按需启用 · ⛔ 标注已弃用 |
 | 全文下载 | — | `nature-downloader` |
 | **G0** 质控四项 | ✅ `literature-pipeline`（覆盖声明 + 四项硬性） | `nature-ref-verifier` |
 | A2 证据表 | ✅ `literature-pipeline`（12 列口径） | — |
