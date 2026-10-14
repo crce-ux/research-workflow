@@ -6,8 +6,13 @@
     可行性数字对比。写在文档里的规矩靠人记；这个脚本把其中**长得出来**的部分查掉。
 
 【它查什么、不查什么】
-    查：该有的东西在不在（证伪条件 / 乐观保守两套 / 脱落率 / 风险四列 / 伦理与预注册）。
-    不查：阈值出处的标准对不对、效应量取得合不合理——语义，一律不碰。
+    查：该有的东西在不在——证伪条件(G1) / 乐观保守两套(G2) / 脱落率(G3) /
+        风险四列(G4) / 伦理与预注册(G6) / **疗效阈值有没有写出处(G7)**。
+    不查：出处的标准**对不对**、效应量取得**合不合理**——语义，一律不碰。
+
+    ⚠️ 2026-10-14：此前把「阈值出处」整条归为「语义，不查」——**那是把两件事混了**。
+    「出处**对不对**」是语义（确实不查）；「**有没有写**出处」是结构，与 G1
+    「有没有写证伪条件」同类。结果是：**四条铁律里只有第 3 条没有任何机检**。
 
 【⚠️ 它会标出你自己的设计书】
     2026-10-14 实测 `TRS_EEG/03_课题申报/02_研究设计书_终稿_20260812.md`：
@@ -37,6 +42,21 @@ OPTIMISTIC = re.compile(r"乐观|×\s*0\.7|\*\s*0\.7")
 CONSERVATIVE = re.compile(r"保守|×\s*0\.5|\*\s*0\.5")
 DROPOUT = re.compile(r"脱落率|失访率|dropout")
 RISK_COLS = ("风险", "概率", "影响", "应对")
+
+# ── G7 疗效 / 分组阈值有没有写出处 ────────────────────────────
+# 铁律 3 说「分组阈值必须写明出处」。此前 docstring 把它归为「语义，不查」——
+# **那是把两件事混了**：「出处对不对」是语义（确实不查），但「**有没有写**出处」
+# 是结构，与 G1「有没有写证伪条件」同类。
+# ⚠️ 触发面必须窄：**只认疗效判定型的百分比阈值**（减分率 / 应答 / 缓解），
+#    不认操作阈值（如「有效试次 ≥85%」那种质控阈值本就不需要文献出处）——
+#    放宽会把操作阈值全报成缺出处。
+RESPONSE = re.compile(r"减分率|应答|缓解|疗效判定|界定有效")
+THRESHOLD = re.compile(r"(?:≥|>=|>|不低于|至少|超过)\s*\d+(?:\.\d+)?\s*%?")
+SOURCED = re.compile(r"\[\d+(?:\s*[,–\-]\s*\d+)*\]|PMID|DOI|指南|共识|标准|依据"
+                     r"|Kane|TRRIP|BPRS|CGI")
+# 文档**自己已标为待定**的，不再重复报——那是「已知未决」，不是「漏写」。
+# （实测：初稿的「待确认事项」清单里就列了这条阈值，被重复报了一次。）
+PENDING = re.compile(r"待确认|待定|待讨论|待课题组|待核|TBD")
 
 # 交付物清单（design-steps.md §交付物清单）——按**文书种类**找，不按文件名抠字
 DELIVERABLES = {
@@ -135,6 +155,18 @@ def check(path):
             r"ChiCTR|ClinicalTrials|Chinese Clinical Trial|OSF|NCT\s*\d|注册号", text):
         hits.append("G6 提到预注册，但全篇未见注册平台或注册号"
                     "（ChiCTR / ClinicalTrials.gov / OSF）")
+
+    # G7 疗效 / 分组阈值写了没写出处
+    for i, line in enumerate(text.splitlines()):
+        if not (RESPONSE.search(line) and THRESHOLD.search(line)):
+            continue
+        window = text.splitlines()[max(0, i - 1):i + 2]      # 本行 ±1
+        if any(PENDING.search(w) for w in window):
+            continue                                          # 已标待定 → 不重复报
+        if not any(SOURCED.search(w) for w in window):
+            hits.append(f"G7 第 {i + 1} 行给了疗效阈值，但**没写出处**："
+                        f"{line.strip()[:60]}——"
+                        f"铁律：阈值要能立刻说出依据（哪份指南 / 共识 / 哪篇文献）")
 
     # G5（软）可行性数字对比
     fs = find_sec(secs, "可行性")

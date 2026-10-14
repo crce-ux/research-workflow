@@ -124,6 +124,42 @@ def test_deliverables_finds_present_kind(tmp_path):
     assert not any("研究设计书" in n for n in notes)
 
 
+# ── G7 疗效阈值有没有写出处 ──────────────────────────────────
+
+def _run(tmp_path, text):
+    p = tmp_path / "设计书.md"
+    p.write_text(text, encoding="utf-8")
+    return cd.check(p)
+
+
+def test_g7_threshold_without_source_fires(tmp_path):
+    """铁律 3 的核心：给了阈值，说不出依据。"""
+    hits, _ = _run(tmp_path, GOOD + "\n以 PANSS 减分率≥30% 为有效。\n")
+    assert any("G7" in h for h in hits)
+
+
+def test_g7_threshold_with_citation_passes(tmp_path):
+    hits, _ = _run(tmp_path, GOOD + "\n以 PANSS 减分率≥30% 为有效[12]。\n")
+    assert not any("G7" in h for h in hits)
+
+
+def test_g7_threshold_with_consensus_name_passes(tmp_path):
+    hits, _ = _run(tmp_path, GOOD + "\n应答定义依 TRRIP 共识：PANSS 减分率≥50%。\n")
+    assert not any("G7" in h for h in hits)
+
+
+def test_g7_skips_items_the_doc_already_flags_as_pending(tmp_path):
+    """⭐ 文档自己标了「待确认」的，不再重复报——那是已知未决，不是漏写。"""
+    hits, _ = _run(tmp_path, GOOD + "\n待确认事项：PANSS 减分率≥20% 为有效。\n")
+    assert not any("G7" in h for h in hits)
+
+
+def test_g7_ignores_operational_thresholds(tmp_path):
+    """⭐ 触发面必须窄：质控阈值（有效试次 ≥85%）本就不需要文献出处。"""
+    hits, _ = _run(tmp_path, GOOD + "\n质控阈值：有效试次比例 ≥85%，不合格按缺失处理。\n")
+    assert not any("G7" in h for h in hits)
+
+
 def test_missing_sections_are_reported_as_not_evaluated(tmp_path):
     """⚠️ 实测踩过：设想稿没有假设节/样本量节，四条规则会**全部静默跳过**，
     屏幕上却显示「全过」——那是假象。必须把「没评到」说出来。"""
