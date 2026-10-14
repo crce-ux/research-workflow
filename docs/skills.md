@@ -21,11 +21,17 @@ C  交付侧        ✅ academic-slides（出片/体检/快照）· ai-academic-
 D  课题设计      ✅ study-design
 E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5）· submission（E6/E7）
 ────────────────────────────────────────────────
-独立支线         国自然 ✅ grant-diagnosis · 审稿 ✅ peer-review · 专利/实验记录 ⚪ 外部够用
+独立支线         国自然 ✅ grant-diagnosis · 审稿 ✅ peer-review · 专利/实验记录 ⚪ 外部够用（指针已挂）
 全局             证据核查 ✅ · 自查协议 ✅ text-self-review（横向）
 ```
 
-**一眼看去：链条已基本闭合——剩下三个洞是「外部够用」，不是「没人管」。**
+**一眼看去：链条已闭合——剩下三个洞是「外部够用」，且**各自在对应自研 skill 里挂了指针**。**
+
+> ⚪ **为什么不把它们并进来**（2026-10-14 决定）：
+> ① **许可证**——`nature-figure` / `nature-paper-to-patent` **未声明 license**，不能复制进本仓公开分发；
+> ② **维护**——`nature-figure` 34M / 114 文件，上游在更新，fork 完就是自己扛；
+> ③ **它们已经装好**——科研助手 `pubmed-zotero` 有 32 个 skill，全套都在。
+> **一句话：调用 > 复制。** 指针只写「什么时候调谁」，不复制一行内容。
 
 ---
 
@@ -109,7 +115,7 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | E3 SAP 执行 / 偏离记录 | ✅ | — |
 | E4 结果报告 | ✅ | — |
 | **E5 论文** | ✅ `ai-academic-writing` ①②③④ | `paper-spine` · `nature-writing` · `academic-paper` · `academic-pipeline` · `academic-writing` |
-| 图表 | ⚪ **外部够用，不建** | `nature-figure` · `scipilot-figure-skill` · `scientific-schematics` · `scientific-svg-figures` · `scientific-visualization` · `svg-figure` |
+| 图表 | ⚪ **外部够用，不建**（**指针已挂**：`ai-academic-writing` / `academic-slides` / `review-writing` 各有「→ `nature-figure`」一节） | `nature-figure` · `scipilot-figure-skill` · `scientific-schematics` · `scientific-svg-figures` · `scientific-visualization` · `svg-figure` |
 | E6 投稿选刊 | ✅ `submission`（含 `journal_match.py` 硬过滤） | — |
 | E7 归档（成果台账） | ✅ `submission`（含 `check_credit.py` 署名自洽） | — |
 
@@ -124,8 +130,8 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 |---|---|---|
 | **国自然** | ✅ `grant-diagnosis` | `nature-proposal-writer` |
 | **审稿** | ✅ `peer-review` | `nature-reviewer` · `academic-paper-reviewer` · `nature-response` |
-| 专利 | ⚪ **外部够用，不建** | `nature-paper-to-patent` |
-| 实验记录 | ⚪ **外部够用，不建** | `nature-experiment-log` |
+| 专利 | ⚪ **外部够用，不建**（**指针已挂**：`submission` 「专利是另一种成果」） | `nature-paper-to-patent` |
+| 实验记录 | ⚪ **外部够用，不建**（**指针已挂**：`data-pipeline` 「上游的实验记录」） | `nature-experiment-log` |
 
 > ⚠️ **国自然的 AI 边界和论文不同**：论文可大幅 AI 辅助，**标书明文不得直接生成正文**。
 > 这一条现在**没有任何 skill 承载**，只写在手册和模板里。
@@ -155,9 +161,9 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | 2 | 取数·专项（中文库 / 政务库，243 行） | ✅ `data-sources`（政务库）+ 中文库并入 `literature-pipeline` |
 | 3 | E7 归档（成果台账 134 行） | ✅ `submission` |
 | 4 | C4 快照 | ✅ 并入 `academic-slides` ⑨ |
-| 5 | 图表生成 | ⚪ 外部够用，**不建** |
-| 6 | 专利 | ⚪ 外部够用，**不建** |
-| 7 | 实验记录 | ⚪ 外部够用，**不建** |
+| 5 | 图表生成 | ⚪ 外部够用，**不建** → 指针在 `ai-academic-writing` / `academic-slides` / `review-writing` |
+| 6 | 专利 | ⚪ 外部够用，**不建** → 指针在 `submission` |
+| 7 | 实验记录 | ⚪ 外部够用，**不建** → 指针在 `data-pipeline` |
 
 **约 525 行手册已落到自研 skill；剩下 3 处是主动决定留外部。**
 
@@ -171,6 +177,8 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 > **要么写清谁管哪一半，要么就标 🔴。**
 
 > ⚪ ≠ 没人管——外部 skill 能顶上，只是**不背本库纪律**。
+> **三处指针已挂进对应自研 skill**（图表 → 写作/幻灯片/综述；专利 → 成果台账；实验记录 → 数据管线），
+> 所以 agent 走到那一步会**自己看到该调谁**，不必先去翻这份文档。
 > 需要哪一条纪律时，回到对应手册（`manuals/`）。
 
 ---
