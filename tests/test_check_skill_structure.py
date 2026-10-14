@@ -131,12 +131,22 @@ def test_declared_script_must_exist(tmp_path):
 def test_placeholder_path_is_not_treated_as_missing(tmp_path):
     """`references/cards/<slug>.md` 是在讲命名格式，不是真路径。
 
-    注意：它同时**确实**是深链（两层），那条错误照报——这里只断言
-    「声明落地」那条不发火。
+    **两条规则都得豁免它**——「声明落地」与「深链」。
+    只豁免一条，同一类误报就会从另一条漏出来（实测：video-talkcraft 被误判 3 处）。
     """
     d = _make(tmp_path, "my-skill", GOOD_FM, body="每个卡见 `references/cards/<slug>.md`。\n")
     errs, _ = css.check_skill(d, strict=False)
     assert not any("不存在" in e for e in errs)
+    assert not any("深链" in e for e in errs)
+
+
+def test_directory_reference_is_not_deep_link(tmp_path):
+    """`references/cards/` 是**目录提及**，不是深链——没有文件名就不是引用。"""
+    d = _make(tmp_path, "my-skill", GOOD_FM, body="配方卡都在 `references/cards/`。\n")
+    (d / "references").mkdir()
+    (d / "references" / "cards").mkdir()
+    errs, _ = css.check_skill(d, strict=False)
+    assert not any("深链" in e for e in errs)
 
 
 # ── 非规范字段（警告，不是错误）───────────────────────────────

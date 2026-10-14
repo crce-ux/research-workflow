@@ -1,12 +1,12 @@
 # 脚本索引
 
-**脚本 38 个（Python 37 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 39 个（Python 38 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
 > 📌 **这里是正本。**
-> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design`），
+> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission` / `data-sources`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 > 分发映射见各 skill 的 `scripts/README.md`。
 >
@@ -22,12 +22,13 @@
 | `verify_pmid_doi.py` | PMID/DOI 反查核验——**防手填错误** | 标准库 |
 | `quality_screen.py` | **OpenAlex 归一化指标**快筛（FWCI / 被引百分位） | 标准库 |
 | `pubmed_meta_fetch.py` | 批量拉元数据（PMID 优先用 esummary） | 标准库 |
-| `cnlit_search.py` | 中文文献库（知网 / 万方 / 维普）取数 | DrissionPage |
+| `cnlit_search.py` | 中文文献库（知网 / 万方 / 维普）取数 → 分发到 `literature-pipeline` | DrissionPage |
 | `fetch_abstracts_compare.py` | 摘要抓取与比对 | 标准库 |
-| `journal_match.py` | 期刊匹配（投稿选刊） | 标准库 |
-| `fetch_journal_metrics.py` | 期刊指标拉取 | 标准库 |
+| `journal_match.py` | **期刊匹配（投稿选刊）** → 分发到 `submission` | 标准库 |
+| `fetch_journal_metrics.py` | 期刊指标拉取 → 分发到 `submission` + `literature-pipeline`（**两处部署**） | 标准库 |
 
 > ⚠️ `cnlit_search.py` 需本机重建 venv 与知网 cookie。
+> ⚠️ `journal_match.py` / `fetch_journal_metrics.py` 需 `_journal_data/` 三份 CSV（授权数据，不分发）。
 
 ---
 
@@ -56,6 +57,7 @@
 | `check_token_diff.py` | **改写前后的受保护 token 比对**（LaTeX / 引用 key / 数字与单位 / 状态 token / 路径 URL）——丢失的必须逐个解释 | 硬 |
 | `check_data.py` | **数据管线口径（E1–E4）**：变量字典七列 + **缺失码四类** / SAP 偏离七列 + **偏离行原因与批准人不得为空** / 结果报告 p 与 95%CI | 硬；按**文件名**触发 |
 | `check_note.py` | **精读笔记口径**：必备信息 / 标注使用 / **定位方式与引用形式一致**（标了「仅摘要」却引用 Table = 在编） | 硬；N4 为软 |
+| `check_credit.py` | **成果台账署名自洽**：署名情况 ↔ 位次（如「共同第一作者」却写位次 3）/ 六种署名枚举 / **三数字齐** / 状态四态 | 硬；全占位行时报「本次未评」 |
 | `check_design.py` | **研究设计书结构**：假设节证伪条件 / 乐观·保守两套 / 脱落率 / 风险四列表 / 伦理与预注册 | 硬；缺节时报「本次未评」 |
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |

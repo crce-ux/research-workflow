@@ -15,17 +15,17 @@
 
 ```
 P  日常精读      ✅ paper-reading
-A  文献侧        ✅ literature-pipeline
+A  文献侧        ✅ literature-pipeline · data-sources（取数·专项）
 B  内容侧        ✅ ai-academic-writing（表达/内容）· academic-slides（制作稿）
-C  交付侧        ✅ academic-slides（出片/体检）· ai-academic-writing（元数据）
+C  交付侧        ✅ academic-slides（出片/体检/快照）· ai-academic-writing（元数据）
 D  课题设计      ✅ study-design
-E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5）· E6/E7 🔴
+E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5）· submission（E6/E7）
 ────────────────────────────────────────────────
-独立支线         国自然 🔴 · 审稿 ✅ peer-review · 专利 🔴 · 实验记录 🔴
+独立支线         国自然 ✅ grant-diagnosis · 审稿 ✅ peer-review · 专利/实验记录 ⚪ 外部够用
 全局             证据核查 ✅ · 自查协议 ✅ text-self-review（横向）
 ```
 
-**一眼看去：链条在 E 段断了三次，另有国自然那一大块空着。**
+**一眼看去：链条已基本闭合——剩下三个洞是「外部够用」，不是「没人管」。**
 
 ---
 
@@ -48,7 +48,7 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | **G0** 质控四项 | ✅ `literature-pipeline`（覆盖声明 + 四项硬性） | `nature-ref-verifier` |
 | A2 证据表 | ✅ `literature-pipeline`（12 列口径） | — |
 | **G1** 入库 | ✅ `literature-pipeline`（PMID ↔ DOI） | — |
-| 取数·专项 | 🔴 **无**（中文库 / 政务库手册 243 行） | — |
+| 取数·专项 | ✅ `data-sources`（政务 / 产业库）· 中文库并入 `literature-pipeline` | — |
 | 综述成文 | 🟡 部分 | `citation-reviewer` · `nature-literature-pipeline` |
 
 > **自研补的是**：覆盖声明 `N → M → K` · 影响力归一化（裸被引会筛掉最好的新文）· 证据表列口径。
@@ -78,7 +78,7 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | C2 视觉验证 | ✅ `academic-slides` ⑥（源体检 + 像素体检） | — |
 | **G4** 交付门禁 | ✅ | — |
 | C3 隐藏元数据 | ✅ `ai-academic-writing` ⑧ | — |
-| C4 快照 | 🔴 **无** | — |
+| C4 快照 | ✅ `academic-slides` ⑨ | — |
 
 > ⚠️ `ppt_build.py` 的合并层调 `ppt-master`——**本库不含，跑 `setup.sh` 拉**。
 
@@ -109,9 +109,9 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 | E3 SAP 执行 / 偏离记录 | ✅ | — |
 | E4 结果报告 | ✅ | — |
 | **E5 论文** | ✅ `ai-academic-writing` ①②③④ | `paper-spine` · `nature-writing` · `academic-paper` · `academic-pipeline` · `academic-writing` |
-| 图表 | 🔴 **无** | `nature-figure` · `scipilot-figure-skill` · `scientific-schematics` · `scientific-svg-figures` · `scientific-visualization` · `svg-figure` |
-| E6 投稿选刊 | 🔴 **无**（`journal_match.py` 有，手册 148 行） | — |
-| E7 归档（成果台账） | 🔴 **无** | — |
+| 图表 | ⚪ **外部够用，不建** | `nature-figure` · `scipilot-figure-skill` · `scientific-schematics` · `scientific-svg-figures` · `scientific-visualization` · `svg-figure` |
+| E6 投稿选刊 | ✅ `submission`（含 `journal_match.py` 硬过滤） | — |
+| E7 归档（成果台账） | ✅ `submission`（含 `check_credit.py` 署名自洽） | — |
 
 > ✅ **E1–E4 已补**（`data-pipeline`）。原先的拦路虎不是不会做，是**纪律没人替你背**——
 > 变量字典四类缺失码、缺失率先报再处理、SAP 偏离必须记录（**偏离本身不致命，不记录才致命**）。
@@ -124,8 +124,8 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 |---|---|---|
 | **国自然** | ✅ `grant-diagnosis` | `nature-proposal-writer` |
 | **审稿** | ✅ `peer-review` | `nature-reviewer` · `academic-paper-reviewer` · `nature-response` |
-| 专利 | 🔴 **无** | `nature-paper-to-patent` |
-| 实验记录 | 🔴 **无** | `nature-experiment-log` |
+| 专利 | ⚪ **外部够用，不建** | `nature-paper-to-patent` |
+| 实验记录 | ⚪ **外部够用，不建** | `nature-experiment-log` |
 
 > ⚠️ **国自然的 AI 边界和论文不同**：论文可大幅 AI 辅助，**标书明文不得直接生成正文**。
 > 这一条现在**没有任何 skill 承载**，只写在手册和模板里。
@@ -145,34 +145,44 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 
 ---
 
-## 九、缺口清单（🔴 共 7 处）
+## 九、缺口清单
 
-| # | 缺口 | 手册行数 | 急不急 |
-|---|---|---|---|
-| 1 | E6 投稿选刊 | 148 | 🟡 |
-| 2 | 取数·专项（中文库 / 政务库） | 243 | 🟢 |
-| 3 | 图表生成 | — | 🟢 外部够用 |
-| 4 | C4 快照 | — | 🟢 |
-| 5 | E7 归档 | — | 🟢 |
-| 6 | 专利 | — | 🟢 外部够用 |
-| 7 | 实验记录 | — | 🟢 外部够用 |
+**原本 7 处「没有自研 skill 承载」的工序，2026-10-14 全部收口：**
 
-**合计约 610 行手册没有 skill 承载。**
+| # | 原缺口 | 处置 |
+|---|---|---|
+| 1 | E6 投稿选刊（148 行） | ✅ `submission` |
+| 2 | 取数·专项（中文库 / 政务库，243 行） | ✅ `data-sources`（政务库）+ 中文库并入 `literature-pipeline` |
+| 3 | E7 归档（成果台账 134 行） | ✅ `submission` |
+| 4 | C4 快照 | ✅ 并入 `academic-slides` ⑨ |
+| 5 | 图表生成 | ⚪ 外部够用，**不建** |
+| 6 | 专利 | ⚪ 外部够用，**不建** |
+| 7 | 实验记录 | ⚪ 外部够用，**不建** |
+
+**约 525 行手册已落到自研 skill；剩下 3 处是主动决定留外部。**
+
+> ⚪ ≠ 没人管——外部 skill 能顶上，只是**不背本库纪律**。
+> 需要哪一条纪律时，回到对应手册（`manuals/`）。
 
 ---
 
-## 十、自研 6 个补的是什么
+## 十、自研 11 个补的是什么
 
-外部 skill 覆盖了「怎么做」，自研这 6 个补的是**它们不管的那半**：
+外部 skill 覆盖了「怎么做」，自研这 11 个补的是**它们不管的那半**：
 
-| skill | 补什么 |
-|---|---|
-| `literature-pipeline` | **覆盖声明** · 影响力归一化 · 证据表口径 |
-| `ai-academic-writing` | **表达层四轴 + 内容层四查** · 本文核查链 · **AI 边界（合规）** |
-| `academic-slides` | **待核清零** · **理解确认门禁** · 讲稿规格 · 本地出片工具链 |
-| `study-design` | **四条铁律** · 裁决四档 |
-| `peer-review` | **五层领域核查轴**（给生成法，不给固定清单）· 伦理边界 |
-| `text-self-review` | **换维度迭代** + 收敛判据（横向协议） |
+| skill | 段 | 补什么 |
+|---|---|---|
+| `paper-reading` | P | **证据标签五态**（归属轴）· 定位方式三态 · 精读笔记回填口径 |
+| `literature-pipeline` | A | **覆盖声明** · 影响力归一化 · 证据表口径 · 中文库取数 |
+| `data-sources` | A | **非常规源的已证伪清单** · CDP 接管 · **法定披露 ≠ 申报状态** |
+| `ai-academic-writing` | B/E5 | **表达层四轴 + 内容层四查** · 本文核查链 · **AI 边界（合规）** |
+| `academic-slides` | B/C | **待核清零** · **理解确认门禁** · 讲稿规格 · 本地出片工具链 · 交付快照 |
+| `study-design` | D | **四条铁律** · 裁决四档 |
+| `data-pipeline` | E1–E4 | **四类缺失码** · 缺失先报再处理 · **SAP 偏离必留痕** |
+| `submission` | E6/E7 | **相关度是门槛 / IF 只排序** · **成果台账署名自洽**（共同一作不能写成第一） |
+| `grant-diagnosis` | 支线 | **标书章节职责归位** · 四层去机器味 · **标书 AI 边界** |
+| `peer-review` | 支线 | **五层领域核查轴**（给生成法，不给固定清单）· 伦理边界 |
+| `text-self-review` | 横向 | **换维度迭代** + 收敛判据（横向协议） |
 
 > 共同点：**都管「凭什么说这话站得住」**，不管「这话怎么写好看」。
 > 后者交给外部那一堆。
