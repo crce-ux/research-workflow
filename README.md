@@ -90,7 +90,7 @@ README.md                    本文件（管线地图 + 门禁 + 轴）
 docs/
   pipeline.md                P→A→B→C→D→E 全流程逐步
   gates.md                   五门 + 六轴的完整判据
-  skills.md                  6 个 skill 的索引与选择指南
+  skills.md                  **工序 × skill 对照图**——每步用谁、哪里还空着
   runtime.md                 运行环境与工具绑定（能力→工具；**不写工具 ID**）
   核查方法/                   来源核验 / 定量断言审计 / 对抗压力测试 / 演讲产物审查
 scripts/
