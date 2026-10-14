@@ -1,12 +1,12 @@
 # 脚本索引
 
-**脚本 31 个（Python 30 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 33 个（Python 32 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
 > 📌 **这里是正本。**
-> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review`），
+> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review` / `peer-review` / `study-design`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 > 分发映射见各 skill 的 `scripts/README.md`。
 >
@@ -51,6 +51,8 @@
 | `check_talk.py` | 讲者侧硬规则：待核清零 / 洗白词 / 每页 200–500 字 / 加粗 ≤3 / 总字数↔时长 / 制作稿七项 / 讲稿六样 | **可判定** |
 | `check_lit.py` | 证据表 12 列 / 对照列 NA / 同作者同年 a-b / IF 与分区须带年份版本 / 分区标题；覆盖声明 N→M→K 齐且相加对 | 硬；E6 为软 |
 | `check_vault.py` | **科研库命名与结构**：精读笔记 / 终稿不带日期 / ADR 命名 · 工作日志字段+倒序 · 变量字典 · SAP 偏离 · AI 声明 · 理解确认清单 | 硬；S 组按**文件名**触发 |
+| `check_review.py` | **审稿意见结构**：四档审稿建议 / 摘要段 / 编号 3–8 条 / 每条带位置与要求 / 不端指控不得给作者看 / 密评须标「不向作者展示」 | 硬；草稿·密评·非审稿意见自动跳过并报因 |
+| `check_design.py` | **研究设计书结构**：假设节证伪条件 / 乐观·保守两套 / 脱落率 / 风险四列表 / 伦理与预注册 | 硬；缺节时报「本次未评」 |
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |
 | `check_metadata_leak.py` | **Office/PDF 隐藏元数据**（盲审泄露面） | 硬（对外场景） |
