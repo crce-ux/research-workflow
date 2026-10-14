@@ -96,23 +96,8 @@ def test_s1_only_applies_to_worklog():
     assert cv.s1_worklog("随便什么", P("日记.md")) == []
 
 
-def test_s2_vardict_missing_column():
-    text = "# 变量字典\n| 字段名 | 含义 | 类型 | 取值域 | 缺失码 |"
-    assert cv.s2_vardict(text, P("变量字典_TRS_EEG.md"))
 
 
-def test_s2_vardict_complete():
-    text = "变量字典\n字段名 含义 类型 取值域 缺失码 来源 对应假设"
-    assert cv.s2_vardict(text, P("变量字典_TRS_EEG.md")) == []
-
-
-def test_s3_sap_deviation_complete():
-    text = "SAP 偏离记录：假设编号 / 原定 / 实际 / 一致 / 原因 / 批准人"
-    assert cv.s3_sap_deviation(text, P("SAP_TRS_EEG.md")) == []
-
-
-def test_s3_sap_deviation_incomplete():
-    assert cv.s3_sap_deviation("SAP 偏离记录：假设编号 / 原定", P("SAP_TRS_EEG.md"))
 
 
 def test_s4_ai_declaration_complete():
@@ -160,4 +145,4 @@ def test_n3_readme_in_decision_dir_is_exempt():
 def test_rules_registry_is_wired():
     """每条规则都得在 RULES 里登记，否则写了也不会被跑到。"""
     ids = {r[0] for r in cv.RULES}
-    assert ids == {"N1", "N2", "N3", "S1", "S2", "S3", "S4", "S6"}
+    assert ids == {"N1", "N2", "N3", "S1", "S4", "S6"}

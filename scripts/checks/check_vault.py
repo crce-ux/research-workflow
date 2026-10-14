@@ -12,6 +12,11 @@
 
 【每组的规范出处】见各函数 docstring（都引自 `manuals/`，不是自创）。
 
+【搬走的两条 · 2026-10-14】
+    原 S2「变量字典必填列」与 S3「SAP 偏离记录列」已搬到 `check_data.py`——
+    check_vault 管的是**科研库命名与结构**，而那是**数据管线的口径**，
+    不该挂在这里。一条规则一个家。
+
 【撤回记录 · 2026-10-14】
     有两条规则写出来了，但**判据不成立**，已撤回，理由留档：
 
@@ -110,27 +115,6 @@ def s1_worklog(text, p):
     return [f"{p.name}：{b}" for b in bad]
 
 
-def s2_vardict(text, p):
-    """变量字典必填七列（数据与统计分析流程 §环节1）
-
-    ⚠️ 按**文件名**触发，不按正文出现「变量字典」四字触发——否则《…全流程总纲》这类
-    **讲变量字典该怎么写**的文档会被判成变量字典本身（实测全库 4 条命中全是这种）。
-    代价：藏在别的文档里的变量字典小节查不到。可接受。
-    """
-    if "变量字典" not in p.name:
-        return []
-    need = ["字段名", "含义", "类型", "取值域", "缺失码", "来源", "对应假设"]
-    miss = [c for c in need if c not in text]
-    return [f"{p.name}：变量字典缺列 {'/'.join(miss)}"] if miss else []
-
-
-def s3_sap_deviation(text, p):
-    """SAP 偏离记录七列（数据与统计分析流程 §环节4）——同 S2，按文件名触发。"""
-    if "SAP" not in p.name:
-        return []
-    need = ["假设编号", "原定", "实际", "一致", "原因", "批准"]
-    miss = [c for c in need if c not in text]
-    return [f"{p.name}：SAP 偏离记录缺列 {'/'.join(miss)}"] if miss else []
 
 
 def s4_ai_declaration(text, p):
@@ -165,8 +149,6 @@ RULES = [
     ("N2", "最终稿不带日期", None, n2_final_name),
     ("N3", "ADR 命名", None, n3_adr_name),
     ("S1", "工作日志字段+倒序", "*.md", s1_worklog),
-    ("S2", "变量字典必填列", "*.md", s2_vardict),
-    ("S3", "SAP 偏离记录列", "*.md", s3_sap_deviation),
     ("S4", "AI 声明要素", "*.md", s4_ai_declaration),
     ("S6", "理解确认清单", "*.md", s6_understanding),
 ]

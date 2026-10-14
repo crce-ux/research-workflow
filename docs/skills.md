@@ -19,7 +19,7 @@ A  文献侧        ✅ literature-pipeline
 B  内容侧        ✅ ai-academic-writing（表达/内容）· academic-slides（制作稿）
 C  交付侧        ✅ academic-slides（出片/体检）· ai-academic-writing（元数据）
 D  课题设计      ✅ study-design
-E  执行产出      🟡 只到 E5（论文）· E1–E4 / E6 / E7 🔴
+E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5）· E6/E7 🔴
 ────────────────────────────────────────────────
 独立支线         国自然 🔴 · 审稿 ✅ peer-review · 专利 🔴 · 实验记录 🔴
 全局             证据核查 ✅ · 自查协议 ✅ text-self-review（横向）
@@ -104,18 +104,17 @@ E  执行产出      🟡 只到 E5（论文）· E1–E4 / E6 / E7 🔴
 
 | 工序 | 自研 | 外部（已装） |
 |---|---|---|
-| E1 数据（变量字典 / 缺失码） | 🔴 **无**（手册 218 行） | `nature-statistics` · `nature-data` |
-| E2 缺失处理 | 🔴 **无** | — |
-| E3 SAP 执行 / 偏离记录 | 🔴 **无** | — |
-| E4 结果报告 | 🔴 **无** | — |
+| E1 数据（变量字典 / 缺失码） | ✅ `data-pipeline` | `nature-statistics` · `nature-data` |
+| E2 缺失处理 | ✅ | — |
+| E3 SAP 执行 / 偏离记录 | ✅ | — |
+| E4 结果报告 | ✅ | — |
 | **E5 论文** | ✅ `ai-academic-writing` ①②③④ | `paper-spine` · `nature-writing` · `academic-paper` · `academic-pipeline` · `academic-writing` |
 | 图表 | 🔴 **无** | `nature-figure` · `scipilot-figure-skill` · `scientific-schematics` · `scientific-svg-figures` · `scientific-visualization` · `svg-figure` |
 | E6 投稿选刊 | 🔴 **无**（`journal_match.py` 有，手册 148 行） | — |
 | E7 归档（成果台账） | 🔴 **无** | — |
 
-> 🔴 **E1–E4 是当前最急的一格**——TRS_EEG 正在进实施阶段，下一步就是它。
-> **拦路虎不是不会做，是纪律没人替你背**：变量字典四类缺失码、缺失率先报再处理、
-> SAP 偏离必须记录（**偏离本身不致命，不记录才致命**）。
+> ✅ **E1–E4 已补**（`data-pipeline`）。原先的拦路虎不是不会做，是**纪律没人替你背**——
+> 变量字典四类缺失码、缺失率先报再处理、SAP 偏离必须记录（**偏离本身不致命，不记录才致命**）。
 
 ---
 
@@ -146,11 +145,10 @@ E  执行产出      🟡 只到 E5（论文）· E1–E4 / E6 / E7 🔴
 
 ---
 
-## 九、缺口清单（🔴 共 9 处）
+## 九、缺口清单（🔴 共 8 处）
 
 | # | 缺口 | 手册行数 | 急不急 |
 |---|---|---|---|
-| 1 | **E1–E4 数据与统计分析** | 218 | 🔴 **最急**（TRS_EEG 正进实施） |
 | 2 | **国自然**（诊断 / 医学口 / 规则取用） | 595 | 🟡 申报季前 |
 | 3 | E6 投稿选刊 | 148 | 🟡 |
 | 5 | 取数·专项（中文库 / 政务库） | 243 | 🟢 |
@@ -160,7 +158,7 @@ E  执行产出      🟡 只到 E5（论文）· E1–E4 / E6 / E7 🔴
 | 9 | 专利 | — | 🟢 外部够用 |
 | 10 | 实验记录 | — | 🟢 外部够用 |
 
-**合计约 1423 行手册没有 skill 承载。**
+**合计约 1205 行手册没有 skill 承载。**
 
 ---
 
