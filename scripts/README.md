@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 47 个（Python 46 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 48 个（Python 47 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -18,7 +18,7 @@
 >
 > 它**按内容反查**，不维护「谁装了谁」的登记表（那种表自己会漂）：
 > 扫每个 skill 的 `scripts/`，拿文件名去正本索引里找，找得到就比对。
-> 当前基线：**64 份运行版副本，0 不一致**。
+> 当前基线：**65 份运行版副本，0 不一致**。
 >
 > ⚠️ **一个正本都对不上的仓 = 不参与分发**（如第三方的 `video-talkcraft`），整仓跳过——
 > 否则它自带的脚本会被逐条误报成「无正本」，淹没真信号。
@@ -151,6 +151,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `render_svg.py` / `render_templates.py` | 渲染 |
 | `render_and_qa_pptx.py` | 成品像素体检 |
 | `make_notes.py` | 讲稿 → PPT 备注 |
+| `slide_fit.py` | **画之前的版面算术**：容量、带高预算、**配图可读性**（图内字号 × 显示宽 ÷ 图宽 < 9px 即不可读） |
 
 > ⚠️ **做 PPT 走全链路那套**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 > PPT 做得再好，讲的人没内化，一样会当场卡住。
