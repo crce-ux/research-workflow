@@ -68,16 +68,24 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 
 ## 配套 skill（各自独立仓库）
 
-这套工作流里的**方法**已经沉淀成 6 个可安装的 skill：
+这套工作流里的**方法**已经沉淀成 **12 个**可安装的 skill：
 
-| Skill | 管什么 | 最硬的一条 |
-|---|---|---|
-| [`text-self-review`](https://github.com/crce-ux/text-self-review) | 迭代式文本自查 | 盲区的形状由**当轮采用的维度**决定 |
-| [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | AI 学术写作全流程 | 定贡献→核查链→AI 边界 |
-| [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | 文献调研 | **覆盖声明 N→M→K** + 裸被引必须归一 |
-| [`academic-slides`](https://github.com/crce-ux/academic-slides) | 学术汇报 PPT 全链路 | 待核清零 + 出片工具链 + 理解确认 |
-| [`peer-review`](https://github.com/crce-ux/peer-review) | 同行评议 | 领域核查**五层生成轴** + 三份样例（TRS / EEG / ML） |
-| [`study-design`](https://github.com/crce-ux/study-design) | 课题设计 | 没有证伪条件，就不是科学假设 |
+| Skill | 段 | 管什么 | 最硬的一条 |
+|---|---|---|---|
+| [`paper-reading`](https://github.com/crce-ux/paper-reading) | P | 日常精读 | 证据标签**两条轴**（归属 / 可信度）不能互相替代 |
+| [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | A | 文献调研 | **覆盖声明 N→M→K** + 裸被引必须归一 |
+| [`data-sources`](https://github.com/crce-ux/data-sources) | A | 非常规数据源 | 已证伪清单 · **法定披露 ≠ 申报状态** |
+| [`review-writing`](https://github.com/crce-ux/review-writing) | A | 综述成文 | **名头与配置必须自洽**（自称系统综述就得有 PRISMA） |
+| [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | B/E5 | AI 学术写作全流程 | 定贡献→核查链→**AI 边界** |
+| [`academic-slides`](https://github.com/crce-ux/academic-slides) | B/C | 学术汇报 PPT 全链路 | 待核清零 + 出片工具链 + 理解确认 |
+| [`study-design`](https://github.com/crce-ux/study-design) | D | 课题设计 | 没有证伪条件，就不是科学假设 |
+| [`data-pipeline`](https://github.com/crce-ux/data-pipeline) | E1–E4 | 数据管线 | **四类缺失码** · SAP 偏离必留痕 |
+| [`submission`](https://github.com/crce-ux/submission) | E6/E7 | 投稿与成果 | 相关度是门槛 / IF 只排序 · **台账署名自洽** |
+| [`grant-diagnosis`](https://github.com/crce-ux/grant-diagnosis) | 支线 | 国自然标书诊断 | 章节职责归位 · **标书不得直接生成正文** |
+| [`peer-review`](https://github.com/crce-ux/peer-review) | 支线 | 同行评议 | 领域核查**五层生成轴** + 三份样例（TRS / EEG / ML） |
+| [`text-self-review`](https://github.com/crce-ux/text-self-review) | 横向 | 迭代式文本自查 | 盲区的形状由**当轮采用的维度**决定 |
+
+完整工序对照（含缺口与外部工具指针）见 [`docs/skills.md`](docs/skills.md)。
 
 🔌 **工具怎么接** → [`docs/runtime.md`](docs/runtime.md)：能力 → 候选工具对照，以及**为什么不在 skill 里写死工具 ID**。
 
@@ -94,9 +102,11 @@ docs/
   runtime.md                 运行环境与工具绑定（能力→工具；**不写工具 ID**）
   核查方法/                   来源核验 / 定量断言审计 / 对抗压力测试 / 演讲产物审查
 scripts/
-  literature/                检索、元数据核验、质量快筛、中文库取数
+  sync_skill_scripts.py      正本 → 各 skill 的分发校验 / 同步（`--write` 覆盖）
+  literature/                检索、元数据核验、质量快筛、期刊指标、中文库取数
   evidence/                  证据表生成、日常文献表、一致性核查
-  checks/                    语言 / 身份 / 引用 / 资产 / 隐藏元数据
+  checks/                    **20 个机检**：语言 / 措辞 / 身份 / 引用 / 笔记 / 证据表 /
+                             设计书 / 数据 / 台账 / 综述 / 资产 / 隐藏元数据 / skill 结构
   ppt/                       PPT 生成与质检工具链
 manuals/                     49 份流程手册原文（已去敏化）
   workflow/                  各阶段流程手册
