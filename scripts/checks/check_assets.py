@@ -215,16 +215,19 @@ def check_script_count(root, exclude, rep):
     # ⚠️ 2026-10-14：原先写死 `_系统/_流程与工具/_scripts/`（扁平旧结构），本仓已改为
     #    `scripts/<子目录>/`，导致此处取不到数（等于空跑）。改为递归扫 scripts/。
     scripts = sorted(p.name for p in (root / "scripts").rglob("*.py"))
-    actual = len(scripts)
+    shells = sorted(p.name for p in (root / "scripts").rglob("*.sh"))
+    actual = len(scripts) + len(shells)      # 总数 = .py + .sh（README 自称的就是总数）
 
     text = readme.read_text(encoding="utf-8", errors="replace")
     claimed = [int(m) for m in SCRIPT_COUNT_RE.findall(text)]
+    # ⚠️ 2026-10-14：此前取 most_common(1)——README 里同时出现「总数 44」与「Python 43」
+    #    两个数字时**随便挑一个**，且拿「总数」跟「只数 .py」的 actual 比，必然对不上。
+    #    改为：**只认「脚本 N 个」这个句式里的那个数**（句首即总数），
+    #    并与 **.py + .sh 的实际总数**比。
     if not claimed:
         rep.add(2, readme, 0, f"未找到自称的脚本总数（实际 {actual} 个）——README 应为唯一出处")
         return
-    # 取出现次数最多的那个数作为自称值（避免把"新增 1 个"之类误当总数）
-    from collections import Counter
-    declared = Counter(claimed).most_common(1)[0][0]
+    declared = claimed[0]        # 「脚本 N 个」句首的那个数就是总数；后面的分项不算
     if declared != actual:
         rep.add(2, readme, 0,
                 f"脚本总数对账失败：README 自称 {declared} 个，实际 {actual} 个"

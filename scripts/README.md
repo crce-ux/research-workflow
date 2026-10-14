@@ -1,12 +1,12 @@
 # 脚本索引
 
-**脚本 42 个（Python 41 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 44 个（Python 43 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
 > 📌 **这里是正本。**
-> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission` / `data-sources` / `review-writing`），
+> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 >
 > 🔴 **不用再靠记性同步了**——跑 `python scripts/sync_skill_scripts.py --root D:/Github`：
@@ -18,7 +18,7 @@
 >
 > 它**按内容反查**，不维护「谁装了谁」的登记表（那种表自己会漂）：
 > 扫每个 skill 的 `scripts/`，拿文件名去正本索引里找，找得到就比对。
-> 当前基线：**66 份运行版副本，0 不一致**。
+> 当前基线：**62 份运行版副本，0 不一致**。
 >
 > ⚠️ **一个正本都对不上的仓 = 不参与分发**（如第三方的 `video-talkcraft`），整仓跳过——
 > 否则它自带的脚本会被逐条误报成「无正本」，淹没真信号。
@@ -88,6 +88,7 @@
 | `check_token_diff.py` | **改写前后的受保护 token 比对**（LaTeX / 引用 key / 数字与单位 / 状态 token / 路径 URL）——丢失的必须逐个解释 | 硬 |
 | `check_data.py` | **数据管线口径（E1–E4）**：变量字典七列 + **缺失码四类** / SAP 偏离七列 + **偏离行原因与批准人不得为空** / 结果报告 p 与 95%CI | 硬；按**文件名**触发 |
 | `check_note.py` | **精读笔记口径**：必备信息 / 标注使用 / **定位方式与引用形式一致**（标了「仅摘要」却引用 Table = 在编） | 硬；N4 为软 |
+| `ledger_to_cv.py` | **成果台账 → NSFC 简历用成果清单**：按表头认表、近 N 年筛（年份缺失单列待补）、论文只导已发表/已接收、按署名优先级排序 | 硬（只读不判） |
 | `check_credit.py` | **成果台账署名自洽**：署名情况 ↔ 位次（如「共同第一作者」却写位次 3）/ 六种署名枚举 / **三数字齐** / 状态四态 | 硬；全占位行时报「本次未评」 |
 | `check_review_article.py` | **综述自称与配置自洽**：标题（或摘要**自我描述**）自称「系统综述 / 荟萃分析 / 范围综述」→ 必须有方法学要素；未定项计数 | 硬 R1 + 软 R2；**不扫摘要里的「荟萃分析」**（那是引用别人，实测 20 篇误报 3 篇） |
 | `check_design.py` | **研究设计书结构**：假设节证伪条件 / 乐观·保守两套 / 脱落率 / 风险四列表 / 伦理与预注册 | 硬；缺节时报「本次未评」 |
