@@ -48,7 +48,7 @@
 | `writing/文本迭代自查流程` | [text-self-review](https://github.com/crce-ux/text-self-review) |
 | `writing/反防御性写作` + `标书去机器味` + `写作禁用词清单` + `代笔身份匹配` | [ai-writing-debug](https://github.com/crce-ux/ai-writing-debug) |
 | `workflow/文献调研流程手册` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
-| `workflow/汇报PPT产出流程手册`（讲者侧那半） | [talk-readiness](https://github.com/crce-ux/talk-readiness) |
+| `workflow/汇报PPT产出流程手册` | [academic-slides](https://github.com/crce-ux/academic-slides) |
 | （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
 | `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
 

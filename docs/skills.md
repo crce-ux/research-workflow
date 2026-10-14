@@ -10,7 +10,7 @@
 手上有份稿子要交        → text-self-review（自查迭代）
 稿子读起来像 AI 写的    → ai-writing-debug（表达层）
 要查一批文献、建证据表  → literature-pipeline
-要汇报、讲稿没底        → talk-readiness（讲者侧）
+要做汇报 PPT、讲稿没底   → academic-slides（全链路）
 受邀审一篇稿            → peer-review
 要把想法变成研究方案    → study-design
 ```
@@ -41,7 +41,7 @@
 - **四条铁律**：相关度是门槛 / **裸被引必须归一** / 权威的错误更危险 / 外在不覆盖内在
 - G0 四项质控；12 列证据表口径
 
-### [`talk-readiness`](https://github.com/crce-ux/talk-readiness)
+### [`academic-slides`](https://github.com/crce-ux/academic-slides)
 **汇报讲者侧把关**
 
 - **待核清零**——`待核/⏳/TODO` 扫成 0，不允许「保留但标注待核」

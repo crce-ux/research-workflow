@@ -6,7 +6,7 @@
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
 > 📌 **这里是正本。**
-> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `talk-readiness` / `text-self-review` / `peer-review` / `study-design`），
+> 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-writing-debug` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 > 分发映射见各 skill 的 `scripts/README.md`。
 >
@@ -95,7 +95,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `render_and_qa_pptx.py` | 成品像素体检 |
 | `make_notes.py` | 讲稿 → PPT 备注 |
 
-> ⚠️ **做 PPT 之前先过讲者侧那关**——见 [`talk-readiness`](https://github.com/crce-ux/talk-readiness)。
+> ⚠️ **做 PPT 走全链路那套**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 > PPT 做得再好，讲的人没内化，一样会当场卡住。
 
 ---
