@@ -48,9 +48,17 @@ def test_bold_in_notes_is_not_counted():
 
 
 # ── ⑥ 制作稿七项 ─────────────────────────────────────────────
+# ⚠️ 2026-10-15 改：原先只数 `**①…**` 到 `**⑦…**` 有没有七个，不检查是哪七种。
+#    写「① 项」…「⑦ 项」照样过检——撞上设计纪律 5（按形式找，不按信息找）。
+#    现在按标签识别七种字段。下面把「哪些该报、哪些不该报」钉死，防它再退回数个数。
 
-def _page(marks="①②③④⑤⑥⑦"):
-    return "## S1 · 封面\n" + "\n".join(f"**{m} 项**：内容" for m in marks)
+SEVEN_LABELS = ["标题", "版式建议", "页面文字", "表格数据", "图表说明", "讲稿备注", "口径提醒"]
+
+
+def _page(marks="①②③④⑤⑥⑦", labels=None):
+    labels = labels or SEVEN_LABELS
+    return "## S1 · 封面\n" + "\n".join(
+        f"**{m} {lb}**：内容" for m, lb in zip(marks, labels))
 
 
 def test_missing_seven_item_is_flagged():
@@ -59,6 +67,31 @@ def test_missing_seven_item_is_flagged():
 
 def test_full_seven_items_pass():
     assert "七项不全" not in _fails(_page())
+
+
+def test_field_kinds_are_recognized():
+    """七个编号齐、标签也是七种 —— 认得出，不报。"""
+    f = _fails(_page())
+    assert "缺字段" not in f and "认不出" not in f
+
+
+def test_wrong_labels_are_flagged():
+    """编号齐但字段不是那七种 —— 要报「认不出的字段」，不能静默通过。"""
+    f = _fails(_page(labels=["项"] * 7))
+    assert "认不出的字段" in f
+    assert "缺字段" in f
+
+
+def test_duplicated_field_leaves_a_gap():
+    """七个编号齐、但「标题」用了两次 —— 缺「口径」要报出来。"""
+    f = _fails(_page(labels=["标题"] * 7))
+    assert "缺字段" in f and "口径" in f
+
+
+def test_zhuangtu_alias_is_recognized():
+    """手册叫「图注」，实际稿子常写「图表说明」——别名要认。"""
+    f = _fails(_page(labels=["标题", "版式", "页面文字", "表格", "图表说明", "讲稿备注", "口径"]))
+    assert "缺字段" not in f and "认不出" not in f
 
 
 # ── 页分隔与类型识别 ─────────────────────────────────────────

@@ -33,8 +33,33 @@ PENDING = re.compile(r"待核|⏳|疑为|核不到|需回原文|待回原文|待
 # ── ② 洗白词：把「没查过」伪装成「查过了」
 WHITEWASH = re.compile(r"一般认为|据估计|通常认为|据悉")
 # ── 制作稿七项
+# ⚠️ 2026-10-15 改：原先只数 `**①…**` 到 `**⑦…**` 有没有七个，**不检查是哪七种**。
+#    后果：写「① 标题」…「⑦ 随便写」照样过检——正好撞上设计纪律 5（按形式找，不按信息找）。
+#    现在按标签识别七种字段；认不出的标签报出来，不静默跳过。
 SEVEN = ["①", "②", "③", "④", "⑤", "⑥", "⑦"]
-SEVEN_RE = re.compile(r"\*\*[①②③④⑤⑥⑦]\s*[^*]*\*\*")
+SEVEN_RE = re.compile(r"\*\*([①②③④⑤⑥⑦])\s*([^*]*?)\*\*")
+# 七种字段的别名。手册叫「图注」，实际稿子常写「图表说明」——两种都认。
+# ⚠️ 这张表是单一真相源：`scripts/ppt/pick_layout.py` 从这里 import，别处不要再抄一份。
+FIELD_ALIASES = [
+    ("标题", ["ppt 标题", "ppt标题", "标题"]),
+    ("版式", ["版式建议", "版式", "排版建议"]),
+    ("正文", ["页面文字", "页面内容", "正文", "页面"]),
+    ("表格", ["表格数据", "表格"]),
+    ("图注", ["图表说明", "图注", "配图", "图的说明"]),
+    ("讲稿", ["讲稿备注", "讲稿", "备注"]),
+    ("口径", ["口径提醒", "口径"]),
+]
+FIELD_KINDS = [k for k, _ in FIELD_ALIASES]
+CONTENT_KINDS = ("标题", "正文", "表格", "图注")
+
+
+def classify_field(label: str):
+    """把一个字段标签归类到七项之一；认不出返回 None。"""
+    low = label.strip().lower()
+    for kind, names in FIELD_ALIASES:
+        if any(n in low for n in names):
+            return kind
+    return None
 # ── 讲稿必带六样（按手册的表头找，不硬编标题）
 SIX_HINTS = [
     ("用时表", re.compile(r"用时表|每页秒数|累计")),
@@ -143,12 +168,28 @@ def check(text, kind, minutes):
     if kind == "制作稿":
         miss = []
         for name, page in pages:
-            found = {m.group(0)[2] for m in SEVEN_RE.finditer(page)}
+            found = {m.group(1) for m in SEVEN_RE.finditer(page)}
             lack = [s for s in SEVEN if s not in found]
+            kinds, unknown = set(), []
+            for m in SEVEN_RE.finditer(page):
+                k = classify_field(m.group(2))
+                if k:
+                    kinds.add(k)
+                elif m.group(2).strip():
+                    unknown.append(m.group(2).strip())
+            lack_kinds = [k for k in FIELD_KINDS if k not in kinds]
+            parts = []
             if lack:
-                miss.append(f"{name} 缺 {'/'.join(lack)}")
+                parts.append("缺编号 " + "/".join(lack))
+            if lack_kinds:
+                parts.append("缺字段 " + "/".join(lack_kinds))
+            if unknown:
+                parts.append("认不出的字段 " + "/".join(sorted(set(unknown))[:3]))
+            if parts:
+                miss.append(f"{name} " + "；".join(parts))
         if miss:
-            fails.append("⑥ 制作稿七项不全：\n" + "\n".join("        " + m for m in miss[:10]))
+            fails.append("⑥ 制作稿七项不全或字段认不出：\n"
+                         + "\n".join("        " + m for m in miss[:10]))
 
     # ⑦ 讲稿六样
     if kind == "讲稿":
