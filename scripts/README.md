@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 40 个（Python 39 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 41 个（Python 40 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -8,10 +8,35 @@
 > 📌 **这里是正本。**
 > 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission` / `data-sources` / `review-writing`），
 > 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
-> 分发映射见各 skill 的 `scripts/README.md`。
+>
+> 🔴 **不用再靠记性同步了**——跑 `python scripts/sync_skill_scripts.py --root D:/Github`：
+>
+> ```bash
+> python scripts/sync_skill_scripts.py --root D:/Github           # 校验（默认，进退出码）
+> python scripts/sync_skill_scripts.py --root D:/Github --write   # 把不一致的覆盖为正本
+> ```
+>
+> 它**按内容反查**，不维护「谁装了谁」的登记表（那种表自己会漂）：
+> 扫每个 skill 的 `scripts/`，拿文件名去正本索引里找，找得到就比对。
+> 当前基线：**66 份运行版副本，0 不一致**。
+>
+> ⚠️ **一个正本都对不上的仓 = 不参与分发**（如第三方的 `video-talkcraft`），整仓跳过——
+> 否则它自带的脚本会被逐条误报成「无正本」，淹没真信号。
 >
 > ⚠️ `ppt/` 里的 `ppt_build.py` 依赖第三方的 `ppt-master`（**不在本仓**，Hugo He，MIT）。
 > 先跑一次 `bash scripts/ppt/setup.sh` 把它拉到 `vendor/`（不进 git）。
+
+---
+
+## 根目录 · 仓库自身的维护工具
+
+| 脚本 | 干什么 |
+|---|---|
+| `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 这里是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
+
+> ⚠️ 这个脚本存在的理由是一处**双标**：本库对**外部** skill 的主张是「调用 > 复制，fork 完就是自己扛维护」，
+> 而对自己的检查器一直在复制——`check_skill_structure.py` 一度有 **13 份**副本，全靠手工重灌。
+> **要么别复制，要么复制了就得有机制保证一致。**
 
 ---
 

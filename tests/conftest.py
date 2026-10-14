@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-for sub in ("scripts/literature", "scripts/evidence", "scripts/checks", "scripts/ppt"):
+for sub in ("scripts", "scripts/literature", "scripts/evidence", "scripts/checks", "scripts/ppt"):
     d = ROOT / sub
     if d.is_dir():
         sys.path.insert(0, str(d))
