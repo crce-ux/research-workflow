@@ -8,7 +8,7 @@
 
 ```
 手上有份稿子要交        → text-self-review（自查迭代）
-稿子读起来像 AI 写的    → ai-writing-debug（表达层）
+写论文 / 稿子像 AI 写的 → ai-academic-writing（写作全流程）
 要查一批文献、建证据表  → literature-pipeline
 要做汇报 PPT、讲稿没底   → academic-slides（全链路）
 受邀审一篇稿            → peer-review
@@ -27,7 +27,7 @@
 - 23 个维度分 5 组；收敛判据；独立视角的**隔离纪律**
 - **跑过对照评测**，含两处对自身不利的发现
 
-### [`ai-writing-debug`](https://github.com/crce-ux/ai-writing-debug)
+### [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing)
 **AI 写作痕迹诊断与修复**
 
 - 四个互不重叠的轴：叙事姿态 / 表达层四层扫描 / 文体适配 / 代笔身份匹配

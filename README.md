@@ -73,7 +73,7 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 | Skill | 管什么 | 最硬的一条 |
 |---|---|---|
 | [`text-self-review`](https://github.com/crce-ux/text-self-review) | 迭代式文本自查 | 盲区的形状由**当轮采用的维度**决定 |
-| [`ai-writing-debug`](https://github.com/crce-ux/ai-writing-debug) | AI 写作痕迹诊断与修复 | 口语节拍 ≠ 口语化 |
+| [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | AI 学术写作全流程 | 定贡献→核查链→AI 边界 |
 | [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | 文献调研 | **覆盖声明 N→M→K** + 裸被引必须归一 |
 | [`academic-slides`](https://github.com/crce-ux/academic-slides) | 学术汇报 PPT 全链路 | 待核清零 + 出片工具链 + 理解确认 |
 | [`peer-review`](https://github.com/crce-ux/peer-review) | 同行评议 | 领域核查**五层生成轴** + 三份样例（TRS / EEG / ML） |
