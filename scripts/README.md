@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 46 个（Python 45 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 47 个（Python 46 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -33,7 +33,13 @@
 | 脚本 | 干什么 |
 |---|---|
 | `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 这里是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
+| `deploy_to_vault.py` | **仓 → 观测库 `.claude/skills/` 的第三套副本同步**。默认只校验、`--write` 覆盖。**只增改不删**——库里多出来的由人判断 |
 | `run_checks.py` | **跑一批检查器，把发现写进「待修清单」**——闭环的最后一环。`--target <文件或目录> --ledger <清单.md>` |
+
+> ⚠️ `deploy_to_vault.py` 面对的是**第三套副本**：`sync_skill_scripts.py` 管仓内各 skill 的
+> `scripts/`，这个管**真正被 agent 加载的那些目录**。此前它们靠手敲同步——
+> 和 `check_skill_structure.py` 散成 13 份是同一个病。
+> ⚠️ `.gitignore` 不参与比对——它是**仓的元数据**，不是 skill 内容。
 
 > ⚠️ `sync_skill_scripts.py` 存在的理由是一处**双标**：本库对**外部** skill 的主张是「调用 > 复制，fork 完就是自己扛维护」，
 > 而对自己的检查器一直在复制——`check_skill_structure.py` 一度有 **13 份**副本，全靠手工重灌。
