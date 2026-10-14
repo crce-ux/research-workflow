@@ -15,7 +15,7 @@
 
 ```
 P  日常精读      ✅ paper-reading
-A  文献侧        ✅ literature-pipeline · data-sources（取数·专项）
+A  文献侧        ✅ literature-pipeline · data-sources（取数·专项）· review-writing（综述成文）
 B  内容侧        ✅ ai-academic-writing（表达/内容）· academic-slides（制作稿）
 C  交付侧        ✅ academic-slides（出片/体检/快照）· ai-academic-writing（元数据）
 D  课题设计      ✅ study-design
@@ -43,13 +43,13 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 
 | 工序 | 自研 | 外部（已装） |
 |---|---|---|
-| A1 检索 | ✅ `literature-pipeline` **§〇 是唯一步骤入口** | 见其 §〇：常轨走本库脚本 · 重装按需启用 · ⛔ 标注已弃用 |
+| A1 检索 | ✅ `literature-pipeline` **§〇 是唯一步骤入口** | 见其 §〇：常轨走本库脚本 · 重装按需启用 · ⛔ 标注已弃用 · `nature-literature-pipeline`（外部发现管线：多源检索→六维打分→精读→归档） |
 | 全文下载 | — | `nature-downloader` |
 | **G0** 质控四项 | ✅ `literature-pipeline`（覆盖声明 + 四项硬性） | `nature-ref-verifier` |
 | A2 证据表 | ✅ `literature-pipeline`（12 列口径） | — |
 | **G1** 入库 | ✅ `literature-pipeline`（PMID ↔ DOI） | — |
 | 取数·专项 | ✅ `data-sources`（政务 / 产业库）· 中文库并入 `literature-pipeline` | — |
-| 综述成文 | 🟡 部分 | `citation-reviewer` · `nature-literature-pipeline` |
+| 综述成文 | ✅ `review-writing`（名头与配置自洽 · 论点驱动 · 证据分层） | `citation-reviewer`（**私人库**，管成文**之后**：引用审查 / 删改 / 去 AI 味 / 配图 / 格式收尾） |
 
 > **自研补的是**：覆盖声明 `N → M → K` · 影响力归一化（裸被引会筛掉最好的新文）· 证据表列口径。
 
@@ -161,20 +161,30 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 
 **约 525 行手册已落到自研 skill；剩下 3 处是主动决定留外部。**
 
+### ⚠️ 收口时又发现一处，已补（2026-10-14）
+
+| # | 缺口 | 处置 |
+|---|---|---|
+| 8 | **综述成文**（A 段末） | 原先记作「🟡 部分」——**名不副实**：那一格只有 `citation-reviewer`（**私人库**），而它只管成文**之后**（引用审查 / 删改 / 去 AI 味 / 配图 / 格式）。**「怎么写一篇综述」这半段从来没人管**——`ai-academic-writing` 是给论文（IMRaD）的。 → ✅ **已建 `review-writing`** |
+
+> **教训**：`🟡 部分` 是个含糊标记，掩盖了「一半有人管、一半没人管」。
+> **要么写清谁管哪一半，要么就标 🔴。**
+
 > ⚪ ≠ 没人管——外部 skill 能顶上，只是**不背本库纪律**。
 > 需要哪一条纪律时，回到对应手册（`manuals/`）。
 
 ---
 
-## 十、自研 11 个补的是什么
+## 十、自研 12 个补的是什么
 
-外部 skill 覆盖了「怎么做」，自研这 11 个补的是**它们不管的那半**：
+外部 skill 覆盖了「怎么做」，自研这 12 个补的是**它们不管的那半**：
 
 | skill | 段 | 补什么 |
 |---|---|---|
 | `paper-reading` | P | **证据标签五态**（归属轴）· 定位方式三态 · 精读笔记回填口径 |
 | `literature-pipeline` | A | **覆盖声明** · 影响力归一化 · 证据表口径 · 中文库取数 |
 | `data-sources` | A | **非常规源的已证伪清单** · CDP 接管 · **法定披露 ≠ 申报状态** |
+| `review-writing` | A | **名头与配置必须自洽**（自称系统综述就得有 PRISMA）· **框架拿掉不该只剩摘要** |
 | `ai-academic-writing` | B/E5 | **表达层四轴 + 内容层四查** · 本文核查链 · **AI 边界（合规）** |
 | `academic-slides` | B/C | **待核清零** · **理解确认门禁** · 讲稿规格 · 本地出片工具链 · 交付快照 |
 | `study-design` | D | **四条铁律** · 裁决四档 |
