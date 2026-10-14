@@ -43,14 +43,23 @@
 
 手册是**原始材料**，skill 是**提炼后的可执行版本**：
 
-| 手册 | 沉淀成的 skill |
-|---|---|
-| `writing/文本迭代自查流程` | [text-self-review](https://github.com/crce-ux/text-self-review) |
-| `workflow/论文撰写流程` + `writing/反防御性写作` + `标书去机器味` + `写作禁用词清单` + `代笔身份匹配` | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
-| `workflow/文献调研流程手册` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
-| `workflow/汇报PPT产出流程手册` | [academic-slides](https://github.com/crce-ux/academic-slides) |
-| （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
-| `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
+| 段 | 手册 | 沉淀成的 skill |
+|---|---|---|
+| P | `workflow/日常精读手册` | [paper-reading](https://github.com/crce-ux/paper-reading) |
+| A | `workflow/文献调研流程手册` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
+| A | `data-sources/手册_中文文献库取数`（中文库部分已并入 literature-pipeline §五）<br>`data-sources/手册_监管政务数据库取数` + `notes/调研_中文文献库通路_现成工具_20260922` | [data-sources](https://github.com/crce-ux/data-sources) |
+| A | （**无对应手册**——综述成文此前无人承载，2026-10-14 新建） | [review-writing](https://github.com/crce-ux/review-writing) |
+| B/E5 | `workflow/论文撰写流程` + `writing/反防御性写作` + `writing/标书去机器味` + `checklists/写作禁用词与句式清单` + `writing/代笔身份匹配` | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
+| B/C | `workflow/汇报PPT产出流程手册` + `ppt/`（12 份）+ `checklists/出稿检查总表` | [academic-slides](https://github.com/crce-ux/academic-slides) |
+| D | `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
+| E1–E4 | `workflow/数据与统计分析流程` | [data-pipeline](https://github.com/crce-ux/data-pipeline) |
+| E6/E7 | `funding/SCI投稿_选刊流程`（+ 成果台账规范，手册另存） | [submission](https://github.com/crce-ux/submission) |
+| 支线 | `funding/国自然标书_诊断与架构手册` + `funding/国自然标书_医学口补充` + `funding/国自然_规则取用指引` | [grant-diagnosis](https://github.com/crce-ux/grant-diagnosis) |
+| 支线 | （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
+| 横向 | `writing/文本迭代自查流程` | [text-self-review](https://github.com/crce-ux/text-self-review) |
+
+> **共 12 个 skill。** 完整工序对照（含缺口与外部工具指针）见
+> [`docs/skills.md`](../docs/skills.md)。
 
 **手册保留了 skill 里放不下的东西**：具体的命令、实测数据、踩坑记录、以及与具体项目绑定的案例。
 两者互补——skill 管「怎么做」，手册管「为什么这么做、当时踩了什么坑」。
