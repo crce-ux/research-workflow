@@ -47,8 +47,8 @@ def test_abstract_claim_counts_too(tmp_path):
 def test_citing_meta_analysis_in_abstract_is_not_a_self_claim(tmp_path):
     """⭐ 实测误报源：综述摘要里出现「荟萃分析」几乎都是在**引用别人**。
 
-    「网络荟萃分析显示奥氮平代谢副作用谱最差」——这是引用，不是本文自称。
-    不加这条限制，20 篇真稿误报 3 篇。
+    「网络荟萃分析显示奥氮平代谢副作用谱最差」——引用别人的结果，不是本文自称。
+    不把摘要里的荟萃分析判为引用，20 篇真稿误报 3 篇。
     """
     hits, _ = run(
         "# GLP-1 受体激动剂在精神分裂症体重管理中的应用：研究进展综述\n\n"

@@ -37,7 +37,7 @@ def test_placeholder_rows_are_skipped(tmp_path):
 
 
 def test_c2_cofirst_with_wrong_rank(tmp_path):
-    """⭐ 「共同第一作者」却写位次 3——这是 §八 点名的例子。"""
+    """⭐ 「共同第一作者」却写位次 3 是 §八 点名的例子。"""
     bad = GOOD.replace("唯一第一作者 | 8 | 1", "共同第一作者 | 8 | 3")
     hits, _ = run(note(bad), tmp_path)
     assert any("C2" in h and "位次" in h for h in hits)

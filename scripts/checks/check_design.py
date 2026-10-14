@@ -55,7 +55,7 @@ THRESHOLD = re.compile(r"(?:≥|>=|>|不低于|至少|超过)\s*\d+(?:\.\d+)?\s*
 SOURCED = re.compile(r"\[\d+(?:\s*[,–\-]\s*\d+)*\]|PMID|DOI|指南|共识|标准|依据"
                      r"|Kane|TRRIP|BPRS|CGI")
 # 文档**自己已标为待定**的，不再重复报——已知未决，不算漏写。
-# （实测：初稿的「待确认事项」清单里就列了这条阈值，被重复报了一次。）
+# （实测：初稿的「待确认事项」清单里就列了分组阈值，被重复报了一次。）
 PENDING = re.compile(r"待确认|待定|待讨论|待课题组|待核|TBD")
 
 # 交付物清单（design-steps.md §交付物清单）——按**文书种类**找，不按文件名抠字
@@ -189,7 +189,7 @@ def check_deliverables(d):
     if not d.is_dir():
         return [f"{d}：不是目录"]
     names = [p.name for p in d.rglob("*")]
-    return [f"交付物清单：未见「{kind}」（{kw}）——若是还没到这一步，忽略"
+    return [f"交付物清单：未见「{kind}」（{kw}）——若是还没到写该文书的阶段，忽略"
             for kind, kw in DELIVERABLES.items()
             if not any(kw in n for n in names)]
 

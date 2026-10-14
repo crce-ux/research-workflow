@@ -1,9 +1,9 @@
 # 外部同类项目 · 许可与运行足迹
 
-> **用途一句话：调用 > 复制；**真要复制，先看这一列许可。
+> **用途一句话：调用 > 复制；**真要复制，先看许可列。
 >
 > 本库对 **外部** skill 的一贯主张是「调用 > 复制」——
-> 它们的许可、维护、依赖都不是我们的。这份清单只做两件事：
+> 它们的许可、维护、依赖都不是我们的。本清单只做两件事：
 > **① 记许可与运行足迹；② 记我们能从中借鉴什么。**
 >
 > ⚠️ **许可信息来自第三方索引**（`O0000-code/awesome-academic-skills`，CC0 · ★见其仓库），
@@ -49,7 +49,7 @@
 
 > **能借鉴的**：`diogenes` 把 **ICD 203**（美国情报界分析标准）搬进证据评级。
 > ICD 203 的核心是**结构化分析技术**——关键假设核查、竞争性假设分析、指标与路标。
-> 这与本库 `peer-review` 的「五层生成轴」同向（**给生成法，不给固定清单**），
+> ICD 203 的结构化分析技术与本库 `peer-review` 的「五层生成轴」同向（**给生成法，不给固定清单**），
 > 但补上一件我们没写的东西：**把「前提层」的追问固定成一组动作**。
 
 ---
@@ -62,13 +62,13 @@
 | `matsuikentaro1/humanizer_academic` | MIT | | 医学稿去味，**做的是反向动作**——把 LLM 一律抹平的正式术语**补回来** |
 | `conorbronsdon/avoid-ai-writing` | MIT | | 引假阳性研究，并坚持自己的标记是「**信号，不是证据**」 |
 | `blader/humanizer` | MIT | `net` | 去 AI 腔的事实标准（破折号滥用 / 三项排比 / 填充词 / 否定式排比） |
-| `stephenturner/skill-deslop` | MIT | | 科研版去味，**放过 Methods 的被动语态**这类学科惯例 |
+| `stephenturner/skill-deslop` | MIT | | 科研版去味，**放过 Methods 的被动语态**等学科惯例 |
 | `hardikpandya/stop-slop` | MIT | | 八条硬规则；**通用文体，不看假阳性** |
 | `houlaisan/deai-academic-zh` | MIT | | 中文三遍法（措辞 → 突发度 → 重构）+ **零编造规则** |
 
 > **能借鉴的三条**：
 > ① **ABT 叙事弧**——本库的表达层四轴查「词/句/段/章有没有机器腔」，
->    **不查「这段论证有没有转折与落点」**。ABT 正好补这一格（已落进 `ai-academic-writing`）。
+>    **不查「这段论证有没有转折与落点」**。ABT 正好补上该缺口（已落进 `ai-academic-writing`）。
 > ② **反向动作**——去味不只有「删」，还有「把被抹平的正式术语补回来」。
 >    医学稿尤其明显：LLM 会把 `adherence` 写成 `how well patients followed the plan`。
 > ③ **「信号，不是证据」**——与本库的 B 类纪律同构，值得直接引用为外部佐证。
@@ -99,9 +99,9 @@
 
 > **能借鉴的两条**：
 > ① **vision-in-the-loop**——不是「渲染完体检一次」，而是「渲染 → 看图 → 改 → 再渲染」的闭环。
->    本库有 `render_and_qa_pptx.py`（成品像素体检），但**没写明这个回路**（已落进 `academic-slides`）。
+>    本库有 `render_and_qa_pptx.py`（成品像素体检），但**没写明 vision-in-the-loop 闭环**（已落进 `academic-slides`）。
 > ② **被引图清点**——版面里有几张图，正文引用了几张，**两张清单对不上就是漏**。
->    这与本库「覆盖声明 N→M→K」是同一个动作换了对象。
+>    被引图清点与本库「覆盖声明 N→M→K」是同一个动作换了对象。
 
 ---
 
@@ -129,13 +129,13 @@
 |---|---|---|---|
 | `maxwell2732/my-submission-formatting-agent` | 🔴 无 | `hooks` | 按新刊作者须知**重排定稿**，**绝不碰结果**——专为拒稿后改投 |
 | `junhahyung/claude-skill-overleaf` | MIT | | 走 Overleaf git bridge 读写项目 |
-| `lovstudio/any2pdf` | MIT | | Markdown → PDF，**真本事是 CJK 渲染**（Pandoc / wkhtmltopdf 在这块会崩） |
+| `lovstudio/any2pdf` | MIT | | Markdown → PDF，**真本事是 CJK 渲染**（Pandoc / wkhtmltopdf 在 CJK 渲染上会崩） |
 | `gostyan/docx-skill-4-cn-paper` | MIT | | 中文论文 Word 版式（字体 / 字号 / 页边距 / 图表编号 / 参考文献） |
 | `7tocr/paper2patent` | MIT | | 论文 → 中国发明专利申请稿 |
 
 > **能借鉴的一条**：**「按目标刊格式重排」是 E6 的一个独立子步骤**——
 > 只动版式不动结果，且有明确的界限（**never touching the results**）。
-> 本库 `submission` 原先只写「选刊 → 投出去 → 登记回来」，缺这一格（已补）。
+> 本库 `submission` 原先只写「选刊 → 投出去 → 登记回来」，缺「按目标刊格式重排」（已补）。
 
 ---
 

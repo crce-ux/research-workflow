@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """check_token_diff 的规则测试。
 
-锁的是「改写不得动事实」这一条在机器上唯一可判定的形态——
+锁的是「改写不得动事实」在机器上唯一可判定的形态——
 受保护 token 有没有在改写中被丢掉或凭空多出来。
 """
 import check_token_diff as ctd

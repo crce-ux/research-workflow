@@ -2,7 +2,7 @@
 """check_data 的规则测试。
 
 最值钱的是 D4：**标了「偏离」的行，原因与批准人不得为空**——
-这条纪律是「偏离本身不致命，不记录才致命」的机检版。
+「偏离必须留痕」是「偏离本身不致命，不记录才致命」的机检版。
 D2 另锁「四类缺失不许合并」。
 """
 import pathlib
@@ -65,7 +65,7 @@ def test_d3_needs_when_decided():
 
 
 def test_d4_deviation_row_must_be_filled():
-    """标了偏离，但原因与批准人空着——这是代价最大的失误。"""
+    """标了偏离，但原因与批准人空着，是代价最大的失误。"""
     bad = SAP_OK.replace("| ⚠️ 偏离 | 某组 n<10，插补不稳定 | 2026-09-30 锁库前 | 统计师王 X |",
                          "| ⚠️ 偏离 |  |  |  |")
     hits = cd.d4_deviation_filled(bad, P("SAP_偏离记录.md"))
@@ -93,7 +93,7 @@ def test_d5_p_with_ci_passes():
 
 
 def test_trigger_is_filename_based():
-    """讲这些事的文档不该被当成它本身——实测过《数据与统计分析流程》手册会中招。"""
+    """提及缺失码、SAP 偏离等话题的文档，不该被当成它本身——实测过《数据与统计分析流程》手册会中招。"""
     text = "# 数据与统计分析流程\n\n变量字典要有缺失码；SAP 偏离要记录。p 值之外还要报 95%CI。"
     for fn in (cd.d1_vardict, cd.d2_missing_types, cd.d3_sap_cols,
                cd.d4_deviation_filled, cd.d5_reporting):

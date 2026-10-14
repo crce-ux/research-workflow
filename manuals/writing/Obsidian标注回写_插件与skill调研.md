@@ -62,7 +62,7 @@
 
 > ⚠️ **方向陷阱**：track-changes 自带的 SKILL.md 是**评审向**——它的硬规则写着
 > "**Never rewrite, rephrase, or generate text**"，agent 只加标注、绝不改原文。
-> **这与我们的需求正好相反**（我们要 agent 读标注→执行修改）。
+> **track-changes 的评审向规则与我们的需求正好相反**（我们要 agent 读标注→执行修改）。
 > 可以拿它的**语法规范**用，但**规则要反过来写**，见 §四。
 
 ---
@@ -88,7 +88,7 @@
 | `uuq007/obsidian-annotation-marker` | 62 | 自述存储方式为「**标注数据存储在独立的标注文件中，不修改原始 Markdown 文件**」→ **原文里什么都没有** |
 | `mofukuru/side-note` | 30 | 位置以 **CodeMirror 绝对字符偏移**存储，走 `ChangeSet.mapPos()` 实时映射 → 数据在插件侧，文件里读不到 |
 
-> 这两个功能都不弱（side-note 锚点跟随编辑做得很好），**但它们是为"人在 Obsidian 里看"设计的，不是为"agent 读文件"设计的**。
+> annotation-marker 与 side-note 这两个功能都不弱（side-note 锚点跟随编辑做得很好），**但它们是为"人在 Obsidian 里看"设计的，不是为"agent 读文件"设计的**。
 > 若要勉强打通，得让 agent 去解析 sidecar 文件或插件 data.json——**不值得**，除非有别的理由必须用它们。
 
 ---

@@ -5,9 +5,9 @@
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
 
-> 📌 **这里是正本。**
+> 📌 **`scripts/` 是正本。**
 > 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission`），
-> 各 skill 里的副本是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
+> 各 skill 里的副本是**运行版**。**改脚本改 `scripts/`，再同步过去**——不要只改副本，两边会岔。
 >
 > 🔴 同步跑 `python scripts/sync_skill_scripts.py --root D:/Github`：
 >
@@ -33,12 +33,12 @@
 | 脚本 | 干什么 |
 |---|---|
 | `doctor.py` | **一条命令跑完五项体检**：结构 / 资产 / 副本①仓内 / 副本②观测库 / 单测。全绿，或指出哪条没过。`--full` 看原始输出 |
-| `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 这里是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
+| `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 `scripts/` 是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
 | `deploy_to_vault.py` | **仓 → 观测库 `.claude/skills/` 的第三套副本同步**。默认只校验、`--write` 覆盖。**只增改不删**——库里多出来的由人判断 |
 | `run_checks.py` | **跑一批检查器，把发现写进「待修清单」**。`--target <文件或目录> --ledger <清单.md>` |
 
 > ⚠️ `deploy_to_vault.py` 面对的是**第三套副本**：`sync_skill_scripts.py` 管仓内各 skill 的
-> `scripts/`，这个管**被 agent 加载的目录**。此前它们靠手敲同步。
+> `scripts/`，`deploy_to_vault.py` 管**被 agent 加载的目录**。此前它们靠手敲同步。
 > ⚠️ `.gitignore` 不参与比对——它是**仓的元数据**，不是 skill 内容。
 
 > ⚠️ 各 skill 的检查器此前一直在复制：`check_skill_structure.py` 一度有 **13 份**副本，全靠手工重灌。
@@ -87,7 +87,7 @@
 |---|---|---|
 | `sample_flow.py` | **样本量 → 需招募 → 可招募**，三段数字摆出来。按脱落率给乐观/预期/保守三套，按分组比拆每组；可招募数不够时退出码 1 | 标准库 |
 
-> ⭐ 只做「**拿到主分析样本量之后**」的换算——**样本量本身怎么来**（效应量、效能、检验方法）不在这。
+> ⭐ 只做「**拿到主分析样本量之后**」的换算——**样本量本身怎么来**（效应量、效能、检验方法）不在本脚本。
 > ⚠️ D4 的可行性判据是「可招募数 ≥ 样本量需求」，缺哪一半都不算算过。
 
 ---
@@ -144,7 +144,7 @@ python scripts/checks/check_skill_structure.py <单个skill目录> --strict
 查：`name` 的格式/长度/与目录一致/不含保留词 · `description` 长度 ·
 frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否有可判定的 `Anti-Patterns`。
 
-> 这是同类项目里唯一被多个仓库验证过、能完全进 CI 的一层。
+> `check_skill_structure.py` 是同类项目里唯一被多个仓库验证过、能完全进 CI 的一层。
 > 真正的 LLM 行为评估（eval）目前没有可抄的 CI 实现——见下文。
 
 > ⚠️ **脚本只做可自动化的部分。** 语义判断必须人工过。
@@ -157,7 +157,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | 脚本 | 一句话 |
 |---|---|
 | `ppt_init.py` | 新项目初始化 |
-| `ppt_style.py` | **样式真相源**（改这里，全库统一） |
+| `ppt_style.py` | **样式真相源**（改本文件，全库统一） |
 | `ppt_kit.py` | 组件库 |
 | `make_svg_skeletons.py` | 生成 SVG 骨架 |
 | `ppt_build.py` | **一条命令出片**（讲稿→分镜→渲染→导出） |

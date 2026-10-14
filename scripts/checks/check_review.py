@@ -47,7 +47,7 @@ CONF_HINT = re.compile(r"^#{1,6}.*(给编辑|保密|Confidential)|^\*\*附（给
 EXCLUDE_MARK = re.compile(r"不向作者展示|勿提交|不提交|not.{0,20}shown.{0,20}author|for the editor", re.I)
 
 # 目录模式只认「审稿意见」本身。
-# ⚠️ 判据是 **文件名前缀** 或 **frontmatter 的 type**——不是「正文里有没有这四个字」。
+# ⚠️ 判据是 **文件名前缀** 或 **frontmatter 的 type**——不是「正文里有没有『审稿意见』四个字」。
 #    否则《期刊审稿方法指南》《中文阅读与审稿意见报告》这类**讲审稿意见**的文档
 #    会被判成审稿意见本身（实测命中一大片）。
 IS_REVIEW_FM = re.compile(r"^type\s*:\s*审稿意见\s*$", re.M)
@@ -164,7 +164,7 @@ def main():
     if p.is_file():
         # ⚠️ 2026-10-14：单文件模式原先**完全不做适用性判断**——把《研究设计书》当审稿意见查，
         #    一次报出 60+ 条 V4（「第 N 条只提了问题、没给要作者做什么」）。
-        #    目录模式早就有这条门控，**单文件模式漏了**——同一条判据要豁免两处（设计纪律 6）。
+        #    目录模式早有适用性门控，**单文件模式漏了**——同一条判据要豁免两处（设计纪律 6）。
         fm = re.match(r"^---\n(.*?)\n---",
                       p.read_text(encoding="utf-8", errors="replace"), re.S)
         if p.name.startswith("审稿意见") or (fm and IS_REVIEW_FM.search(fm.group(1))):

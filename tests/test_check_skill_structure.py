@@ -2,7 +2,7 @@
 """check_skill_structure 的校验规则测试。
 
 校验器本身也必须被校验——否则它就是「没人管的裁判」。
-这里用 tmp_path 造出合规与不合规的 skill 目录，断言规则确实生效。
+本文件用 tmp_path 造出合规与不合规的 skill 目录，断言规则确实生效。
 """
 import textwrap
 

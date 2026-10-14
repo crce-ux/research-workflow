@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """check_language 的规则测试。
 
-这些测试锁的是**判据本身**——排他性断言必须有出处、回指必须点名。
-它们是这套工作流里少数可以客观验证的规则，所以值得写死。
+本文件的测试锁的是**判据本身**——排他性断言必须有出处、回指必须点名。
+它们是本仓工作流里少数可以客观验证的规则，所以值得写死。
 """
 import check_language as cl
 
@@ -31,7 +31,7 @@ def test_exclusive_with_citation_is_not_flagged():
 
 
 def test_exclusive_with_search_disclosure_is_not_flagged():
-    """写明检索分层与库名 → 不报（这是合规的写法）。"""
+    """写明检索分层与库名 → 不报（合规写法）。"""
     text = "在 PubMed / Europe PMC / OpenAlex 三库交叉检索下，有效 1 篇。"
     hits = cl.check(text, terms=set(), only=ONLY_EXCLUSIVE)
     assert _flat(hits, "② 排他性断言·未见出处 ⚠️硬规则") == []

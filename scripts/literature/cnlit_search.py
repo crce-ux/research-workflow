@@ -6,7 +6,7 @@ cnlit_search.py —— **中文文献库检索**（维普 / 万方）
 【背景】
     英文库有 PubMed / Europe PMC / OpenAlex / CrossRef 四条直连路径，
     **中文库没有**。中文课题用「屏状核」「氯氮平」这类表述时，英文库收不到。
-    本脚本补这个缺口。
+    本脚本补中文库的检索缺口。
 
 【浏览器要求】
     维普/万方/CNKI 都有反爬。实测（2026-09-22）：
@@ -306,7 +306,7 @@ def parse_cnki(html):
 # ── 维普「期刊级别」facet ────────────────────────────────
 # 结果页左侧带一组期刊收录/级别筛选项，每个链接自带计数：
 #   <a data-search="QK=bdhx#北大核心期刊" title="北大核心期刊">…<tt>14</tt></a>
-# ⭐ 这是**维普自己的分级**，与记录同源、覆盖它全部收录，
+# ⭐ 维普结果页的期刊级别是**维普自己的分级**，与记录同源、覆盖它全部收录，
 #   比外挂一份期刊名单更好（外挂名单往往只覆盖某几个学科）。
 # ⚠️ 代码含义（2026-09-22 实测反解）：
 #     bdhx    北大核心期刊      zgkjhx  中国科技核心期刊
@@ -438,7 +438,7 @@ def main():
     ap = argparse.ArgumentParser(description='中文文献库检索（维普/万方）')
     ap.add_argument('site', choices=list(SITES), help='检索哪个库')
     ap.add_argument('query', nargs='?', help='检索词 / 检索式（维普记得带 U= / M= 前缀）')
-    ap.add_argument('--query', dest='q2', help='同上（长检索式用这个）')
+    ap.add_argument('--query', dest='q2', help='同上（长检索式用 --query）')
     ap.add_argument('-o', '--out', help='结果写入 JSON')
     ap.add_argument('--pages', type=int, default=2, help='最多翻几页（默认 2）')
     ap.add_argument('--pagesize', type=int, default=50, choices=[20, 50],

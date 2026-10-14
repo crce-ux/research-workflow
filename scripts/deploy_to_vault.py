@@ -16,7 +16,7 @@
     python deploy_to_vault.py --write        # 把差异覆盖过去（以仓为准）
 
 ⚠️ **方向是仓 → 库**。库里的目录**不回流到仓**——改了库里的副本不会自动回去。
-   改内容请改仓，再跑这个。
+   改内容请改仓，再跑本脚本。
 """
 import argparse
 import filecmp

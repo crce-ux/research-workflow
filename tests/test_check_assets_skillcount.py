@@ -2,7 +2,7 @@
 """check_assets 第 6 类（skill 数对账）的测试。
 
 为什么要它：2026-10-14 一次扩张（6 → 12 个 skill）在同一份文档集里留下 3 处旧数字，
-**全是人肉扫出来的**——第 2 类只对脚本总数。这条补上。
+**全是人肉扫出来的**——第 2 类只对脚本总数。第 6 类补上。
 
 ⚠️ 首版判据 `(\\d+) 个…skill` 在真库上 **8 个命中里 5 个是误报**
 （「科研助手有 32 个 skill」「榜单 10 个 skill」……说的都是**外部** skill）。
@@ -52,7 +52,7 @@ def test_mismatched_count_is_reported(tmp_path):
 
 
 def test_external_skill_count_is_not_our_business(tmp_path):
-    """「科研助手有 32 个 skill」说的是**别人**——首版就是在这上面误报的。"""
+    """「科研助手有 32 个 skill」说的是**别人**——首版就是把它当成自家 skill 数才误报的。"""
     root, sr = _tree(tmp_path,
                      {"docs/x.md": "科研助手 `pubmed-zotero` 有 32 个 skill，全套都在。"},
                      {"a": True})

@@ -2,7 +2,7 @@
 """doctor.py —— 一条命令跑完本仓的全部体检
 
 【跑哪几项】
-    这个仓有四个检查项，各有一个工具，跑一次要点四条命令：
+    本仓有四个检查项，各有一个工具，跑一次要点四条命令：
 
         结构   check_skill_structure.py --root D:/Github
         资产   check_assets.py --root .

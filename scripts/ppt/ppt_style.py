@@ -78,7 +78,7 @@ PT = {
 }
 
 PX = {k: pt2px(v) for k, v in PT.items()}
-"""SVG 里直接用这一组：statement 147 ｜ cover 122 ｜ title 60 ｜ section 40 ｜ body 32 ｜ caption 23 ｜ big 50"""
+"""SVG 里直接用 PX 这一组：statement 147 ｜ cover 122 ｜ title 60 ｜ section 40 ｜ body 32 ｜ caption 23 ｜ big 50"""
 
 
 # ══════════════════════════════════════════════════════════
@@ -206,7 +206,7 @@ FONT_NUM_LIGHT = "'DIN Next LT Pro Light','Microsoft YaHei'"
 #: `slide(..., footer_left="…")` 可逐页覆盖。
 FOOTER_TEXT = "（项目名）· 汇报"
 
-#: 占位说明前缀 —— 交付前 grep 这个应清零
+#: 占位说明前缀 —— 交付前 grep PLACEHOLDER_TAG 应清零
 PLACEHOLDER_TAG = "【说明】"
 
 #: **无栏页标记** —— 封面 / 结尾页不设标题栏与页脚，且内容居中，

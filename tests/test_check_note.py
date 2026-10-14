@@ -2,7 +2,7 @@
 """check_note 的规则测试。
 
 最值钱的是 N3：**定位方式与引用形式必须一致**——
-标了"仅摘要"却引用表格页码，就是在编。这条锁不住，五态标签就白设了。
+标了"仅摘要"却引用表格页码，就是在编。N3 锁不住，五态标签就白设了。
 """
 import pathlib
 
@@ -56,7 +56,7 @@ def test_n2_no_labels_at_all(tmp_path):
 
 
 def test_n3_source_limited_must_not_cite_table(tmp_path):
-    """标了 source-limited 却引用 Table 2——摘要里没有表，这是越界。"""
+    """标了 source-limited 却引用 Table 2——摘要里没有表，属于越界。"""
     text = GOOD_HEAD.replace("page-grounded", "source-limited")
     text += "\n- 应答率 44% `[Paper: Abstract]`（见 Table 2）\n"
     hits, _ = run(text, tmp_path)

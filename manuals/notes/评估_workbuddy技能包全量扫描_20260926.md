@@ -50,7 +50,7 @@
 | 243 | 硬编码个人 open_id `ou_74c5a7816fcb78172bfca68a7f7449e8`（已注释） |
 | 137 | 硬编码作者本地路径 `~/Desktop/二饼文件夹/openclaw 二饼/` |
 
-**判断**：这是**绑定在作者个人环境**上的包，不是可分发工具。**不建议加载。**
+**判断**：ppt-afp 是**绑定在作者个人环境**上的包，不是可分发工具。**不建议加载。**
 
 ### 2.2 🔴 `beatra`：每 24 小时静默远程自更新
 
@@ -74,17 +74,17 @@ If no separate agreement exists, use is governed by Anthropic's Consumer/Commerc
 ```
 
 > ⚠️ **本次更正**：子代理初报为「LICENSE 明文**禁止提取/复制/衍生/分发**」——
-> **复核后不成立，原文没有这句话。** 准确表述是：
+> **复核后不成立，原文并没有「禁止提取/复制/衍生/分发」的表述。** 准确表述是：
 > **「保留所有权利 + 受 Anthropic 服务条款约束」，不是开源许可。**
 > 该包在第三方市场以 "zxh" 名义分发，**其再分发的正当性由 Anthropic 的服务条款决定，不是我能判定的**——
-> 但**它不是给你自由使用的开源件**，这一点确定。
+> 但可以确定的是，**它不是给你自由使用的开源件**。
 
 > 📌 附带一个事实：**我们本身就在 Anthropic 的技能生态里**。
 > 需要官方 `pptx` 能力，**正规路径是走 Anthropic 官方渠道**，而不是采用一个来源不明的重打包副本。
 
 ---
 
-## 三、"文档承诺 >> 实际交付" —— 这是这批包的共同模式
+## 三、"文档承诺 >> 实际交付" —— 该落差是这批包的共同模式
 
 与上次评估 `ppt-design-master` 时观察到的现象完全一致（无脚本、无模板、只有规范文本），
 本次在其余包中**重复出现，且更严重**：
@@ -95,7 +95,7 @@ If no separate agreement exists, use is governed by Anthropic's Consumer/Commerc
 | `ppt-generator-skill` | `node generate.js --topic X --template Y --pages 10`；`templates/` 目录 | `generate.js` **只认 `--title/--palette/--lang/--output`**；`templates/` **不存在** |
 | `pptx` | "`pptxgenjs` 已预装" | 无 `node_modules`，`require` 抛错 |
 
-> **判据**：这类包的 README/SKILL.md **不能作为"它能做什么"的依据**。
+> **判据**：文档承诺远大于实际交付的包，其 README/SKILL.md **不能作为"它能做什么"的依据**。
 > 必须先 `ls` 交付物、再读代码、最好实跑一次。
 > → 与本库既有纪律同源：**「不报错 ≠ 检索式生效」**（FACT §〇）。
 
@@ -124,7 +124,7 @@ If no separate agreement exists, use is governed by Anthropic's Consumer/Commerc
 
 子代理建议「中文≈2×拉丁、拉丁≈0.55em」加入 `ppt_check.py`。
 
-**复核结果**：`ppt_style.estimate_text_width()`（L125-147）**已经实现了这件事，而且更细**：
+**复核结果**：`ppt_style.estimate_text_width()`（L125-147）**已经实现了 CJK 文本宽度估算，而且更细**：
 
 ```
 CJK 1.0 ｜ 空格 0.3 ｜ 宽拉丁(mMwWOQ%) 0.75 ｜ 窄拉丁(iIlj!|) 0.3 ｜ 其余 0.55 ｜ 粗体 ×1.05
@@ -140,7 +140,7 @@ CJK 1.0 ｜ 空格 0.3 ｜ 宽拉丁(mMwWOQ%) 0.75 ｜ 窄拉丁(iIlj!|) 0.3 ｜
 - **我方现状**：`ppt_check` 的 I 项**能检出**文字出框（估算宽度 + 容器包含），但**只能报，不能修**。
 - **可借鉴**：量化**溢出率**，并按「先缩字号 → 再扩框 → 复检」的顺序**自动修复**，且设**"不可修复"阈值**（超出则交人工）。
 - **落地**：`ppt_check.py --fix`，与现有 `--strict` 并列；修复前自动 `.bak`（参照 `renumber_refs.py` 已有做法）。
-- **⚠️ 注意**：来源包 `ppt-pro-max` **没有任何代码交付**，这里借的是**思路**，实现要自己写。
+- **⚠️ 注意**：来源包 `ppt-pro-max` **没有任何代码交付**，本条借的是**思路**，实现要自己写。
 
 ### ⭐ 3. 图片化兼容兜底 → 新脚本 `ppt_compat_export.py`
 
@@ -172,7 +172,7 @@ CJK 1.0 ｜ 空格 0.3 ｜ 宽拉丁(mMwWOQ%) 0.75 ｜ 窄拉丁(iIlj!|) 0.3 ｜
 | `python-pptx` | ❌ 缺 | `ppt-generator-skill` 全部 4 个脚本 |
 | `pywin32` | ❌ 缺 | 借鉴第 3 条（图片化兜底） |
 
-> 即：**这批包在本机一个都跑不起来**（子代理已逐个实测确认，非推测）。
+> 即：**workbuddy 的 8 个包在本机一个都跑不起来**（子代理已逐个实测确认，非推测）。
 
 ---
 

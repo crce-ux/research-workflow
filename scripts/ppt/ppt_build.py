@@ -5,7 +5,7 @@ ppt_build.py —— PPT 制作**总管线**（一条命令跑完 渲染 → 体�
 【背景】
     以前做一册 PPT 要手动串 4 步、记 4 个命令、路径各写一遍：
         render_svg.py（逐页）→ ppt_check（无）→ svg_to_pptx.py <project> → render_and_qa_pptx.py
-    本脚本把这条链固定下来，**输入一个目录，输出 PPTX + 报告**。
+    本脚本把「渲染 → 体检 → 合 PPTX → 验证」这条链固定下来，**输入一个目录，输出 PPTX + 报告**。
 
 【目录约定】
     <项目>/
@@ -73,7 +73,7 @@ PPT_MASTER = _find_ppt_master()
 
 
 def project_cfg(proj):
-    """读 `<项目>/ppt.json`（可选）。**项目专有内容放这里，不放共享库。**
+    """读 `<项目>/ppt.json`（可选）。**项目专有内容放 ppt.json，不放共享库。**
 
     支持的键（都可省）：
         footer     页脚左侧文字
@@ -296,7 +296,7 @@ def main():
         print(f"❌ 目录不存在：{proj}"); return 1
     print(f"▶ PPT 构建：{proj}")
 
-    # 页脚占位检查 / 替换（在体检之前，这样后面的检查看的是最终文本）
+    # 页脚占位检查 / 替换（放在体检之前，后面的检查看的是最终文本）
     n_ph, hits = apply_footer(proj, dry=not a.apply_footer)
     if n_ph:
         if a.apply_footer:

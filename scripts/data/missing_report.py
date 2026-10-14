@@ -3,7 +3,7 @@
 
 【背景】
     data-pipeline 环节③ 的头两步是「报缺失率（逐变量逐时点）」与「分缺失类型」。
-    这两步纯机械，人做又慢又容易漏；人真正该判的是最后一步——
+    报缺失率与分缺失类型这两步纯机械，人做又慢又容易漏；人真正该判的是最后一步——
     「这个缺失率能不能接受、该不该插补」。
 
 【🔴 它守的一条纪律：「不适用」不是缺失】
@@ -17,7 +17,7 @@
     **报告里该用哪个，看 SAP 怎么写。脚本只把两个都摆出来，不替你选。**
 
 【它不查什么】
-    缺失机制（MCAR / MAR / MNAR）是判断，不在这；该不该插补、怎么插补也是判断。
+    缺失机制（MCAR / MAR / MNAR）是判断，不在本脚本；该不该插补、怎么插补也是判断。
 
 用法：
     python missing_report.py <data.csv|data.xlsx> [--time 时点列] [--id 编号列]
@@ -48,7 +48,7 @@ ENCODINGS = ("utf-8-sig", "utf-8", "gbk")
 
 
 def read_rows(path):
-    """读 csv/tsv。按 utf-8-sig → utf-8 → gbk 依次试，Windows 上少不了这一手。"""
+    """读 csv/tsv。按 utf-8-sig → utf-8 → gbk 依次试，Windows 上非如此不可。"""
     p = pathlib.Path(path)
     if p.suffix.lower() in (".tsv", ".txt"):
         opener = lambda f: csv.DictReader(f, delimiter="\t")
@@ -142,7 +142,7 @@ def main():
                 times.append(t)
         print(f"\n── 逐时点（{a.time}：{' / '.join(times)}）──")
         print("  ⚠️ 逐时点看的是**失访**——真缺失率随时间的抬头，"
-              "多半是人不来了，不是这个变量本身难测。")
+              "多半是人不来了，不是变量本身难测。")
         for t in times:
             sub = [r for r in rows if (r.get(a.time) or "").strip() == t]
             print(f"\n  【{t}】N={len(sub)}")

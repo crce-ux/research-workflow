@@ -61,7 +61,7 @@ _BROWSER_CANDIDATES = [
     (r"C:\Users\{u}\AppData\Local\ms-playwright", r"chromium_headless_shell-*\chrome-headless-shell-win64\chrome-headless-shell.exe"),
     # Playwright 完整 chromium
     (r"C:\Users\{u}\AppData\Local\ms-playwright", r"chromium-*\chrome-win64\chrome.exe"),
-    # 用户级安装的 Chrome（Program Files 之外，之前漏了这里）
+    # 用户级安装的 Chrome（Program Files 之外，之前漏查了）
     (r"C:\Users\{u}\AppData\Local\Google\Chrome\Application", "chrome.exe"),
     # 系统浏览器（有"被已有实例吞掉"的风险，故排在最后）
     (r"C:\Program Files\Google\Chrome\Application", "chrome.exe"),
@@ -156,7 +156,7 @@ def main():
 
     # ⚠️ 必须给独立的 user-data-dir —— 否则 headless 会用**默认 profile**，
     #    而默认 profile 常被用户正开着的浏览器锁住 → 静默渲染失败（实测 2026-09-15）：
-    #    表现是"未生成输出"，且不报任何错。这也解释了"为什么有时候能跑、有时候不能"。
+    #    表现是"未生成输出"，且不报任何错。默认 profile 被占用也解释了"为什么有时候能跑、有时候不能"。
     profile = os.path.join(tmpdir, "profile")
     cmd = [
         browser, "--headless=new", "--disable-gpu", "--hide-scrollbars",
@@ -170,7 +170,7 @@ def main():
     r = subprocess.run(cmd, capture_output=True, timeout=120)
 
     if not os.path.isfile(tmp_png) or os.path.getsize(tmp_png) == 0:
-        # ⚠️ 不要把浏览器输出吞掉 —— 这次排查慢就是因为它静默失败（2026-09-15）
+        # ⚠️ 不要把浏览器输出吞掉 —— 当初排查慢就是因为它静默失败（2026-09-15）
         print("❌ 渲染失败（未生成输出）")
         print(f"   浏览器：{browser}")
         err = (r.stderr or b"").decode("utf-8", "ignore").strip()

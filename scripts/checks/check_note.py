@@ -149,7 +149,7 @@ def check(path):
         if cites:
             detail = "、".join(f"{k}×{len(v)}（如 {v[0]}）" for k, v in cites.items())
             hits.append(f"N3 {why}，却出现了精确引用：{detail}——"
-                        f"摘要里没有页码与表格，**这是在编**")
+                        f"摘要里没有页码与表格，**出现精确引用就是在编**")
     elif mode == "structure":
         if CITE_PAGE.findall(text):
             hits.append(f"N3 标了 structure-grounded（页码不可靠），"
@@ -202,7 +202,7 @@ def main():
     for rule, n in sorted(per_rule.items()):
         if len(files) >= 3 and n >= len(files) * 0.8:
             print(f"\n  ⚠️ 汇总：{n}/{len(files)} 篇都命中 {rule}——"
-                  f"更像**尚未迁移到新格式**，不是逐篇出错，先看这一条。")
+                  f"更像**尚未迁移到新格式**，不是逐篇出错，先看 {rule} 这条规则。")
 
     if not total:
         print("  ✅ 全过（三组硬规则）")

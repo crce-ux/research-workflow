@@ -86,7 +86,7 @@ def test_g4_risk_table_missing_column(tmp_path):
 
 
 def test_g6_scans_whole_document_not_just_the_section(tmp_path):
-    """⚠️ 实测踩过：设计书用 `**（3）预注册**` 这种粗体伪标题，
+    """⚠️ 实测踩过：设计书用粗体伪标题（如 `**（3）预注册**`），
     按章节切会漏掉平台，把「写了」判成「没写」。"""
     text = GOOD.replace("将在 ChiCTR 注册，数据采集前完成。", "见 5.7 第（3）节。")
     text += "\n\n## 5.7 统计严谨性\n\n**（3）预注册与透明度**\n\n预注册平台：**ClinicalTrials.gov** 或 OSF。\n"

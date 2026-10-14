@@ -76,7 +76,7 @@ if not os.path.isdir(DATA_DIR):
         "    · FQBJCR2025-UTF8.csv   中科院分区 2025 升级版\n"
         "    · JCR2024-UTF8.csv      JCR 2024\n"
         "    · GJQKYJMD2025.csv      国际期刊预警名单 2025\n"
-        "  ⚠️ 这三份为授权数据，本仓不分发；只查单个已知刊名可用 --help 看轻量用法。"
+        "  ⚠️ 中科院分区 / JCR / 预警名单三份 CSV 为授权数据，本仓不分发；只查单个已知刊名可用 --help 看轻量用法。"
     )
 
 

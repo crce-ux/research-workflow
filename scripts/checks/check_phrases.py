@@ -4,7 +4,7 @@
 【它管什么】
     `ai-academic-writing` 里的**词表与句式**规则——自我削弱、套话、抽象标签、
     演义媒体化、降智解释、自问自答、伪对立、名词化、越级引用、连接词堆砌。
-    这些是纯匹配，不需要判断；原先只写在 references/ 里，每轮靠模型重读。
+    这些词表与句式规则是纯匹配，不需要判断；原先只写在 references/ 里，每轮靠模型重读。
 
 【它不管什么（避免重复）】
     · 口语动词 / 程度词 / 第一人称 / 指示代词 / 口头连接词 → `check_persona.py` 的 **C8**
@@ -14,7 +14,7 @@
 
 【词表来源】
     `manuals/checklists/写作禁用词与句式清单.md`（权威）+ `references/` 各轴。
-    改词表请改手册，再同步这里。
+    改词表请改手册，再同步本脚本。
 
 用法：
     python check_phrases.py 文稿.md [--kind 幻灯片|讲稿|论文|标书] [--only 3,4]
@@ -80,7 +80,7 @@ def main():
     ap.add_argument("doc")
     ap.add_argument("--kind", default=None,
                     choices=["幻灯片", "讲稿", "论文", "标书", "期刊审稿", "回导师"])
-    ap.add_argument("--only", default=None, help="只查这几组，如 3,4")
+    ap.add_argument("--only", default=None, help="只查指定组，如 3,4")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
 

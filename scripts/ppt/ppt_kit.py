@@ -302,7 +302,7 @@ def defs():
 def grad_band(x, y, w, h, horizontal=False):
     """⭐ 色带淡出：从透明渐变到主色。用于标题栏 / 结论条。
 
-    **不要**用纯色 rect 代替——模板的色带"长出来"靠的就是这层渐变。
+    **不要**用纯色 rect 代替——模板的色带"长出来"靠的就是渐变层。
     """
     gid = GID_BAND
     return f'  <rect x="{x}" y="{y}" width="{w}" height="{h}" fill="url(#{gid})"/>'
@@ -329,7 +329,7 @@ def cardhead(x, y, w, h, title, lines=(), headh=None, headfill=None,
     ```
 
     ⚠️ **不要拿它拼成一个"大表格"** —— 它的价值在于**把一个表格拆成 2–4 块**，
-    块与块之间留间距。这是模板与"一个表格到底"的核心差别，也是元素密度的来源。
+    把表格拆成 2–4 块并留间距，是模板与"一个表格到底"的核心差别，也是元素密度的来源。
     """
     fs = fs or PX["body"]
     lead = lead or fs * 1.55
@@ -379,7 +379,7 @@ def badge(x, y, text, size=None, fill=None):
 
 
 def dot(x, y, r=6, fill=None):
-    """色点：列表前缀 / 图例。**这是"细节密度"最便宜的一种。**"""
+    """色点：列表前缀 / 图例。**色点是"细节密度"最便宜的一种。**"""
     return f'  <circle cx="{x}" cy="{y}" r="{r}" fill="{fill or C["red"]}"/>'
 
 
@@ -403,7 +403,7 @@ def rulenum(x, y, n, lead=None, gap=18, fill=None):
 def iconslot(x, y, w, h, label="图标"):
     """图标位：浅底方块 + 虚线内框 + 小字。
 
-    ⚠️ 模板的图标是**真实图片**；这里给的是**占位**，交付前应换成 `<image>`。
+    ⚠️ 模板的图标是**真实图片**；本函数给的是**占位**，交付前应换成 `<image>`。
     但放一个图标位也比什么都没有强——它提供模板的"细节密度"。
     """
     return "\n".join([
@@ -419,7 +419,7 @@ def statement(text, sub=None):
     """⭐ 结尾页大标语（`PX["statement"]` = 147px，模板最大档）。
 
     模板实测：**结尾页字号（117@1280）比封面（97@1280）还大**——
-    用最大字号收场。此前我们的 `PT` 表**没有这一档**。
+    用最大字号收场。此前我们的 `PT` 表**没有大标语档**。
     """
     out = [txt(W / 2, H / 2 + 10, esc(text), size=PX["statement"],
                fill=C["main"], weight=700, anchor="middle")]

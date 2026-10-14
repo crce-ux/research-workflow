@@ -8,7 +8,7 @@
 
 ---
 
-## 〇、这份管什么
+## 〇、本流程管什么
 
 | | |
 |---|---|
@@ -128,7 +128,7 @@ python journal_match.py --major 医学 --sub 精神病学 --min-if 5 --out 候�
 
 > ⚠️ **投稿前必跑**：`check_metadata_leak.py --scene blind`
 > ——检查稿件里的 `creator` / `lastModifiedBy` 等**文档属性是否泄露身份**。
-> 盲审场景下这是硬门槛。
+> 盲审场景下，**文档属性泄露检查**是硬门槛。
 
 ---
 
