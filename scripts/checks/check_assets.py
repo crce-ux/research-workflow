@@ -233,10 +233,14 @@ def check_script_count(root, exclude, rep):
 
 # ------------------------------------------------- 3 索引覆盖对账
 def check_index(root, exclude, rep):
-    index = root / "_系统" / "_流程与工具" / "出稿检查总表.md"
-    if not index.exists():
-        rep.add(3, index, 0, "`出稿检查总表.md` 不存在——资产索引无落点")
+    # ⚠️ 2026-10-14：原先写死 `_系统/_流程与工具/出稿检查总表.md`（扁平旧结构），
+    # 仓改成 `manuals/` 分层后这个路径已不存在，硬门禁恒报「资产索引无落点」。
+    # 与 2 号检查同因：路径写死经不起目录重构。改为按文件名全库找。
+    hits = sorted(root.rglob("出稿检查总表.md"))
+    if not hits:
+        rep.add(3, root / "出稿检查总表.md", 0, "`出稿检查总表.md` 不存在——资产索引无落点")
         return
+    index = hits[0]
     text = index.read_text(encoding="utf-8", errors="replace")
     name_index = build_name_index(root)
 
