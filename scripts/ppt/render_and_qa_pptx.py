@@ -35,8 +35,8 @@ def render(src, out, width=1600):
         pres = app.Presentations.Open(os.path.abspath(src), ReadOnly=True, WithWindow=True)
         n = pres.Slides.Count
 
-        # 【血的教训 2026-10-07】原来写 Export(dst, "PNG", width, -1)，
-        # 以为 -1 是「按比例算高」——**不是**。实测 PowerPoint 会把宽缩到 width、
+        # 【教训 2026-10-07】原来写 Export(dst, "PNG", width, -1)，
+        # 误以为 -1 是「按比例算高」。实测 PowerPoint 会把宽缩到 width、
         # 却把高留在**默认导出高度的 1350**，于是 16:9 的画面被**纵向拉伸 1.5 倍**
         # （应 900），且**不报错、不产出异常文件**。后果：像素体检量出的
         # 边缘/边距/四角全部失真（纵向数字虚高 50%），而肉眼又看不出明显问题。

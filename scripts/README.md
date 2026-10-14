@@ -7,21 +7,21 @@
 
 > 📌 **这里是正本。**
 > 其中一部分已随包分发到各 skill 的 `scripts/`（`ai-academic-writing` / `literature-pipeline` / `academic-slides` / `text-self-review` / `peer-review` / `study-design` / `data-pipeline` / `paper-reading` / `grant-diagnosis` / `submission`），
-> 那些是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
+> 各 skill 里的副本是**运行版**。**改脚本改这里，再同步过去**——不要只改副本，两边会岔。
 >
-> 🔴 **不用再靠记性同步了**——跑 `python scripts/sync_skill_scripts.py --root D:/Github`：
+> 🔴 同步跑 `python scripts/sync_skill_scripts.py --root D:/Github`：
 >
 > ```bash
 > python scripts/sync_skill_scripts.py --root D:/Github           # 校验（默认，进退出码）
 > python scripts/sync_skill_scripts.py --root D:/Github --write   # 把不一致的覆盖为正本
 > ```
 >
-> 它**按内容反查**，不维护「谁装了谁」的登记表（那种表自己会漂）：
+> 它**按内容反查**，不维护「谁装了谁」的登记表（登记表自己会漂）：
 > 扫每个 skill 的 `scripts/`，拿文件名去正本索引里找，找得到就比对。
 > 当前基线：**71 份运行版副本，0 不一致**。
 >
 > ⚠️ **一个正本都对不上的仓 = 不参与分发**（如第三方的 `video-talkcraft`），整仓跳过——
-> 否则它自带的脚本会被逐条误报成「无正本」，淹没真信号。
+> 否则它自带的脚本会被逐条误报成「无正本」，掩盖真差异。
 >
 > ⚠️ `ppt/` 里的 `ppt_build.py` 依赖第三方的 `ppt-master`（**不在本仓**，Hugo He，MIT）。
 > 先跑一次 `bash scripts/ppt/setup.sh` 把它拉到 `vendor/`（不进 git）。
@@ -32,19 +32,17 @@
 
 | 脚本 | 干什么 |
 |---|---|
-| `doctor.py` | **一条命令跑完五项体检**：结构 / 资产 / 副本①仓内 / 副本②观测库 / 单测。全绿或指出哪条红。`--full` 看原始输出 |
+| `doctor.py` | **一条命令跑完五项体检**：结构 / 资产 / 副本①仓内 / 副本②观测库 / 单测。全绿，或指出哪条没过。`--full` 看原始输出 |
 | `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 这里是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
 | `deploy_to_vault.py` | **仓 → 观测库 `.claude/skills/` 的第三套副本同步**。默认只校验、`--write` 覆盖。**只增改不删**——库里多出来的由人判断 |
-| `run_checks.py` | **跑一批检查器，把发现写进「待修清单」**——闭环的最后一环。`--target <文件或目录> --ledger <清单.md>` |
+| `run_checks.py` | **跑一批检查器，把发现写进「待修清单」**。`--target <文件或目录> --ledger <清单.md>` |
 
 > ⚠️ `deploy_to_vault.py` 面对的是**第三套副本**：`sync_skill_scripts.py` 管仓内各 skill 的
-> `scripts/`，这个管**真正被 agent 加载的那些目录**。此前它们靠手敲同步——
-> 和 `check_skill_structure.py` 散成 13 份是同一个病。
+> `scripts/`，这个管**被 agent 加载的目录**。此前它们靠手敲同步。
 > ⚠️ `.gitignore` 不参与比对——它是**仓的元数据**，不是 skill 内容。
 
-> ⚠️ `sync_skill_scripts.py` 存在的理由是一处**双标**：本库对**外部** skill 的主张是「调用 > 复制，fork 完就是自己扛维护」，
-> 而对自己的检查器一直在复制——`check_skill_structure.py` 一度有 **13 份**副本，全靠手工重灌。
-> **要么别复制，要么复制了就得有机制保证一致。**
+> ⚠️ 各 skill 的检查器此前一直在复制：`check_skill_structure.py` 一度有 **13 份**副本，全靠手工重灌。
+> 复制了就得有机制保证一致。
 
 > ⚠️ `run_checks.py` **试跑每一个检查器**（收不了单一路径参数的自动跳过），**不维护登记表**。
 > 它**不把发现拆成「文件 / 说明」两列**——各检查器格式不同，硬拆会解析错（`check_metadata_leak`
@@ -123,7 +121,7 @@
 | `check_note.py` | **精读笔记口径**：必备信息 / 标注使用 / **定位方式与引用形式一致**（标了「仅摘要」却引用 Table = 在编） | 硬；N4 为软 |
 | `ledger_to_cv.py` | **成果台账 → NSFC 简历用成果清单**：按表头认表、近 N 年筛（年份缺失单列待补）、论文只导已发表/已接收、按署名优先级排序 | 硬（只读不判） |
 | `check_credit.py` | **成果台账署名自洽**：署名情况 ↔ 位次（如「共同第一作者」却写位次 3）/ 六种署名枚举 / **三数字齐** / 状态四态 | 硬；全占位行时报「本次未评」 |
-| `check_review_article.py` | **综述自称与配置自洽**：标题（或摘要**自我描述**）自称「系统综述 / 荟萃分析 / 范围综述」→ 必须有方法学要素；未定项计数 | 硬 R1 + 软 R2；**不扫摘要里的「荟萃分析」**（那是引用别人，实测 20 篇误报 3 篇） |
+| `check_review_article.py` | **综述自称与配置自洽**：标题（或摘要**自我描述**）自称「系统综述 / 荟萃分析 / 范围综述」→ 必须有方法学要素；未定项计数 | 硬 R1 + 软 R2；**不扫摘要里的「荟萃分析」**（此处多指引用别人，实测 20 篇误报 3 篇） |
 | `check_design.py` | **研究设计书结构**：假设节证伪条件 / 乐观·保守两套 / 脱落率 / 风险四列表 / 伦理与预注册 | 硬；缺节时报「本次未评」 |
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_grant_rules.py` | **指导类文档里有没有写死年度性数值**（篇幅/年龄/申请代码/经费/资助期限）；只在文件名含 指南/规则/清单/申报/SKILL 的文档上触发 | 硬；非指导类自动跳过并报因 |
@@ -134,7 +132,7 @@
 | `skill_selfcheck.py` | **skill 自检入口**（分发为各 skill 的 `scripts/selfcheck.py`）：结构 + 语法 + 依赖 | 硬（静态） |
 | `renumber_refs.py` | 参考文献重新编号 | — |
 
-### `check_skill_structure.py` —— 唯一可完全 CI 化的那一层
+### `check_skill_structure.py` —— 唯一可完全 CI 化的层
 
 按[官方 Agent Skills 规范](https://agentskills.io/specification)做**静态校验**：零依赖、不调模型、只读。
 
@@ -146,11 +144,11 @@ python scripts/checks/check_skill_structure.py <单个skill目录> --strict
 查：`name` 的格式/长度/与目录一致/不含保留词 · `description` 长度 ·
 frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否有可判定的 `Anti-Patterns`。
 
-> **为什么要它**：这是同类项目里唯一被多个仓库验证过、能完全进 CI 的一层。
+> 这是同类项目里唯一被多个仓库验证过、能完全进 CI 的一层。
 > 真正的 LLM 行为评估（eval）目前没有可抄的 CI 实现——见下文。
 
-> ⚠️ **脚本只做能自动化的那一半。** 语义判断必须人工过。
-> **命中 ≠ 要改**——写证据边界时「可能」是正确用法，写结论时才是逃避。
+> ⚠️ **脚本只做可自动化的部分。** 语义判断必须人工过。
+> **命中不等于要改**——证据边界里「可能」是正确用法，结论里用它则是回避。
 
 ---
 
@@ -169,8 +167,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `make_notes.py` | 讲稿 → PPT 备注 |
 | `slide_fit.py` | **画之前的版面算术**：容量、带高预算、**配图可读性**（图内字号 × 显示宽 ÷ 图宽 < 9px 即不可读） |
 
-> ⚠️ **做 PPT 走全链路那套**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
-> PPT 做得再好，讲的人没内化，一样会当场卡住。
+> ⚠️ **做 PPT 走全链路**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 
 ---
 
@@ -187,7 +184,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `pywin32`（`win32com`） | `render_and_qa_pptx.py` —— **需 Windows + 已安装 PowerPoint** | pip |
 
 ```bash
-# 只装你要用的那一组
+# 只装需要的一组
 pip install openpyxl            # 证据表
 pip install DrissionPage        # 中文库取数
 pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
@@ -196,7 +193,7 @@ pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
 ### ⚠️ 外部依赖：`ppt_build.py` 需要一个不在本仓的工具
 
 `ppt_build.py` 的最后一步（SVG → PPTX 合并）调用 **`ppt-master` 的 `svg_to_pptx.py`**——
-那是**不可替代的合并层**，本仓不包含。
+不可替代的合并层，本仓不包含。
 
 它按以下顺序查找：
 
@@ -217,7 +214,7 @@ pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
 
 ## 通用约定
 
-1. **脚本只做能自动化的那一半**——每个脚本的 docstring 里写清了它**不查什么**
+1. **脚本只做可自动化的部分**——每个脚本的 docstring 里写清了它**不查什么**
 2. **覆盖要说出来**——报 `N → M → K`
 3. **静默失败比报错危险**——替换 / 改名 / 批量操作后要回读验证
 4. **同目录 import 自带 path bootstrap**——`ppt/` 下的脚本互相引用时，靠 `sys.path.insert(0, HERE)`，不依赖调用方式
@@ -231,10 +228,10 @@ uv run --with pytest python -m pytest tests/ -q
 ```
 
 测试覆盖**可客观验证的判据**（排他性断言必须有出处、编号解析的边界、结构校验规则）。
-启发式的判据（如身份匹配）**只测结构与选择器**——它们的最后一关永远是人。
+启发式的判据（如身份匹配）**只测结构与选择器**——最后一关由人判断。
 
-**测试本身也有一条纪律**：校验器必须被校验。`test_check_skill_structure.py` 用临时目录
-造出合规与不合规的 skill，断言规则确实生效——否则校验器就成了「没人管的裁判」。
+**测试本身也有要求**：校验器要能被校验。`test_check_skill_structure.py` 用临时目录
+造出合规与不合规的 skill，断言规则确实生效。
 
 ### 一个已知的空白
 

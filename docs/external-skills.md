@@ -134,7 +134,7 @@
 | `7tocr/paper2patent` | MIT | | 论文 → 中国发明专利申请稿 |
 
 > **能借鉴的一条**：**「按目标刊格式重排」是 E6 的一个独立子步骤**——
-> 只动版式不动结果，且有明确的红线（**never touching the results**）。
+> 只动版式不动结果，且有明确的界限（**never touching the results**）。
 > 本库 `submission` 原先只写「选刊 → 投出去 → 登记回来」，缺这一格（已补）。
 
 ---

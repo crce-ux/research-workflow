@@ -4,10 +4,10 @@ render_svg.py —— SVG → PNG 预览（**支持中文**）
 
 【用途】
     把自制 SVG 示意图渲染成 PNG，供**视觉验证**与 PPT 嵌入。
-    补 `_work/render_svg.py` 的缺口——那个用 svglib，**不渲染 CJK，中文会变方框**，
+    补 `_work/render_svg.py` 的缺口——它用 svglib，**不渲染 CJK，中文会变方框**，
     只能校验几何，不能做视觉验证。
 
-【为什么用浏览器渲染】
+【渲染方式】
     Edge/Chrome 的 headless 模式用系统字体引擎，**中文渲染正确**，
     且支持 CSS 字体栈、tspan、透明度等 SVG 特性。
     实测（2026-09-14）：屏状核局部环路示意图，中英文与 tspan 加粗全部正确。
@@ -49,9 +49,9 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ⚠️ 顺序有讲究 —— 优先用**专用 headless 二进制**，最后才用系统浏览器。
 #:
-#: 【血的教训 2026-09-15】此前只探测 Edge 与 Chrome 的 Program Files 路径，
+#: 【教训 2026-09-15】此前只探测 Edge 与 Chrome 的 Program Files 路径，
 #: 结果**用户 Edge 开着时，headless 调用被转发给已有实例后直接 rc=0 退出**，
-#: 不渲染、不报错、不产出文件 —— 表现为神秘的"未生成输出"。
+#: 不渲染、不报错、不产出文件 —— 表现为「未生成输出」。
 #: 排查花了很久，因为脚本当时把浏览器 stderr 吞掉了（现已保留）。
 #:
 #: Playwright 的 `chrome-headless-shell` 是**独立的 headless 二进制**，
@@ -77,7 +77,7 @@ def find_browser():
     for base, pat in _BROWSER_CANDIDATES:
         hits = sorted(_glob.glob(os.path.join(base.format(u=user), pat)))
         if hits:
-            return hits[-1]          # 取版本最新的那个
+            return hits[-1]          # 取版本最新的一个
     return None
 
 
@@ -93,7 +93,7 @@ def svg_size(path):
 def absolutize_hrefs(svg_text, svg_dir):
     """把 SVG 里的**相对路径 href 改写成绝对 file:// URL**。
 
-    【为什么必须做】
+    【背景】
         本脚本会把 SVG 复制到**纯 ASCII 临时目录**再交给浏览器（见下方"踩坑教训"）。
         复制之后，原 SVG 里 `../素材/xxx.png` 这类**相对路径全部失效** ——
         表现为：图片区域渲染成空白或错图，但 SVG 本身没有任何报错。

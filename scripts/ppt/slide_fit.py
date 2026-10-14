@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """slide_fit.py —— 画之前先算：版面够不够，图里的字还看不看得清
 
-【为什么有它】
+【背景】
     academic-slides 的纪律是「不要等渲染出来才发现放不下」。
-    但那段算术写在手册里，做的时候没人会手算——于是还是等渲染。
-    **把算术变成一条命令，它才会被执行。**
+    本脚本把版面算术做成一条命令。
 
 【两条判据（都来自 script-spec.md）】
 
@@ -105,7 +104,7 @@ def main():
               f" / {area_h:g} px")
         if total > area_h:
             problems += 1
-            print(f"  ❌ 超 {total - area_h:.1f} px——**画之前就该砍**，"
+            print(f"  ❌ 超 {total - area_h:.1f} px——**画之前就该减**，"
                   f"别等渲染出来再改")
         else:
             print(f"  ✅ 余量 {area_h - total:.1f} px")

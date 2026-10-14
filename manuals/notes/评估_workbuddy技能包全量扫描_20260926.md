@@ -152,8 +152,8 @@ CJK 1.0 ｜ 空格 0.3 ｜ 宽拉丁(mMwWOQ%) 0.75 ｜ 窄拉丁(iIlj!|) 0.3 ｜
 
 ### 4.（边际可选）OOXML 打包层校验 → `ppt_build.py` 成品验证
 
-来源 `pptx` 技能。它做的**不是** SVG 层质检（那是我方 `ppt_check` 的活），
-而是**生成的 PPTX 包本身**的检查：XSD 能过、但 PowerPoint 拒开的那一类
+来源 `pptx` 技能。它做的**不是** SVG 层质检（属于我方 `ppt_check` 的工作），
+而是**生成的 PPTX 包本身**的检查：XSD 能过、但 PowerPoint 拒开的一类
 （堆积柱 `dLblPos` 非法、组合图未声明的 secondary axId、多 master 共用 theme 等）。
 
 - **我方现状**：`render_and_qa_pptx.py` 做**像素级**成品体检，**不做包结构校验**。
@@ -195,7 +195,7 @@ CJK 1.0 ｜ 空格 0.3 ｜ 宽拉丁(mMwWOQ%) 0.75 ｜ 窄拉丁(iIlj!|) 0.3 ｜
 2. **值得做的只有 2 件**（第 2、3 条）：
    - `ppt_check.py --fix`（溢出自动修复）—— **纯 Python，无新依赖，可立即做**
    - `ppt_compat_export.py`（图片化兜底）—— **需先解决 COM/soffice 依赖**
-3. **`pptx` 那条**（OOXML 包校验）优先级最低，**暂缓**。
+3. **`pptx` 的 OOXML 包校验项**优先级最低，**暂缓**。
 4. ⚠️ **若确需 Anthropic 官方 `pptx` 能力，走官方渠道**，不要用来源不明的重打包副本（§2.3）。
 
 ---

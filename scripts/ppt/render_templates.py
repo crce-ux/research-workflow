@@ -2,7 +2,7 @@
 """
 render_templates.py —— 把 7 套国自然模板全部渲染成 PNG，并拼成「联系表」缩略图墙
 
-【为什么】
+【背景】
     目视逐页看 123 页成本太高；用 contact sheet 把一套模板的全部页拼成 1–2 张图，
     一次 Read 就能扫完整套，且能横向比较版式分布。
 
@@ -94,7 +94,7 @@ def main():
     """用法：render_templates.py [模板目录] [--sheetonly]
 
     模板目录可省略（用 `BASE` 的默认值）。**换到别的模板集时从命令行传**，
-    不要改脚本里的常量——那是复用时的坑。
+    不要改脚本里的常量（改常量是复用时的坑）。
     """
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     base = args[0] if args else BASE

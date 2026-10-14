@@ -2,9 +2,9 @@
 """
 ppt_check.py —— PPT 单页 / 整册的**一键体检**
 
-【为什么有它】
+【背景】
     以前检查散在四处：手册 §3.0 版面体检、§三 视觉验证、render_and_qa_pptx 的像素体检、
-    以及靠人眼逐张读 PNG。**没有一个地方能把"这一册能不能交"一次说清。**
+    以及靠人眼逐张读 PNG。本脚本把这几处检查集中到一条命令。
 
 【查什么】
     对 **SVG 源文件**（不需要渲染，秒级）：
@@ -15,7 +15,7 @@ ppt_check.py —— PPT 单页 / 整册的**一键体检**
       E 字号         —— font-size 不在字号表里（防手滑写成 30 而非 60）
       F 图片缩放比   —— 图为密度警告（判据 C 的可自动化部分）
       G 页脚/标题栏 —— 是否缺固定件
-      J 对比度       —— 文字色 vs 背后那层纯色的对比度（借用 WCAG 阈值）
+      J 对比度       —— 文字色 vs 背后一层纯色的对比度（借用 WCAG 阈值）
 
     对 **PPTX**：交给 `render_and_qa_pptx.py`（像素级），本脚本只管源。
 
@@ -123,13 +123,13 @@ FIX_LADDER = sorted(OK_SIZES, reverse=True)
 FIX_FLOOR = min(int(v) for v in PX.values())      # = caption 23px（图注/页脚档）
 
 #: 允许的最大降幅（新字号 ÷ 原字号）。
-#: 🔴 **40px 缩到 23px 不是「修复」，是重排** —— 它说明**文字本身就太长**，
-#: 正确答案是改措辞或扩大该框，不是把字缩到看不清。降幅超限一律不修、列进 refused。
+#: 🔴 **40px 缩到 23px 属于重排** —— 它说明**文字本身就太长**，
+#: 应当改措辞或扩大该框，不要把字缩到看不清。降幅超限一律不修、列进 refused。
 FIX_MAX_DROP = 0.70
 
 
 def overflow_of(t, rects, fs=None):
-    """算一处文字是否出界。给了 `fs` 就按那个字号试算（供 `--fix` 试档用）。
+    """算一处文字是否出界。给了 `fs` 就按给定字号试算（供 `--fix` 试档用）。
 
     返回 `(kind, amount, box)`：
 
@@ -148,7 +148,7 @@ def overflow_of(t, rects, fs=None):
         return "canvas", tr - (G["w"] - 1), None
     if tl < 1:
         return "canvas", 1 - tl, None
-    # 出容器：找「含住文字起点、面积最小」的 rect（最小 ≈ 最贴近的那一层）
+    # 出容器：找「含住文字起点、面积最小」的 rect（最小 ≈ 最贴近文字的一层）
     cands = [r for r in rects
              if r["w"] > 20 and r["h"] > 16
              and r["x"] <= tt["x"] <= r["x"] + r["w"]
@@ -202,10 +202,10 @@ def smallest_needed(t, rects):
 
 
 def _bg_of(t, rects):
-    """取文字背后**最近的那层纯色**。
+    """取文字背后**最近的一层纯色**。
 
-    策略：在所有"含住文字起点"的矩形里，取**面积最小且有纯色填充**的那个
-    （面积最小 ≈ 最贴近文字的那一层）。找不到可判定的就返回 None 放弃判定。
+    策略：在所有"含住文字起点"的矩形里，取**面积最小且有纯色填充**的矩形
+    （面积最小 ≈ 最贴近文字的一层）。找不到可判定的就返回 None 放弃判定。
     """
     cands = [r for r in rects
              if r["w"] > 20 and r["h"] > 16
@@ -286,7 +286,7 @@ def check_svg(path):
 
     # A 占位残留
     # ⚠️ 必须先剥掉文件头的 HTML 注释 —— `slide()` 会在注释里写
-    #    「交付前：grep "【说明】" 应清零」，那本身会命中本检查，造成**每页恒报 1 条误警**。
+    #    「交付前：grep "【说明】" 应清零」，注释本身会命中本检查，造成**每页恒报 1 条误警**。
     #    剥掉后本检查只数**真正的占位框**。
     body_raw = re.sub(r"<!--.*?-->", "", raw, flags=re.S)
     n_ph = body_raw.count(PLACEHOLDER_TAG)
@@ -302,7 +302,7 @@ def check_svg(path):
     #    把右对齐（`anchor="end"`）和居中（`middle`）的文字都当成从 `x` 往右延伸，
     #    于是「贴着右边距右对齐」的页码被误报成越界。
     #    配方 30 的页码恰好卡在容差内（差 27.6 < 34）所以一直没暴露，
-    #    配方 32 的字号更大（32px）就顶出了容差（38.4 > 34）—— **是检查器的错，不是版式的错**。
+    #    配方 32 的字号更大（32px）就顶出了容差（38.4 > 34）—— 错在检查器，不在版式。
     xs = [r["x"] for r in body if r["w"] > 0] + [text_bbox(t)[0] for t in d["texts"] if t["s"]]
     if xs and not no_chrome:
         lo = min(xs)
@@ -440,7 +440,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 DOC_CLAIMS = [
     (r"_系统\_流程与工具\_scripts\README.md", r"脚本清单（(\d+) 个）", "scripts", "脚本数"),
     # ⚠️ README **在两处写了脚本数**（§一 标题 + 页脚）。
-    #    `check_assets` 只读页脚那处，本脚本原先只读标题那处 ——
+    #    `check_assets` 只读页脚处，本脚本原先只读标题处 ——
     #    2026-09-26 因此出现「一个说 25、一个说 26，谁都没发现两处打架」。
     #    两处都登记，才能各自对得上。
     (r"_系统\_流程与工具\_scripts\README.md", r"脚本 \*\*(\d+) 个\*\*", "scripts", "脚本数·页脚"),
@@ -503,9 +503,9 @@ def check_docs():
 def print_contrast_matrix():
     """调色板配对矩阵 —— **改配色后跑一次**。
 
-    为什么做成调色板级而不是逐页：调色板只有 10 色，配对有限，一次算清即可覆盖；
+    做成调色板级而非逐页的理由：调色板只有 10 色，配对有限，一次算清即可覆盖；
     逐页要解析每处文字背后的真实底色（渐变/半透明/图片都要处理），成本高、收益低。
-    逐页的那部分由 `check_svg` 的 J 项负责。
+    逐页部分由 `check_svg` 的 J 项负责。
     """
     T = ["txt", "main", "red", "weak", "foot"]
     B = ["page", "tint", "gray", "main"]
@@ -537,7 +537,7 @@ def print_contrast_matrix():
 def _text_tag_starts(raw):
     """raw 中每个顶层 `<text` 的起始下标（跳过 HTML 注释里的）。
 
-    为什么需要：`parse()` 按文档顺序给文字编号，写回时要找到**同一个**元素。
+    用途：`parse()` 按文档顺序给文字编号，写回时要找到**同一个**元素。
     直接对 raw 正则会把注释里的文字也算进来，故先把注释抹成**等长空格**再匹配
     —— 长度不变，得到的位置可直接用在原 raw 上。
     """

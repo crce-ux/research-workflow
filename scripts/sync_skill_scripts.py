@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 """sync_skill_scripts.py —— 正本 → 各 skill 的分发校验与同步
 
-【为什么有它】
+【背景】
     本库的约定是「正本在 research-workflow，各 skill 的 scripts/ 是运行版」。
-    但**没有任何机制保证两边一致**——只靠「改完记得同步」+ `cmp`。
-    实测：`check_skill_structure.py` 一度有 **13 份**副本，一场会话里我手工重灌两次。
-
-    ⚠️ 讽刺的是：同一场我对**外部** skill 的主张是「调用 > 复制，fork 完就是自己扛维护」。
-    对别人的代码要求「别复制」，对自己的代码却在复制——**这个脚本是把这个双标收掉**。
+    但**没有任何机制保证两边一致**——只靠「改完记得同步」和 `cmp`。
+    实测：`check_skill_structure.py` 一度有 **13 份**副本，手工重灌两次。
 
 【怎么找，不靠登记表】
-    🔴 不维护一张「谁装了谁」的清单——那种表本身就会漂。
+    🔴 不维护一张「谁装了谁」的清单——登记表本身就会漂。
     改为**按内容反查**：扫每个 skill 的 scripts/，拿文件名去正本索引里找；
-    找得到就比对，比对不过就报。**按信息找，不按登记表找。**
+    找得到就比对，比对不过就报。
 
 【用法】
     python sync_skill_scripts.py --root D:/Github            # 只校验（默认）
@@ -76,7 +73,7 @@ def survey(root, canon_repo, index):
                  and f.name not in SKIP_NAMES]
         matched = [f for f in files if f.name in index]
         # 🔴 一个正本都对不上的 skill = **不参与分发**（如第三方仓自带自己的脚本），整仓跳过。
-        #    否则它自己的脚本会被逐条报成「无正本」，淹没真信号。
+        #    否则它自己的脚本会被逐条报成「无正本」，掩盖真差异。
         if not matched:
             skipped.append(skill.name)
             continue

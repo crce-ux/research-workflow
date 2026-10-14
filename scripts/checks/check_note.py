@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """check_note.py —— 精读笔记的结构与口径机检
 
-【为什么有它】
+【背景】
     `paper-reading` 的核心是**证据标签五态**——每条断言标出它是「论文说的」
-    还是「我推断的」。但标签是**自觉**的：不查它，就会退化成「写了但没人标」，
-    而**不标 = 默认是 [Paper]**，正是最危险的那个默认。
+    还是「我推断的」。但标签靠自觉：不查它，就会退化成「写了但没人标」；
+    不标时默认按 [Paper] 算。
 
 【它查什么】
     N1  必备字段（PMID / DOI / 年份 / 期刊 / 标签 / 阅读深度 / 定位方式）
     N2  至少用过一次证据标签
-    N3  ★ **定位方式与引用形式必须一致**（本脚本最值钱的一条）——
+    N3  ★ **定位方式与引用形式必须一致**（本脚本最重要的一条）——
           标了 `source-limited`（仅摘要）却引用 `Table 2` 或 `PDF p.3` = **越界**
-          （摘要里没有表格页码，你是在编）
+          （摘要里没有表格页码，属编造）
           标了 `structure-grounded` 却写 `PDF p.N` = 假精确
     N4  （软）没带标签的断言行——只报数，不拦
 
@@ -32,14 +32,14 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ⚠️ 必备项按**信息**找，不按**字段名**找。
-# 实测教训：真实笔记把「年份 / 期刊」放在 `**原文**：<完整引用>` 那一行，
+# 实测教训：真实笔记把「年份 / 期刊」放在 `**原文**：<完整引用>` 行上，
 # 按字段名找会误报「缺 年份 / 期刊」——信息明明在，只是组织方式不同。
 # 所以只留三项真正无法从别处推出的：标识符、阅读深度、定位方式。
 REQUIRED = ["标识符", "阅读深度", "定位方式"]
 LABELS = ("Paper", "External", "Analysis", "Hypothesis", "User")
 LABEL_RE = re.compile(r"\[(" + "|".join(LABELS) + r")(?:\s*:[^\]]*)?\]")
 # 既有的来源等级标记——真实笔记用 🟢/🟡/🔴 标来源可信度。
-# ⚠️ 那是**可信度轴**，五态标签是**归属轴**（谁说的）——两条不同的轴，都要认。
+# ⚠️ 来源等级标记是**可信度轴**，五态标签是**归属轴**（谁说的）——两条不同的轴，都要认。
 EMOJI_RE = re.compile(r"[🟢🟡🔴]")
 
 # 可得性声明（正文式）——比字段更详细时也算数
@@ -116,7 +116,7 @@ def check(path):
     n_label = len(LABEL_RE.findall(text))
     n_emoji = len(EMOJI_RE.findall(text))
     if n_label == 0 and n_emoji == 0:
-        hits.append("N2 通篇没有任何标注——**不标 = 默认是论文原话**，"
+        hits.append("N2 通篇没有任何标注——**不标时默认按论文原话处理**，"
                     "推断的话会被当成文献支持")
     elif n_label == 0:
         # 有来源等级标记，但没有归属标记——两轴只覆盖了一轴
@@ -124,7 +124,7 @@ def check(path):
                     f"但没有归属标记（[Analysis]/[Hypothesis]/[User]）——"
                     f"**「我推断的」仍与「论文说的」分不出来**")
 
-    # ── N3 定位方式 vs 引用形式（最值钱的一条）─────────────
+    # ── N3 定位方式 vs 引用形式（最重要的一条）─────────────
     loc = field_of(text, "定位方式") or ""
     depth = field_of(text, "阅读深度") or ""
     mode = None
@@ -134,8 +134,8 @@ def check(path):
             break
     limited_by_depth = bool(SHALLOW.search(depth)) and "全文" not in depth
 
-    # 在全篇找引用串（含写在标签里的，如 `[Paper: PDF p.3]`——
-    # 那恰恰是 source-limited 下最该抓的越界写法）
+    # 在全篇找引用串（含写在标签里的，如 `[Paper: PDF p.3]`；
+    # 写在标签里的引用也是 source-limited 下要抓的越界写法）
     cites = {
         "页码": CITE_PAGE.findall(text),
         "表": CITE_TABLE.findall(text),
@@ -198,11 +198,11 @@ def main():
         total += len(hits)
 
     # 同一组规则命中绝大多数文件时，多半是**格式迁移**而非逐篇缺陷——
-    # 报一遍就够，不必刷 N 屏（否则会淹掉真正只在个别篇上出的问题）。
+    # 报一遍就够，不必刷 N 屏（否则会掩盖只出在个别篇上的问题）。
     for rule, n in sorted(per_rule.items()):
         if len(files) >= 3 and n >= len(files) * 0.8:
             print(f"\n  ⚠️ 汇总：{n}/{len(files)} 篇都命中 {rule}——"
-                  f"这更像**尚未迁移到新格式**，不是逐篇出错，先看这一条。")
+                  f"更像**尚未迁移到新格式**，不是逐篇出错，先看这一条。")
 
     if not total:
         print("  ✅ 全过（三组硬规则）")

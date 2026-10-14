@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """deploy_to_vault.py —— D:\\Github 的 skill ↔ Obsidian 库里的运行副本
 
-【为什么有它】
-    `sync_skill_scripts.py` 管的是**一台仓内**的脚本副本（正本 → 各 skill）。
-    但还有**第三套副本**：观测库 `.claude/skills/` 下那些真正被 agent 加载的目录。
-    它们靠手工 robocopy / 手敲 python 同步——和当初 `check_skill_structure.py`
-    散成 13 份是同一个病：**复制了，但没有机制保证一致。**
+【管哪几套副本】
+    `sync_skill_scripts.py` 管**一台仓内**的脚本副本（正本 → 各 skill）。
+    还有**第三套副本**：观测库 `.claude/skills/` 下被 agent 加载的目录。
+    它们靠手工 robocopy / 手敲 python 同步，没有机制保证与正本一致。
 
 【它怎么找配对】
     扫 `--repo-root`（默认 `D:/Github`）下每个含 `SKILL.md` 的目录，
@@ -16,8 +15,8 @@
     python deploy_to_vault.py                # 报告差异，有差异退出码 1
     python deploy_to_vault.py --write        # 把差异覆盖过去（以仓为准）
 
-⚠️ **方向是仓 → 库**。库里的目录**不回流到仓**——改了库里的副本不会自动回去，
-   这正是要防的漂移。改内容请改仓，再跑这个。
+⚠️ **方向是仓 → 库**。库里的目录**不回流到仓**——改了库里的副本不会自动回去。
+   改内容请改仓，再跑这个。
 """
 import argparse
 import filecmp
@@ -31,7 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 # 跳过这些东西：它们与「agent 加载什么」无关
 SKIP_DIRS = {".git", ".github", "__pycache__", ".pytest_cache", ".venv"}
 # ⚠️ `.gitignore` 是**仓的元数据**，不是 skill 内容——库里的副本不需要它。
-#    不排掉它会永远报一条假差异，把真信号淹掉。
+#    不排掉它会永远报一条假差异，掩盖真差异。
 SKIP_NAMES = {".DS_Store", ".gitignore", ".gitattributes"}
 
 DEFAULT_REPO_ROOT = "D:/Github"

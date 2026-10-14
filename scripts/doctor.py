@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """doctor.py —— 一条命令跑完本仓的全部体检
 
-【为什么有它】
-    这个仓有四个「健康」维度，各有一个工具，**跑一次要点四条命令**：
+【跑哪几项】
+    这个仓有四个检查项，各有一个工具，跑一次要点四条命令：
 
         结构   check_skill_structure.py --root D:/Github
         资产   check_assets.py --root .
@@ -10,8 +10,7 @@
         副本②  deploy_to_vault.py                          （观测库 .claude/skills/）
         单测   pytest tests/
 
-    命令多了就会漏跑一条，而**漏跑的那条恰恰是没人看的**。
-    收成一条：全绿或指出哪条红。
+    收成一条命令：全绿，或指出哪条没过。
 
 用法：
     python scripts/doctor.py [--repo-root D:/Github] [--no-tests] [--full]
@@ -71,7 +70,7 @@ def main():
     if not a.no_tests:
         # ⚠️ 本机系统 python 没装 pytest——跑测试要走 uv。没有 uv 就退回直跑。
         # ⚠️ 不要再加 `-q`：pyproject 的 addopts 已经是 `-q`，
-        # 两个叠成 `-qq` 会把「N passed」那行也吞掉。
+        # 两个叠成 `-qq` 会连「N passed」行也吞掉。
         if shutil.which("uv"):
             tests = ["uv", "run", "--with", "pytest", "python", "-m", "pytest",
                      "tests/", "-p", "no:cacheprovider"]

@@ -3,12 +3,12 @@
 """
 cnlit_search.py —— **中文文献库检索**（维普 / 万方）
 
-【为什么有它】
+【背景】
     英文库有 PubMed / Europe PMC / OpenAlex / CrossRef 四条直连路径，
     **中文库没有**。中文课题用「屏状核」「氯氮平」这类表述时，英文库收不到。
     本脚本补这个缺口。
 
-【为什么必须用真实浏览器】
+【浏览器要求】
     维普/万方/CNKI 都有反爬。实测（2026-09-22）：
       · `requests` / `curl` 直连 → 维普 403、CNKI 302 到「安全验证」
       · DrissionPage + **真实浏览器 + 持久 profile** → 维普正常出结果
@@ -25,12 +25,12 @@ cnlit_search.py —— **中文文献库检索**（维普 / 万方）
     U=  任意字段   ｜ M=  题名或关键词 ｜ T=  题名 ｜ K=  关键词
     A=  作者       ｜ R=  摘要
 
-【🔴 维普的四个坑（全部实测复现，2026-09-22）】
+【🔴 维普的四个问题（全部实测复现，2026-09-22）】
 
-  ① **裸词静默失效**（最易中招）
+  ① **裸词静默失效**（最常见）
      `key=屏状核`（无前缀）→ 返回**与检索词完全无关的通用最新列表**，不报错。
      实测：裸词 → 0 篇相关；`U=屏状核` → 124 篇；`M=屏状核` → 31 篇。
-     → 字段前缀不能省。**静默返回垃圾比报错更危险。**
+     → 字段前缀不能省。**静默返回无关结果比报错更危险。**
 
   ② **检索式含空格 → WAF 403**
      `M=(屏状核) AND M=(氯氮平)` → 403 Forbidden（空格被拦）。
@@ -67,7 +67,7 @@ cnlit_search.py —— **中文文献库检索**（维普 / 万方）
     ⚠️ **不要去找一份外挂的中文期刊分级表**：实测拿过 gleaner 的
        `cnki_journal_tiers.json`（340 种）与 `intl_journal_tiers.json`（96 种），
        两者都是**经管/人文**学科定向的（国际表 meta 明写 `ASJC(14/20)` = 商业管理+经济金融），
-       **与中文医学期刊 0 交集**（我们那 22 种刊一个都不在表里）。
+       **与中文医学期刊 0 交集**（本项目的 22 种刊均不在表里）。
        维普自带的分级反而覆盖完整、且与记录同源。
 
     ⚠️ 与翻页同理：筛选项**只能点击**，URL 加 `&QK=bdhx` **无效**。
@@ -119,8 +119,8 @@ def _profile(_name):
 CHROME = _find_browser()
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
-# ⭐ 固定 profile，**不要删**：越用越顺。冷 profile 必被拦（实测 403）。
-#    `cnki` 是已养热的那个（73MB）；换新 profile 需先手动开一次目标站点。
+# ⭐ 固定 profile，**不要删**：冷 profile 必被拦（实测 403）。
+#    `cnki` 是已用热的 profile（73MB）；换新 profile 需先手动开一次目标站点。
 PROFILE = os.environ.get("CNLIT_PROFILE", _profile("cnki"))
 PORT = int(os.environ.get("CNLIT_PORT", "9430"))
 
@@ -147,7 +147,7 @@ SITES = {
 
 def make_browser(attach=None):
     """attach=<端口> 时接管一个**已打开的**浏览器（不新建、退出时也不关它）。
-    用途：CNKI 的人工验证会话——你手动过一次滑块，我接管同一个浏览器。"""
+    用途：CNKI 的人工验证会话——人工过一次滑块后，接管同一个浏览器。"""
     if attach:
         return Chromium(f'127.0.0.1:{attach}')
     co = ChromiumOptions()
@@ -453,7 +453,7 @@ def main():
     ap.add_argument('--force', action='store_true',
                     help='跳过布尔检索式的拦截（⚠️ 结果不可信，除非你已自行核对）')
     ap.add_argument('--attach', type=int, metavar='PORT',
-                    help='接管已打开的浏览器（如 CNKI 人工验证过的那个），不新建也不关闭')
+                    help='接管已打开的浏览器（如 CNKI 人工验证过的实例），不新建也不关闭')
     a = ap.parse_args()
 
     q = a.q2 or a.query
@@ -468,7 +468,7 @@ def main():
     if a.site == 'vip':
         if not re.match(r'\s*[UMTKAR]\s*=', q):
             print('  ⚠️ 检索式没有字段前缀（U=/M=/T=/K=/A=/R=）。')
-            print('     维普会**静默忽略检索词**、返回无关的通用列表——不报错，但结果是垃圾。')
+            print('     维普会**静默忽略检索词**、返回无关的通用列表——不报错，但结果无关。')
         if re.search(r'\b(AND|OR|NOT)\b', q, re.I) and not a.force:
             print('\n⛔ 已拦截：维普的布尔检索式**解析不可靠**，会静默返回假阳性。')
             print('   实测：`M=(屏状核)AND M=(氯氮平)` 命中 3 条，**全部不含「屏状核」**——')
@@ -598,7 +598,7 @@ def main():
             print(f'\n已写 {a.out}')
         return 0
     finally:
-        # ⚠️ --attach 时**绝不能 quit()**——那是用户手动验证过的浏览器，关掉就得重新过验证
+        # ⚠️ --attach 时**绝不能 quit()**——浏览器是用户手动验证过的，关掉就得重新过验证
         if a.attach:
             print('（--attach 模式：浏览器保持打开）')
         else:

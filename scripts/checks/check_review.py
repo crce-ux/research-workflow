@@ -66,7 +66,7 @@ MISCONDUCT = re.compile(
 
 
 def author_region(text):
-    """切出「作者可见」的那一段：审稿建议之后，到 References / 保密意见之前。"""
+    """切出「作者可见」的区段：审稿建议之后，到 References / 保密意见之前。"""
     start = 0
     m = REC_LINE.search(text)
     if m:
@@ -86,7 +86,7 @@ def check(path):
     if any(k in text for k in DRAFT_MARKERS):
         return [], [f"{path.name}：含「备忘录/勿提交」标记，像是草稿——提交稿才有意义，本次不判"]
 
-    # 给编辑的**密评**是另一种文书：它本身就是那个「推荐」，没有作者可见的编号意见。
+    # 给编辑的**密评**是另一种文书：它本身就是一份推荐性文书，没有作者可见的编号意见。
     # 库里有几份 frontmatter 也写 `type: 审稿意见`，靠正文首部的自述来分辨。
     if CONF_LETTER.search(text[:400]):
         return [], [f"{path.name}：自述为「不向作者展示」的密评——文书结构不同（无作者可见编号意见），本次不判"]
@@ -139,8 +139,8 @@ def check(path):
                         f"诚信疑虑只能写进给编辑的保密意见，不能给作者看")
 
     # V6 「给编辑」的节必须带显式排除标记
-    # ⚠️ 不能一见尾节就报——`**References (for the authors' consideration)**` 也是尾节，
-    #    那是给作者看的。只在**确实**出现「给编辑 / 保密」标题时才要求标记。
+    # ⚠️ 不能一见尾节就报——`**References (for the authors' consideration)**` 也属尾节，
+    #    但它是给作者看的。只在**确实**出现「给编辑 / 保密」标题时才要求标记。
     cm = CONF_HINT.search(text)
     if cm and not EXCLUDE_MARK.search(text[cm.start():cm.start() + 400]):
         hits.append("V6 有「给编辑 / 保密」节但没标明「不向作者展示 / 勿提交」——"
@@ -186,7 +186,7 @@ def main():
         print(f"  （跳过 {skipped} 个非审稿意见文件：调研记录 / 图表核查 / 设计书 等——"
               f"只查文件名以「审稿意见」开头、或 frontmatter 标了 `type: 审稿意见` 的）")
     if not files:
-        print("  ⚠️ 本次未评——不是查过了通过")
+        print("  ⚠️ 本次未评——没有可评的文件")
     for f in files:
         hits, soft = check(f)
         softs += soft

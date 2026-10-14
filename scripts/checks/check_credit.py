@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """check_credit.py —— 成果台账的署名自洽机检
 
-【为什么有它】
+【背景】
     成果台账本文件 §八「待建」里点名要这一条：
 
         **兜底校验：位次与署名情况是否自洽**
@@ -153,10 +153,10 @@ def check(path):
                 hits.append(f"C2 第 {r} 行「{label}」：署名归入「其他」，位次却是 1——"
                             f"位次第一就该是第一作者类")
 
-    # ⚠️ 一行有效数据都没有时，「全过」是假象——那是「没得评」，不是「评过了」
+    # ⚠️ 一行有效数据都没有时，「全过」是假象——实际是没得评
     if evaluated == 0:
         return hits, [f"论文表有 {len(rows)} 行，但**全是占位行**——本次未评，"
-                      f"不是查过了通过"]
+                      f"实际没有可评的数据"]
     return hits, []
 
 
@@ -179,7 +179,7 @@ def main():
         print(f"  ○ {s}")
     unevaluated = any("未评" in s for s in softs)
     if not total:
-        print("  ⚠️ 本次未评——不是查过了通过" if unevaluated
+        print("  ⚠️ 本次未评——实际没有可评的数据" if unevaluated
               else "  ✅ 已评的表全过（三组硬规则）")
     print(f"\n  共 {total} 处。⚠️ 只查台账自己几列之间矛不矛盾，不查成果该不该算你的。")
     return total

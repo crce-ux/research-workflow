@@ -2,7 +2,7 @@
 """
 ppt_style.py —— PPT 制作工具链的**单一真相源**
 
-【为什么有它】
+【背景】
     在此之前，配色 / 字号 / 边距在三处各写了一遍：
       · `PPT视觉规范_国自然风格_20260915.md`（文档）
       · `make_svg_skeletons.py`（骨架脚本）
@@ -195,7 +195,7 @@ FONT_NUM = "'DIN Next LT Pro','Microsoft YaHei'"
 WEIGHT = {"regular": 400, "bold": 700}
 
 #: 显式家族名（仅对**拉丁**有效：`Microsoft YaHei Light` 会被 ppt-master 归到 latin，
-#: 中文那档仍回落 Regular）。需要轻量数字时用它。
+#: 中文档仍回落 Regular）。需要轻量数字时用它。
 FONT_NUM_LIGHT = "'DIN Next LT Pro Light','Microsoft YaHei'"
 
 #: 页脚左侧文字 —— **项目级内容，共享库不含任何项目专有串**。
