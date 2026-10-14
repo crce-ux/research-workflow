@@ -62,7 +62,7 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 | ⑤ | **引用与断言** | 自足 · 排他性 · 量词 · 缩写 · 数字口径 |
 | ⑥ | **身份匹配**机检 | 保守 / 越级 / 引据 / 回指 / 书面语 / 长句 |
 
-详细判据见 [`docs/gates.md`](docs/gates.md)。
+详细判据见 [`docs/pipeline.md`](docs/pipeline.md)（流程与门禁已合并）。
 
 ---
 
@@ -94,18 +94,22 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 ```
 README.md                    本文件（管线地图 + 门禁 + 轴）
 docs/
-  pipeline.md                P→A→B→C→D→E 全流程逐步
-  gates.md                   五门 + 六轴的完整判据
+  README.md                  **从哪读起**——从任务出发的入口表 + 各文档分工
+  pipeline.md                **P→A→B→C→D→E 全流程 + 五门 + 六轴 + 闭环**
   skills.md                  **工序 × skill 对照图**——每步用谁、哪里还空着
+  external-skills.md         外部同类项目的**许可与运行足迹**（调用 > 复制）
   runtime.md                 运行环境与工具绑定（能力→工具；**不写工具 ID**）
   核查方法/                   来源核验 / 定量断言审计 / 对抗压力测试 / 演讲产物审查
 scripts/
+  doctor.py                  **一条命令跑完五项体检**（结构 / 资产 / 两套副本 / 单测）
   sync_skill_scripts.py      正本 → 各 skill 的分发校验 / 同步（`--write` 覆盖）
+  deploy_to_vault.py         仓 → 观测库 `.claude/skills/` 的副本同步（只增改不删）
   run_checks.py              跑一批检查器 → 发现写进「待修清单」（闭环最后一环）
-  literature/                检索、元数据核验、质量快筛、期刊指标、中文库取数
+  literature/                检索、元数据核验、质量快筛、期刊指标、中文库取数、**去重**
   evidence/                  证据表生成、日常文献表、一致性核查
-  checks/                    **20 个机检**：语言 / 措辞 / 身份 / 引用 / 笔记 / 证据表 /
-                             设计书 / 数据 / 台账 / 综述 / 资产 / 隐藏元数据 / skill 结构
+  data/                      数据管线（缺失率报告）
+  design/                    研究设计（样本量 → 需招募 → 可招募）
+  checks/                    **20 个门禁机检** + 辅助比对与整理工具
   ppt/                       PPT 生成与质检工具链
 manuals/                     49 份流程手册原文（已去敏化）
   workflow/                  各阶段流程手册
@@ -115,7 +119,7 @@ manuals/                     49 份流程手册原文（已去敏化）
   writing/                   写作质量（含「文本迭代自查」）
   funding/                   基金与投稿
   notes/                     调研与评估记录
-  data-sources/              取数手册
+  取数/                      取数手册
 templates/
   ppt-skeletons/             整页 SVG 骨架（可直接复制填内容）
 ```

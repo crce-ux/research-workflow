@@ -19,7 +19,7 @@
 | [`writing/`](writing/) | 7 | 写作质量——反防御性写作 / 去机器味 / 身份匹配 / **文本迭代自查** |
 | [`funding/`](funding/) | 6 | 基金与投稿——国自然标书诊断 / 规则取用 / 选题规划 / 选刊 |
 | [`notes/`](notes/) | 7 | 调研与评估记录——第三方库评估 / 工具选型 / 成本估算 |
-| [`data-sources/`](data-sources/) | 2 | 取数手册——中文文献库 / 监管政务数据库 |
+| [`取数/`](取数/) | 2 | 取数手册——中文文献库 / 监管政务数据库 |
 
 ---
 
@@ -46,7 +46,7 @@
 | 段 | 手册 | 沉淀成的 skill |
 |---|---|---|
 | P | `workflow/日常精读手册` | [paper-reading](https://github.com/crce-ux/paper-reading) |
-| A | `workflow/文献调研流程手册` + `data-sources/手册_中文文献库取数` + `data-sources/手册_监管政务数据库取数` + `notes/调研_中文文献库通路_现成工具_20260922` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
+| A | `workflow/文献调研流程手册` + `取数/手册_中文文献库取数` + `取数/手册_监管政务数据库取数` + `notes/调研_中文文献库通路_现成工具_20260922` | [literature-pipeline](https://github.com/crce-ux/literature-pipeline) |
 | B/E5 | `workflow/论文撰写流程` + `writing/反防御性写作` + `writing/标书去机器味` + `checklists/写作禁用词与句式清单` + `writing/代笔身份匹配`（综述成文无对应手册，2026-10-14 补写） | [ai-academic-writing](https://github.com/crce-ux/ai-academic-writing) |
 | B/C | `workflow/汇报PPT产出流程手册` + `ppt/`（12 份）+ `checklists/出稿检查总表` | [academic-slides](https://github.com/crce-ux/academic-slides) |
 | D | `workflow/课题设计流程手册` | [study-design](https://github.com/crce-ux/study-design) |
@@ -75,7 +75,7 @@
 ## 逐份索引
 
 > ⚠️ 各手册里提到的《**文献调研与汇报_全流程总纲**》是内部总纲，**未随本仓发布**；
-> 其等效内容见 [`docs/pipeline.md`](../docs/pipeline.md)（P→A→B→C→D→E）与 [`docs/gates.md`](../docs/gates.md)。
+> 其等效内容见 [`docs/pipeline.md`](../docs/pipeline.md)（P→A→B→C→D→E）与 [`docs/pipeline.md`](../docs/pipeline.md) 的门禁一节。
 
 > 49 份的完整清单。**加粗的**是建议优先读的。
 
@@ -161,7 +161,7 @@
 | `评估_workbuddy技能包全量扫描_20260926.md` | workbuddy 技能包全量扫描（2026-09-26） |
 | `调研_中文文献库通路_现成工具_20260922.md` | 中文文献库通路：现成工具盘点 |
 
-### 取数手册 · `data-sources/`（2 份）
+### 取数手册 · `取数/`（2 份）
 
 | 文件 | 讲什么 |
 |---|---|
