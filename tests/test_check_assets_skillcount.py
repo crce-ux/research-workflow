@@ -100,3 +100,42 @@ def test_missing_skills_root_reports_not_evaluated(tmp_path):
                          pathlib.Path(tmp_path) / "nope")
     hits = rep.by_cat(6)
     assert len(hits) == 1 and "未评" in hits[0][3]
+
+
+# ── 内嵌 skill 包（2026-10-14 起）───────────────────────────────
+# 有的 skill 不再单独成仓，改为搬进总仓的 `skills/<名字>/`。
+# 只在库根**直接子目录**里数的写法会把它们漏掉，同一批 skill 数出两个数目。
+
+def test_nested_skill_package_is_counted(tmp_path):
+    """独立仓 + 总仓内嵌包，一起数。"""
+    root, sr = _tree(tmp_path,
+                     {"README.md": "沉淀成 **2 个**可安装的 skill"},
+                     {"a": True, "total": False})
+    (sr / "total" / "skills" / "b").mkdir(parents=True)
+    (sr / "total" / "skills" / "b" / "SKILL.md").write_text("x", encoding="utf-8")
+    assert _run(root, sr) == []
+
+
+def test_nested_package_under_third_party_repo_is_not_counted(tmp_path):
+    """第三方总仓里的 skills/ 也不算——归属判据要盖到内嵌那一层。"""
+    root, sr = _tree(tmp_path,
+                     {"README.md": "沉淀成 **1 个**可安装的 skill"},
+                     {"a": True})
+    third = sr / "third-party"
+    (third / ".git").mkdir(parents=True)
+    (third / ".git" / "config").write_text(
+        "url = https://github.com/SomeoneElse/third-party.git\n", encoding="utf-8")
+    (third / "skills" / "x").mkdir(parents=True)
+    (third / "skills" / "x" / "SKILL.md").write_text("x", encoding="utf-8")
+    assert _run(root, sr) == []
+
+
+def test_nested_package_two_levels_deep_is_not_counted(tmp_path):
+    """只下探一层。再深就分不清「skill 包」与「skill 里引用的示例目录」。"""
+    root, sr = _tree(tmp_path,
+                     {"README.md": "沉淀成 **1 个**可安装的 skill"},
+                     {"a": True})
+    deep = sr / "total" / "skills" / "pkg" / "examples"
+    deep.mkdir(parents=True)
+    (deep / "SKILL.md").write_text("x", encoding="utf-8")
+    assert _run(root, sr) == []

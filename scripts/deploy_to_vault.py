@@ -82,6 +82,27 @@ def copy_tree(src, dst):
         shutil.copy2(p, q)
 
 
+def skill_dirs(root):
+    """找到所有 skill 目录。
+
+    ① 库根下的**直接子目录**里带 SKILL.md 的；
+    ② 各仓 `skills/<名字>/` 里的——**总仓内嵌的 skill 包**。
+    ⚠️ **只下探一层**——再深就分不清「skill 包」与「skill 里引用的示例目录」。
+    """
+    out = []
+    for p in sorted(root.iterdir()):
+        if not p.is_dir():
+            continue
+        if (p / "SKILL.md").is_file():
+            out.append(p)
+            continue
+        pack = p / "skills"
+        if pack.is_dir():
+            out += [q for q in sorted(pack.iterdir())
+                    if q.is_dir() and (q / "SKILL.md").is_file()]
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description="仓 → 库 的 skill 副本同步")
     ap.add_argument("--repo-root", default=DEFAULT_REPO_ROOT)
@@ -97,8 +118,7 @@ def main():
         raise SystemExit("找不到任何库的 .claude/skills（查了 CHEN_VAULT_RESEARCH / "
                          "CHEN_VAULT_PRIVATE 与默认路径）")
 
-    repos = sorted(d for d in repo_root.iterdir()
-                   if d.is_dir() and (d / "SKILL.md").is_file())
+    repos = skill_dirs(repo_root)
     if a.only:
         repos = [d for d in repos if d.name == a.only]
 

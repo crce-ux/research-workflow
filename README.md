@@ -71,12 +71,12 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 | Skill | 段 | 管什么 | 最硬的一条 |
 |---|---|---|---|
 | [`paper-reading`](https://github.com/crce-ux/paper-reading) | P | 日常精读 | 证据标签**两条轴**（归属 / 可信度）不能互相替代 |
-| [`literature-pipeline`](https://github.com/crce-ux/literature-pipeline) | A | 文献调研 · 取数 | **覆盖声明 N→M→K** + 裸被引必须归一 |
+| [`literature-pipeline`](skills/literature-pipeline/SKILL.md) | A | 文献调研 · 取数 | **覆盖声明 N→M→K** + 裸被引必须归一 |
 | [`ai-academic-writing`](https://github.com/crce-ux/ai-academic-writing) | B/E5 | AI 学术写作全流程（**论文 + 综述**） | 定贡献→核查链→**AI 边界** |
 | [`academic-slides`](https://github.com/crce-ux/academic-slides) | B/C | 学术汇报 PPT 全链路 | 待核清零 + 出片工具链 + 理解确认 |
 | [`study-design`](https://github.com/crce-ux/study-design) | D | 课题设计 | 没有证伪条件，就不是科学假设 |
 | `data-pipeline`（私有仓） | E1–E4 | 数据管线 | **四类缺失码** · SAP 偏离必留痕 |
-| [`submission`](https://github.com/crce-ux/submission) | E6/E7 | 投稿与成果 | 相关度是门槛 / IF 只排序 · **台账署名自洽** |
+| `submission`（私有仓） | E6/E7 | 投稿与成果 | 相关度是门槛 / IF 只排序 · **台账署名自洽** |
 | [`grant-diagnosis`](https://github.com/crce-ux/grant-diagnosis) | 支线 | 国自然标书诊断 | 章节职责归位 · **标书不得直接生成正文** |
 | [`peer-review`](https://github.com/crce-ux/peer-review) | 支线 | 同行评议 | 领域核查**五层生成轴** + 三份样例（TRS / EEG / ML） |
 | [`text-self-review`](https://github.com/crce-ux/text-self-review) | 横向 | 迭代式文本自查 | 盲区的形状由**当轮采用的维度**决定 |

@@ -263,13 +263,37 @@ def _is_ours(d):
         return True
 
 
+def iter_skill_dirs(skills_root):
+    """属于本项目的 skill 目录。
+    ① skills_root 下**直接子目录**里带 SKILL.md 的——独立 skill 仓；
+    ② 各仓 `skills/<名字>/` 里带 SKILL.md 的——**总仓内嵌的 skill 包**。
+    ⚠️ **只下探一层**，与 check_skill_structure / sync_skill_scripts / deploy_to_vault 同一判据。
+       四处任一处漏了，同一批 skill 就会被数出不同的数目。
+    ⚠️ 不过滤归属会把第三方的 `video-talkcraft` 算进来。
+    """
+    out = []
+    if not skills_root.is_dir():
+        return out
+    for p in sorted(skills_root.iterdir()):
+        if not p.is_dir():
+            continue
+        if not _is_ours(p):
+            continue
+        if (p / "SKILL.md").is_file():
+            out.append(p)
+            continue
+        pack = p / "skills"
+        if pack.is_dir():
+            out += [q for q in sorted(pack.iterdir())
+                    if q.is_dir() and (q / "SKILL.md").is_file()]
+    return out
+
+
 def count_skills(skills_root):
-    """实际 skill 数 = skills_root 下**属于本项目**、且含 SKILL.md 的目录。
-    ⚠️ 不过滤归属会把第三方的 `video-talkcraft` 算进来（12 → 13）。"""
+    """实际 skill 数 = 独立 skill 仓 + 总仓内嵌的 skill 包。"""
     if not skills_root.is_dir():
         return None
-    return sum(1 for p in skills_root.iterdir()
-               if p.is_dir() and (p / "SKILL.md").is_file() and _is_ours(p))
+    return len(iter_skill_dirs(skills_root))
 
 
 def check_skill_count(root, files, rep, skills_root):

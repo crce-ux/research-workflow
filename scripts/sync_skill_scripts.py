@@ -52,9 +52,24 @@ def build_index(canon):
 
 
 def scan(root):
-    """所有 skill 仓 = 库根下含 SKILL.md 的目录。"""
-    return sorted(p for p in root.iterdir()
-                  if p.is_dir() and (p / "SKILL.md").is_file())
+    """所有 skill 仓。
+
+    ① 库根下的**直接子目录**里带 SKILL.md 的；
+    ② 各仓 `skills/<名字>/` 里的——**总仓内嵌的 skill 包**。
+    ⚠️ **只下探一层**。
+    """
+    out = []
+    for p in sorted(root.iterdir()):
+        if not p.is_dir():
+            continue
+        if (p / "SKILL.md").is_file():
+            out.append(p)
+            continue
+        pack = p / "skills"
+        if pack.is_dir():
+            out += [q for q in sorted(pack.iterdir())
+                    if q.is_dir() and (q / "SKILL.md").is_file()]
+    return out
 
 
 def survey(root, canon_repo, index):
