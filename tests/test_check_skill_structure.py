@@ -109,8 +109,34 @@ def test_deep_reference_link_is_error(tmp_path):
 
 def test_single_level_reference_is_ok(tmp_path):
     d = _make(tmp_path, "my-skill", GOOD_FM, body="见 `references/a.md`。\n")
+    (d / "references").mkdir()
+    (d / "references" / "a.md").write_text("x", encoding="utf-8")
     errs, _ = css.check_skill(d, strict=False)
     assert errs == []
+
+
+def test_declared_reference_must_exist(tmp_path):
+    """文档声明了 `references/a.md`，实物却没有——用户按文档找会扑空。"""
+    d = _make(tmp_path, "my-skill", GOOD_FM, body="见 `references/a.md`。\n")
+    errs, _ = css.check_skill(d, strict=False)
+    assert any("references/a.md" in e for e in errs)
+
+
+def test_declared_script_must_exist(tmp_path):
+    d = _make(tmp_path, "my-skill", GOOD_FM, body="跑 `scripts/check_x.py`。\n")
+    errs, _ = css.check_skill(d, strict=False)
+    assert any("scripts/check_x.py" in e for e in errs)
+
+
+def test_placeholder_path_is_not_treated_as_missing(tmp_path):
+    """`references/cards/<slug>.md` 是在讲命名格式，不是真路径。
+
+    注意：它同时**确实**是深链（两层），那条错误照报——这里只断言
+    「声明落地」那条不发火。
+    """
+    d = _make(tmp_path, "my-skill", GOOD_FM, body="每个卡见 `references/cards/<slug>.md`。\n")
+    errs, _ = css.check_skill(d, strict=False)
+    assert not any("不存在" in e for e in errs)
 
 
 # ── 非规范字段（警告，不是错误）───────────────────────────────

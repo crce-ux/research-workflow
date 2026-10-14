@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 33 个（Python 32 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 35 个（Python 34 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -52,11 +52,13 @@
 | `check_lit.py` | 证据表 12 列 / 对照列 NA / 同作者同年 a-b / IF 与分区须带年份版本 / 分区标题；覆盖声明 N→M→K 齐且相加对 | 硬；E6 为软 |
 | `check_vault.py` | **科研库命名与结构**：精读笔记 / 终稿不带日期 / ADR 命名 · 工作日志字段+倒序 · 变量字典 · SAP 偏离 · AI 声明 · 理解确认清单 | 硬；S 组按**文件名**触发 |
 | `check_review.py` | **审稿意见结构**：四档审稿建议 / 摘要段 / 编号 3–8 条 / 每条带位置与要求 / 不端指控不得给作者看 / 密评须标「不向作者展示」 | 硬；草稿·密评·非审稿意见自动跳过并报因 |
+| `number_diff.py` | **跨版本数字比对**（维度 D15）：两版文本（中英 / md↔docx / 初稿↔终稿）的数字集合求差集，连上下文一起列 | 辅助，不是判据 |
 | `check_design.py` | **研究设计书结构**：假设节证伪条件 / 乐观·保守两套 / 脱落率 / 风险四列表 / 伦理与预注册 | 硬；缺节时报「本次未评」 |
 | `check_ref_citations.py` | 正文 `[n]` ↔ 文末编号表 双向对应 | 硬 |
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |
 | `check_metadata_leak.py` | **Office/PDF 隐藏元数据**（盲审泄露面） | 硬（对外场景） |
 | `check_skill_structure.py` | **Agent Skill 结构校验**（frontmatter / name / 正文长度 / 深链） | 硬（静态） |
+| `skill_selfcheck.py` | **skill 自检入口**（分发为各 skill 的 `scripts/selfcheck.py`）：结构 + 语法 + 依赖 | 硬（静态） |
 | `renumber_refs.py` | 参考文献重新编号 | — |
 
 ### `check_skill_structure.py` —— 唯一可完全 CI 化的那一层
