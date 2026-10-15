@@ -33,6 +33,24 @@ E  执行产出      ✅ data-pipeline（E1–E4）· ai-academic-writing（E5�
 全局             证据核查 ✅ · 自查协议 ✅ text-self-review（横向）
 ```
 
+**跨段的交接物**——工序连着不等于数据连着。实际递出去的东西是这几个：
+
+| 交接物 | 从 | 到 | 内容 |
+|---|---|---|---|
+| 精读笔记 | `paper-reading` | `literature-pipeline` | 15 列，含证据标签与定位方式；回填时对齐证据表 |
+| **证据表** | `literature-pipeline` | `ai-academic-writing` | 12 列，成文时每个数字指回对应行 |
+| **内容稿** | `ai-academic-writing` | `academic-slides` | 要讲什么（⚠️ 推定） |
+| 终稿 | `ai-academic-writing` | `submission` | 选刊与成果台账 |
+| 制作稿 · 讲稿 · PPTX | `academic-slides` | （交付） | C4 快照后存档 |
+
+> ⚠️ **补记（2026-10-15）**：这张表原先不存在，跨段接口只靠人记。
+> 两处曾是断的——`literature-pipeline` 的 SKILL.md 对另外两个 skill 零提及；
+> 「内容稿」在 `academic-slides` 里只写了「一份内容稿」，没说由谁产出。
+> 现已在三个 skill 各加一节「上下游接口」，本表与之对齐。
+>
+> ⚠️ **另有跨段的一道工序**：**C3 隐藏元数据**属交付侧，却落在 `ai-academic-writing` 而不是
+> `academic-slides`。交付时不要漏。
+
 **剩下三个缺口都属「外部够用」，且各自在对应自研 skill 里挂了指针。**
 
 > ⚪ **为什么不把它们并进来**（2026-10-14 决定）：
