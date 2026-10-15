@@ -320,6 +320,36 @@ def check_skill_count(root, files, rep, skills_root):
 
 
 # ------------------------------------------------- 3 索引覆盖对账
+def check_interfaces(root, rep, skills_root):
+    """第 7 类 · 接口声明：每个自研 skill 的 SKILL.md 有没有「上下游接口」一节。
+
+    ⚠️ 2026-10-15 新增。工序地图（P→A→B→C→D→E）原先只说明「哪段归哪个 skill」，
+    没说「谁的输出是谁的输入」。实测十个 SKILL.md 里对彼此的提及共三处，
+    没有一处是接口声明；literature-pipeline 对另外两个零提及。
+    补完之后立这条规则，防它漂回去。
+
+    ⚠️ 只查 `iter_skill_dirs` 认下来的目录——第三方仓（video-talkcraft）自动排除，
+    不会被误报。
+    """
+    dirs = iter_skill_dirs(skills_root)
+    if not dirs:
+        rep.add(7, skills_root, 0,
+                "找不到自研 skill 目录——**本次未评**，不是查过了通过")
+        return
+    for d in dirs:
+        md = d / "SKILL.md"
+        if not md.is_file():
+            continue
+        try:
+            txt = md.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+        miss = [w for w in ("## 上下游接口", "上游给我什么", "我给下游什么")
+                if w not in txt]
+        if miss:
+            rep.add(7, md, 0, "SKILL.md 缺接口声明：" + "、".join(miss))
+
+
 def check_index(root, exclude, rep):
     # ⚠️ 2026-10-14：原先写死 `_系统/_流程与工具/出稿检查总表.md`（扁平旧结构），
     # 仓改成 `manuals/` 分层后 `_系统/_流程与工具/出稿检查总表.md` 已不存在，硬门禁恒报「资产索引无落点」。
@@ -544,15 +574,18 @@ def main():
         check_filename_refs(root, files, rep)
     if run in (0, 5):
         check_cross_doc_dup(root, exclude, rep)
-    if run in (0, 6):
+    if run in (0, 6, 7):
         skills_root = (Path(args.skills_root).resolve() if args.skills_root
                        else root.parent)
-        check_skill_count(root, files, rep, skills_root)
+        if run in (0, 6):
+            check_skill_count(root, files, rep, skills_root)
+        if run in (0, 7):
+            check_interfaces(root, rep, skills_root)
 
     titles = {1: "相对链接有效性", 2: "脚本总数对账", 3: "索引覆盖对账",
               4: "文档引用有效性（提示级）", 5: "跨文档重复内容（提示级）",
-              6: "skill 数对账"}
-    GATE = (1, 2, 3, 6)   # 硬门禁：计入退出码
+              6: "skill 数对账", 7: "接口声明"}
+    GATE = (1, 2, 3, 6, 7)   # 硬门禁：计入退出码
     SOFT = (4, 5)      # 软检查：只提示
 
     def show(cat, limit=40):
