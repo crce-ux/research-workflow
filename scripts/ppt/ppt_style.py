@@ -148,8 +148,16 @@ def estimate_text_width(text, font_size, weight=None):
     return w
 
 
+#: **行首禁则** —— 这些符号不得出现在一行开头。
+#: 中文排版的「避头尾」：句末标点落在行首时，读者会把它读成下一句的起点。
+#: ⚠️ 2026-10-16 补。此前折行只按宽度切，实测出现过「……各排掉一半」后面
+#:    孤零零一行只有一个「。」（骨架试做第一册第 5 页）。
+#: 处理办法是**挤压**：宁可让这一行多出一个标点的宽度，也不把它推到下一行。
+NO_LINE_START = frozenset("，。、；：？！）］｝〕〉》」』】〗〞’”…—～·％")
+
+
 def wrap_text(s, max_w, size):
-    """按估算宽度折行（中文按字断，西文按词断）。
+    """按估算宽度折行（中文按字断，西文按词断），并做**行首禁则**。
 
     ⚠️ 别靠"看着够短"来避免出框 —— 实测（2026-09-15）B4 骨架的 300px 窄栏，
     占位说明超出 62px。
@@ -157,13 +165,25 @@ def wrap_text(s, max_w, size):
     import re
     lines, cur = [], ""
     for tok in re.findall(r"[A-Za-z0-9.,%/·+\-]+|\s+|[^\s]", s):
-        if estimate_text_width(cur + tok, size) <= max_w or not cur:
+        if (estimate_text_width(cur + tok, size) <= max_w or not cur
+                or tok in NO_LINE_START):          # 行首禁则：挤压，不换行
             cur += tok
         else:
             lines.append(cur.rstrip())
             cur = "" if tok.isspace() else tok
     if cur.strip():
         lines.append(cur.rstrip())
+    # 二次收口：折行时若某行仍以禁则字符开头（上一步断在空格后），把它挪回上一行。
+    # 单靠循环里的挤压挡不住「断开处恰好紧邻标点」这一种。
+    i = 1
+    while i < len(lines):
+        if lines[i] and lines[i][0] in NO_LINE_START and lines[i - 1]:
+            lines[i - 1] += lines[i][0]
+            lines[i] = lines[i][1:]
+            if not lines[i]:
+                lines.pop(i)
+                continue
+        i += 1
     return lines or [""]
 
 
@@ -197,6 +217,47 @@ WEIGHT = {"regular": 400, "bold": 700}
 #: 显式家族名（仅对**拉丁**有效：`Microsoft YaHei Light` 会被 ppt-master 归到 latin，
 #: 中文档仍回落 Regular）。需要轻量数字时用它。
 FONT_NUM_LIGHT = "'DIN Next LT Pro Light','Microsoft YaHei'"
+
+#: **页眉的两种形态**（没有全局开关，逐页用 `ppt_kit.slide(head=…)` 指定）：
+#:
+#:   `"bar"` —— 通栏主色色带，高 72，编号与标题白字。21 个骨架都用这个。
+#:   `"corner"` —— 左上角块 + 大号章节号 + 章节名。实测 A116-红色 / B-201 那一族。
+#:
+#: 🔴 **页眉高度是版面的一部分，不是配色的一部分。** `"bar"` 占 72，
+#:    `"corner"` 占到 163（角块 140 + 间隔 10 + 尾条 13）—— **同一页换了页眉，正文
+#:    要整页重排**，不能只改一个值。实测把页眉换成 `"corner"` 而版面不动：
+#:    大号章节号直接压在内容上（配方 32 的左色块被一个「02」压住）。
+#:    所以这里**不设全局开关** —— 那会让人以为换一族只要改一行。
+#:    **换族 = 按新页眉重排一套骨架。**
+HEAD_CORNER = {"x": 40, "w": 76, "h": 140, "tail_h": 13, "tail_gap": 10,
+               "num_x": 134, "num_y": 152, "name_x": 256, "name_y": 148,
+               "num_size": 90, "name_size": 60}
+HEAD_CORNER = {"x": 40, "w": 76, "h": 140, "tail_h": 13, "tail_gap": 10,
+               "num_x": 134, "num_y": 152, "name_x": 256, "name_y": 148,
+               "num_size": 90, "name_size": 60}
+
+#: `"corner"` 页眉占掉的顶高 —— 按它重排正文起点。
+HEAD_CORNER_H = HEAD_CORNER["h"] + HEAD_CORNER["tail_gap"] + HEAD_CORNER["tail_h"]
+
+#: **校徽位**。填一个图片路径（相对项目 `images/`）就在页眉右上角画出来；
+#: `None` = 不画。共享库不含任何机构的校徽文件。
+#: 实测 A116-红色与 B-201 都在这个位置放校徽（约 289×81）。
+LOGO = None
+LOGO_BOX = (1245, 52, 289, 81)
+
+#: **页脚形态**。两个取值：
+#:
+#:   `"line"` —— 极浅细线（`C["line"]`）+ 灰字页脚。本库默认。
+#:   `"rule"` —— 页面底边一条 16px 的主色细带，页码与页脚文字压在带上方。
+#:
+#: ⚠️ 2026-10-16 依 19 份 deck 实测补 `"rule"`：**4 份用底边主色细带**
+#:    （A116-红色 23 处、4白蓝色系 11 处、【B13】红/绿各 3 处），其余用细线。
+#:    改这一处 + 重跑 `make_svg_skeletons.py`，全库 21 个骨架的页脚一起换 ——
+#:    **不复制第二套骨架文件**（两套只有页脚差 16px，复制出来就要维护两份坐标）。
+FOOT_STYLE = "line"
+
+#: `FOOT_STYLE == "rule"` 时底边细带的高度（px）。实测模板是 12–16。
+FOOT_RULE_H = 16
 
 #: 页脚左侧文字 —— **项目级内容，共享库不含任何项目专有串**。
 #:

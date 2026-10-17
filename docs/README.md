@@ -15,7 +15,7 @@
 | 算样本量、核可行性数字 | `study-design` + `scripts/design/sample_flow.py` | — |
 | 数据收上来了，算到能报的结果 | `data-pipeline` + `scripts/data/missing_report.py` | — |
 | 写论文 / 写综述 / 去 AI 味 | `ai-academic-writing` | **改写必附保真审计** |
-| 做组会 PPT、汇报、出片 | `academic-slides` | — |
+| 做组会 PPT、汇报、出片 | **`ppt-master`**（入口 `ppt-master-entry`） | 内容侧见 `academic-slides` |
 | 写国自然标书 / 诊断一份标书 | `grant-diagnosis` | — |
 | 投哪本刊 / 登记成果台账 | `submission` | — |
 | 审别人的稿 / 判断一篇稿子站不站得住 | `peer-review` | — |
@@ -27,7 +27,7 @@
 
 ---
 
-## 二、四份文档各管什么
+## 二、六份文档各管什么
 
 | 文件 | 回答 |
 |---|---|
@@ -35,6 +35,8 @@
 | [`skills.md`](skills.md) | **该用谁**——自研 10 个 × 已装外部，以及哪里还空着 |
 | [`external-skills.md`](external-skills.md) | **外部同类项目的许可与运行足迹**——复制前先看许可列 |
 | [`runtime.md`](runtime.md) | **工具怎么接**——能力 → 候选工具；以及为什么不写死工具 ID |
+| [`manuals.md`](manuals.md) | **手册去哪了**——50 份手册逐条去向，以 skill 为准 |
+| [`skills-map.md`](skills-map.md) | **全景与编排**——五处安装的分类、工序表、什么时候找外部 skill |
 
 ---
 
@@ -49,7 +51,7 @@
 ## 四、维护本仓工具
 
 ```bash
-python scripts/doctor.py                 # 一条命令跑完五项体检（结构 / 资产 / 两套副本 / 单测）
+python scripts/doctor.py                 # 一条命令跑完七项体检（结构 / 资产 / 路由 / 手册 / 两套副本 / 单测）
 python scripts/doctor.py --full          # 连原始输出一起看
 python scripts/doctor.py --no-tests
 ```

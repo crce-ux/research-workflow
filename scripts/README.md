@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 55 个（Python 54 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 57 个（Python 56 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -166,6 +166,16 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `render_and_qa_pptx.py` | 成品像素体检 |
 | `make_notes.py` | 讲稿 → PPT 备注 |
 | `slide_fit.py` | **画之前的版面算术**：容量、带高预算、**配图可读性**（图内字号 × 显示宽 ÷ 图宽 < 9px 即不可读） |
+| `pptx_shapes.py` | **模板拆解·pptx 前端**：zipfile + ElementTree 直读 OOXML；组变换、主题色、占位符帧继承 |
+| `tpl_reader.py` | **模板拆解·输入层**：svg-flat / pptx → 形状级台账；跨画布折算；背景层与继承件分桶 |
+| `tpl_parts.py` | **模板拆解·判据层**：A 判定 · B 候选 · C 证据；指纹与 deck 去重；收录判据 |
+| `tpl_decompose.py` | **模板拆解·命令**：跑完出报告；勾选后 `--accept` 写进配方库 |
+| `tpl_pagetypes.py` | **页型**：检测 / 从模板量参数 / 用参数重画整页。一个页型一对函数 |
+| `tpl_build.py` | **页型·命令**：`extract`（模板→参数）/ `render`（参数+内容→页）/ `list` |
+| `tpl_cells.py` | **格子层**（试验中）：递归切行切列 → 每格判形态。不问「本页是哪一种页型」，判据与模板无关 |
+| `tpl_modules.py` | **模块层**（试验中）：区块级 extract/render，**装饰一起量**。矢量装饰量参数重画，位图装饰从背景图裁片 |
+| `tpl_slots.py` | **槽位层**（试验中）：一页的文字件各是什么角色（标题 / 标签 / 正文 / 编号 / 数值 / 页脚）。自动提取模块的缺口 |
+| `tpl_record.py` | **模块记录**（试验中）：一块区域 → 一条记录（几何 + 装饰 + 槽位）→ 通用重放。`--deck` 走整份文件。区域切分两式：`page` 整片 / `blocks` 按大块空白 |
 
 > ⚠️ **做 PPT 走全链路**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 
@@ -226,6 +236,15 @@ pip install Pillow PyMuPDF      # PPT 质检 / 元数据体检
 ```bash
 uv run --with pytest python -m pytest tests/ -q
 ```
+
+**有一条测试要额外装库才跑**——`test_pptx_shapes.py` 与 `python-pptx` 的交叉验证：
+
+```bash
+uv run --with pytest --with python-pptx python -m pytest tests/test_pptx_shapes.py -q
+```
+
+`python-pptx` 是另一份对同一套 OOXML 的读取实现。两边逐形状比几何与文字，对得上才说明
+`pptx_shapes.py` 读对了。**只在测试里用，不进运行时依赖**——常规那一轮会把它 skip 掉。
 
 测试覆盖**可客观验证的判据**（排他性断言必须有出处、编号解析的边界、结构校验规则）。
 启发式的判据（如身份匹配）**只测结构与选择器**——最后一关由人判断。

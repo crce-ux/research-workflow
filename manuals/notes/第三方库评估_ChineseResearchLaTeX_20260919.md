@@ -1,3 +1,5 @@
+> 本目录只作源材料归档。**生效的规则在 skill 里**（去向见 `docs/manuals.md`）。
+
 # 评估：huangwb8/ChineseResearchLaTeX
 
 > 2026-09-19。评估对象：**`huangwb8/ChineseResearchLaTeX`**（截图里读作 `huangwub8`，实际少一个字符）。

@@ -64,6 +64,8 @@ def main():
     jobs = [
         ("结构", [py, str(HERE / "checks/check_skill_structure.py"), "--root", a.repo_root], None),
         ("资产", [py, str(HERE / "checks/check_assets.py"), "--root", "."], None),
+        ("路由", [py, str(HERE / "checks/check_routes.py"), "--root", a.repo_root], None),
+        ("手册", [py, str(HERE / "checks/check_manuals.py"), "--root", str(HERE.parent)], None),
         ("副本① 仓内", [py, str(HERE / "sync_skill_scripts.py"), "--root", a.repo_root], None),
         ("副本② 观测库", [py, str(HERE / "deploy_to_vault.py"), "--repo-root", a.repo_root], None),
     ]

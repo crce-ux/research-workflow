@@ -33,6 +33,8 @@ ppt_kit.py —— SVG 组件库（所有尺寸/配色从 `ppt_style` 读）
     rule()         装饰短线
     rulenum()      带色点的编号列表
     iconslot()     图标位（占位，交付前可换 <image>）
+    image()    ⭐  真图片：按框等比缩放到框内，不裁不变形
+    imgslot()  ⭐  **图位**：灰底 + 虚线内框 + 【图位】，与文字区一眼可分
     statement() ⭐  结尾页大标语（PX["statement"] = 147px，模板最大档）
 
 ⚠️ **字重只有 2 档**（常规 / 粗）。PPTX 端 `parse_project_font_weight` 把字重折成布尔，
@@ -145,12 +147,55 @@ def titlebar(title, num="01", fs=None):
     ])
 
 
+def headbar(title, num="NN", style="bar"):
+    """页眉。两种形态（**逐页指定，没有全局开关**）：
+
+      · `"bar"` —— 通栏主色色带 + 编号 + 白字标题
+      · `"corner"` —— 左上角块 + 大号章节号 + 章节名
+
+    ⚠️ 两者的**占高不同**（72 对 163），正文起点必须跟着重排 ——
+       换了 `"corner"` 而不动版面，大号章节号会压在内容上。见 `ppt_style.HEAD_CORNER_H`。
+    """
+    if style != "corner":
+        return titlebar(title, num)
+    d = _style.HEAD_CORNER
+    return "\n".join([
+        rect(d["x"], 0, d["w"], d["h"], fill=C["main"]),
+        rect(d["x"], d["h"] + d["tail_gap"], d["w"], d["tail_h"], fill=C["main"]),
+        txt(d["num_x"], d["num_y"], esc(num), size=d["num_size"],
+            fill=C["main"], weight=700),
+        txt(d["name_x"], d["name_y"], esc(title), size=d["name_size"], fill=C["txt"]),
+    ])
+
+
+def logo():
+    """校徽位。`ppt_style.LOGO` 给了路径才画；没给返回空串。"""
+    href = getattr(_style, "LOGO", None)
+    if not href:
+        return ""
+    x, y, w, h = _style.LOGO_BOX
+    return image(x, y, w, h, href)
+
+
 def footer(page="00", left=None):
-    """页脚：细线 + 左标题 + 右页码。左文字取 `left` → 否则 `set_footer()` 设的值。"""
+    """页脚。左文字取 `left` → 否则 `set_footer()` 设的值。
+
+    形态由 `ppt_style.FOOT_STYLE` 定：
+      · `"line"`（默认）—— 极浅细线 + 灰字
+      · `"rule"` —— 页面底边一条 16px 主色细带，文字压在带上方
+    """
+    text, num = esc(left or _style.FOOTER_TEXT), esc(page)
+    if getattr(_style, "FOOT_STYLE", "line") == "rule":
+        h = getattr(_style, "FOOT_RULE_H", 16)
+        return "\n".join([
+            f'  <rect x="0" y="{H - h}" width="{W}" height="{h}" fill="{C["main"]}"/>',
+            txt(M, 866, text, size=PX["caption"], fill=C["foot"]),
+            txt(W - M, 866, num, size=PX["caption"], fill=C["foot"], anchor="end"),
+        ])
     return "\n".join([
         f'  <line x1="{M}" y1="836" x2="{W-M}" y2="836" stroke="{C["line"]}" stroke-width="1.2"/>',
-        txt(M, 866, esc(left or _style.FOOTER_TEXT), size=PX["caption"], fill=C["foot"]),
-        txt(W - M, 866, esc(page), size=PX["caption"], fill=C["foot"], anchor="end"),
+        txt(M, 866, text, size=PX["caption"], fill=C["foot"]),
+        txt(W - M, 866, num, size=PX["caption"], fill=C["foot"], anchor="end"),
     ])
 
 
@@ -366,6 +411,41 @@ def cards_row(y, h, items, gap=22, x0=None, x1=None):
     return "\n".join(out)
 
 
+def table(x, y, w, h, cells, fs=None, headfill=None, tcol="#FFFFFF",
+          striped=True, edge=None):
+    """数据表：表头一行主色底白字，表体隔行浅底，每格居中。
+
+    `cells` = 二维列表，**第一行当表头**。列宽行高等分，不按内容自适应。
+
+    ⚠️ **2026-10-15 补**：此前 `ppt_kit` 没有画表格的函数。
+    模板里 19 处 `graphicFrame` 全是表，拆解能认出「这一页有表」，
+    但画不出来——配方 4 / 5 / 6（表格 + …）因此一直没法填。
+    """
+    if not cells or not cells[0]:
+        return ""
+    fs = fs or PX["caption"]
+    eb = edge or C["edge"]
+    rows, cols = len(cells), len(cells[0])
+    cw, rh = w / cols, h / rows
+    out = []
+    for ri, row in enumerate(cells):
+        for ci in range(cols):
+            cx, cy = x + ci * cw, y + ri * rh
+            cell = str(row[ci]) if ci < len(row) else ""
+            if ri == 0:
+                out.append(rect(cx, cy, cw, rh, fill=headfill or C["main"]))
+                col, weight = tcol, 700
+            else:
+                if striped and ri % 2 == 0:
+                    out.append(rect(cx, cy, cw, rh, fill=C["gray"]))
+                col, weight = C["txt"], None
+            out.append(f'  <rect x="{cx:.1f}" y="{cy:.1f}" width="{cw:.1f}" '
+                       f'height="{rh:.1f}" fill="none" stroke="{eb}" stroke-width="1"/>')
+            out.append(txt(cx + cw / 2, cy + rh * 0.68, esc(cell),
+                           size=fs, fill=col, weight=weight, anchor="middle"))
+    return "\n".join(out)
+
+
 # ── 装饰件（模板 71–85% 的图是 <3% 面积的小件，等价物）──
 
 def badge(x, y, text, size=None, fill=None):
@@ -415,6 +495,45 @@ def iconslot(x, y, w, h, label="图标"):
     ])
 
 
+def image(x, y, w, h, href):
+    """⭐ 真图片：`<image>` 按框等比缩放，不裁切不变形。
+
+    `preserveAspectRatio="xMidYMid meet"` 是**必须的** —— 图位是固定比例的框，
+    图片比例不同时按最长边缩放到框内并居中；换成 `slice` 会裁掉边上的内容，
+    而不写这个属性时 SVG 默认 `xMidYMid meet`，看起来一样但导出器未必同样处理。
+
+    ⚠️ `href` 用**相对项目 `images/` 的路径**（`../images/xxx.png`），
+    `render_svg.py` 会绝对化。绝对路径与 `file://` 在换机器时全废。
+    """
+    return (f'  <image href="{href}" x="{x}" y="{y}" width="{w}" height="{h}" '
+            f'preserveAspectRatio="xMidYMid meet"/>')
+
+
+def imgslot(x, y, w, h, hint="图位"):
+    """⭐ **图位**：灰底 + 虚线内框 + 用途提示。骨架里放它，填内容时换成 `image()`。
+
+    ⚠️ 2026-10-16 补。此前 21 个骨架里 `<image>` 数为 0 —— 凡是要放图的地方
+    都只画了一个和文字区一样的 `ph()` 虚线框，看不出「这里该放图」，
+    也看不出放了图之后是裁切还是缩放。走骨架路线做的第一册，
+    整册一张图都放不进去，根因就在这里。
+
+    `fill_skeleton.py` 见到 `image` 类型的槽位给了路径，就整段换成 `image()`。
+    """
+    size = PX["caption"]
+    lines = wrap_text(hint, max(w - 32, size * 2), size)[:2]
+    top = y + h / 2 - 4 - (len(lines) - 1) * size * 0.7
+    parts = [
+        rect(x, y, w, h, fill=C["gray"]),
+        f'  <rect x="{x + 8}" y="{y + 8}" width="{w - 16}" height="{h - 16}" '
+        f'fill="none" stroke="{C["weak"]}" stroke-width="1.4" stroke-dasharray="7,5"/>',
+        txt(x + w / 2, top, "【图位】", size=size, fill=C["weak"], anchor="middle"),
+    ]
+    for i, ln in enumerate(lines):
+        parts.append(txt(x + w / 2, top + 30 + i * size * 1.25, esc(ln),
+                         size=size, fill=C["weak"], anchor="middle"))
+    return "\n".join(parts)
+
+
 def statement(text, sub=None):
     """⭐ 结尾页大标语（`PX["statement"]` = 147px，模板最大档）。
 
@@ -433,7 +552,7 @@ def statement(text, sub=None):
 #  整页外壳
 # ══════════════════════════════════════════════════════════
 def slide(title, body, num="01", page="00", note="", footer_left=None,
-          cover=False):
+          cover=False, head="bar"):
     """整页 SVG：HTML 注释（规格说明）+ 白底 + 标题栏 + 内容 + 页脚"""
     comment = (note + "\n     " if note else "") + (
         f"画布 {W}×{H} ｜ 边距 {M} ｜ 标题栏高 {BAR}（页高 {BAR/H*100:.0f}%）\n"
@@ -443,7 +562,9 @@ def slide(title, body, num="01", page="00", note="", footer_left=None,
         f"     换主色：改 ppt_style.py 的 C['main']，然后重生成\n"
         f"     交付前：grep \"{PLACEHOLDER_TAG}\" 应清零")
     # 封面 / 结尾页：不要标题栏与页脚，且内容居中 —— 写 NO_CHROME_TAG 让 ppt_check 放行
-    chrome = "" if cover else f"{titlebar(title, num)}\n{footer(page, footer_left)}"
+    chrome = "" if cover else "\n".join(
+        x for x in (headbar(title, num, head), logo(),
+                    footer(page, footer_left)) if x)
     if cover:
         comment = NO_CHROME_TAG + "（封面/结尾页）：不设标题栏与页脚，内容居中\n     " + comment
     return f'''<!-- {comment}

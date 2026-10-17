@@ -1,3 +1,5 @@
+> 本目录只作源材料归档。**生效的规则在 skill 里**（去向见 `docs/manuals.md`）。
+
 # Obsidian 标注 → Agent 回写：插件与 Skill 调研
 
 > 需求（用户 2026-10-12）：在 Obsidian 库的 markdown 文件里对需要修改的地方做标注，
