@@ -96,7 +96,12 @@
 
 ## 五、ppt-master 的入口
 
-`ppt-master` 装在全局池，但不在本 agent 的可调用列表里。已补 `ppt-master-entry`
-（本 agent `.claude/skills/ppt-master-entry/`），内容只有路径与四步流程，不复制 ppt-master 的规则。
+`ppt-master` 装在全局池，但不在本 agent 的可调用列表里。已补 `ppt-master-entry`，只给路径与四步流程，不复制 ppt-master 的规则。
+
+| 位置 | 作用 |
+|---|---|
+| `research-workflow/skills/ppt-master-entry/` | **源**，随仓版本化 |
+| 科研库 `.claude/skills/ppt-master-entry/` | 副本，`deploy_to_vault.py` 同步 |
+| 本 agent `.claude/skills/ppt-master-entry/` | 运行时副本，新开会话后可见 |
 
 **PPT 一律走 ppt-master**，不自建模板、不用自建骨架与配方。

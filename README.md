@@ -66,7 +66,7 @@ E  执行产出 数据 → SAP → 结果 → 论文 → 投稿 → 归档      
 
 ## 配套 skill
 
-本仓工作流里的**方法**已经沉淀成 **10 个**可安装的 skill。
+本仓工作流里的**方法**已经沉淀成 **11 个**可安装的 skill（10 个方法 skill + 1 个 ppt-master 入口）。
 其中 [`literature-pipeline`](skills/literature-pipeline/SKILL.md) 就在本仓 `skills/` 下；
 其余九个各是独立仓库（私有仓不列链接）：
 
