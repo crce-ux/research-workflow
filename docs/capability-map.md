@@ -340,23 +340,48 @@ Skill nature-reviewer is not in this session's skills allowlist
 
 ## 六、2026-10-19 验证总账
 
-| 工具 | 状态 | 关键限制 |
-|---|---|---|
-| `nature-academic-search` | ✅ 可用 | Semantic Scholar 429、Google Scholar 失败；CrossRef 数是相关度不是命中 |
-| `nature-downloader` | ⚠️ 部分 | 只对开放获取直链稳定；出版商 DOI 与 MDPI 403 |
-| `nature-reader` | ✅ 可用 | — |
-| `nature-paper-card` | ✅ 可用 | **自动图表识别为 0，需人工补** |
-| `nature-writing` | ✅ 可用 | — |
-| `nature-polishing` | ✅ 可用 | 附带修订说明与术语台账 |
-| `nature-figure` | ✅ 可用 | 依赖 matplotlib/numpy；会先问 Python/R |
-| `nature-statistics` | ✅ 可用 | 42 例只能检出 d≈0.88 以上 |
-| `nature-experiment-log` | ✅ 可用 | — |
-| `nature-proposal-writer` | ✅ 可用 | **只出框架，不出正文** |
-| `nature-reviewer` | ❌ 不可用 | 不在 allowlist |
-| `academic-paper-reviewer` | ✅ 可用 | 约 3 分钟；多席位并行 |
-| `academic-paper` · `academic-pipeline` · `academic-writing` | 可调用·未跑 | — |
-| `nature-ref-verifier` | 曾用过·未复验 | — |
-| `nature-paper-to-patent` · `nature-paper2ppt` · `paper-spine` | 未验证 | — |
-| `ppt-master` | ✅ 出过 pptx | — |
+### 可用（有产物、有路径）
 
-**十四项已验证通过，一项确认不可用（`nature-reviewer`），六项未验。**
+| 工具 | 用途 | 已知限制 |
+|---|---|---|
+| `nature-academic-search` | 多库检索 | Semantic Scholar 429、Google Scholar 失败；CrossRef 是相关度不是命中 |
+| `nature-reader` | 中英对照全文 | — |
+| `nature-paper-card` | 16 模块卡 | **自动图表识别为 0，须人工补** |
+| `nature-writing` | IMRaD 分节成文 | — |
+| `nature-polishing` | 润色 + 修订说明 | — |
+| `nature-figure` | 出版级图（png/svg/pdf） | 依赖 matplotlib / numpy |
+| `nature-statistics` | 统计方法与样本量 | 42 例只能检出 d≈0.88 |
+| `nature-experiment-log` | 实验记录模板 | — |
+| `nature-proposal-writer` | 标书章节框架 | **只出框架，不出正文** |
+| `nature-ref-verifier` | 引用存在与匹配 | — |
+| `nature-paper-to-patent` | 技术交底书骨架 | 需 python-docx |
+| `nature-paper2ppt` | 论文转可编辑 pptx | 图件为位图；需在 PowerPoint 复核观感 |
+| `paper-spine` | 12 阶段论文改写 | Stage 4 需人工确认；一次跑不完 |
+| `academic-paper-reviewer` | 多席位模拟评审 | 约 3 分钟；结论需自己核 |
+| `ppt-master` | 出片 | 用其自带模板 |
+
+### 部分可用
+
+| 工具 | 限制 |
+|---|---|
+| `nature-downloader` | 只对开放获取直链稳定；DOI 路线与出版商页面常取不到 |
+
+### 不可用 / 不接
+
+| 工具 | 原因 |
+|---|---|
+| `nature-reviewer` | 不在会话 allowlist，调用直接报错 |
+| `academic-pipeline` | 安装缺 `shared/` 与 `scripts/`，Stage 3′ 强制脚本不存在 |
+| `academic-paper` | 不支持 GB/T 7714-2015、无简体中文；仅英文路线可用 |
+| `pyzotero` | 试过、失败，已改用标准库直连 Zotero Web API |
+| `opencite` · `nature-literature-pipeline` | 已关闭 |
+
+### 可调用但未实跑
+
+`academic-writing`
+
+### 本库自有、同样经过验证
+
+`peer-review`（8 条意见 + 保密意见，`check_review` 六组硬规则全过）、`check_language`、`check_phrase`、`check_ref_citations`、`audit.py`、`doctor.py`、`confirm.py`。
+
+**一句话**：外部十七项里，十五项可用或部分可用，三项不接；自有工具里审稿与检查器两条链路已端到端跑通。

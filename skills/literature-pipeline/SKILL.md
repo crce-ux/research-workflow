@@ -125,7 +125,7 @@ python scripts/confirm.py --spec references/confirm-spec.json \
 | 场景 | 用什么 | 用没用过 |
 |---|---|---|
 | 要一轮**系统性深度调研**（不止检索，要成报告） | `deep-research` | ✅ **用过 2 次**，结论直接改过研究设计（三思路 → 五思路） |
-| 引用交叉核对 | `nature-ref-verifier` | ✅ 用过 |
+| 引用交叉核对 | `nature-ref-verifier` | ✅ 复验通过 2026-10-19（能抓「能解析但指向别的论文」） |
 | 合法获取全文 | `nature-downloader` | ✅ **已验证 2026-10-19**（部分可用，见下） |
 | 多库检索执行 | `nature-academic-search` | ✅ **已验证 2026-10-19** |
 
