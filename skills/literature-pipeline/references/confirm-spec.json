@@ -1,0 +1,82 @@
+{
+  "title": "文献调研 · 前置确认",
+  "intro": "以下事项将决定检索式、纳排标准与交付形态。填写完成后提交，检索据此展开。",
+  "questions": [
+    {
+      "id": "purpose",
+      "type": "radio",
+      "label": "调研目的",
+      "effect": "决定检索式构造与纳排口径。判空白要求覆盖多库并分层计数；找方法学模板只看方法细节。",
+      "required": true,
+      "options": [
+        {"value": "判断选题是否有空白", "hint": "需分层计数，覆盖多库"},
+        {"value": "写综述", "hint": "需纳排标准与证据分级"},
+        {"value": "找方法学模板", "hint": "只看设计与统计细节"},
+        {"value": "支撑某个论点", "hint": "定向找反例与最强证据"},
+        {"value": "追踪领域进展", "hint": "按时间窗口筛选"}
+      ]
+    },
+    {
+      "id": "window",
+      "type": "radio",
+      "label": "时间范围",
+      "effect": "写入检索式的日期限制，并记入覆盖声明。变动会改变命中数，不回溯旧检索。",
+      "required": true,
+      "options": [
+        {"value": "近 5 年"},
+        {"value": "近 10 年"},
+        {"value": "不限"},
+        {"value": "自定义区间", "hint": "在对话中给出起止年份"}
+      ]
+    },
+    {
+      "id": "language",
+      "type": "radio",
+      "label": "语种",
+      "effect": "决定数据库组合。含中文时须加知网 / 万方，并按分层口径分别计数。",
+      "required": true,
+      "options": [
+        {"value": "英文为主"},
+        {"value": "中英文都要", "hint": "英文库 + 中文库分别计数"},
+        {"value": "仅中文"}
+      ]
+    },
+    {
+      "id": "query",
+      "type": "radio",
+      "label": "检索式",
+      "effect": "已有检索式则先核再跑，不另起一套；没有则先构造并给出覆盖声明。",
+      "required": true,
+      "options": [
+        {"value": "已有检索式"},
+        {"value": "有一部分关键词"},
+        {"value": "完全没有"}
+      ]
+    },
+    {
+      "id": "budget",
+      "type": "radio",
+      "label": "本轮规模",
+      "effect": "决定分几轮、每轮读多少。超过预算不再扩检索，缺口写进覆盖声明。",
+      "required": true,
+      "options": [
+        {"value": "快速摸底", "hint": "单轮，约 20–30 篇"},
+        {"value": "标准调研", "hint": "两到三轮，约 60–100 篇"},
+        {"value": "全量", "hint": "按纳排标准穷尽，时间长"}
+      ]
+    },
+    {
+      "id": "deliverable",
+      "type": "radio",
+      "label": "本次交付范围",
+      "effect": "决定停在哪一步。到证据表即止，不进入成文。",
+      "required": true,
+      "options": [
+        {"value": "只要命中清单"},
+        {"value": "证据表"},
+        {"value": "证据表 + 覆盖声明说明"},
+        {"value": "证据表 + 综述初稿"}
+      ]
+    }
+  ]
+}
