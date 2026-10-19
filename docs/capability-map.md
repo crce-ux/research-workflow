@@ -22,8 +22,8 @@
 | 阶段 | 能力 | 现成工具 | 状态 | 本库实现 | 动作 |
 |---|---|---|---|---|---|
 | P | 单篇精读 | `nature-reader` · `nature-paper-card` | **未见使用记录** | `paper-reading` | 先验证；不可用则只用本库五态 |
-| A | 检索 | `nature-academic-search` · `deep-research` | **未见使用记录** | `literature-pipeline` | 先验证；不可用则用本库的 PubMed/OpenAlex/CNKI 组合 |
-| A | 全文获取 | `nature-downloader` | **未验证** | 无 | 验证通过后写成分工 |
+| A | 检索 | `nature-academic-search` | **✅ 已验证 2026-10-19**（有产物；两个源失败） | `literature-pipeline` | **调用**：它跑检索，我们算覆盖声明 |
+| A | 全文获取 | `nature-downloader` | **✅ 部分可用 2026-10-19**（arXiv 成功；出版商与 MDPI 403） | 无 | **有条件调用**：开放获取直链走它，其余回落下文 |
 | A | 引用核验 | `nature-ref-verifier` | 已验证（用过） | `check_ref_citations` | **分工**：它查存在性，我们查编号一致性 |
 | B | 成文 / 文体 | `nature-writing` · `paper-spine` | **未见使用记录** | `ai-academic-writing` | 先验证；可用则它管文体，我们管判据 |
 | B | 润色 | `nature-polishing` | **未见使用记录** | 无 | 验证通过后接进 ④ 润色 |
@@ -37,7 +37,7 @@
 | E6 | 选刊 | 无 | — | `submission` | 本库独有 |
 | E7 | 成果台账 | 无 | — | `submission` | 本库独有 |
 | E7 | 审稿回复 | `nature-response` | **未见使用记录** | 无 | 验证通过后接进 `submission` |
-| 支线 | 同行评议 | `nature-reviewer` · `academic-paper-reviewer` | **未见使用记录** | `peer-review`（五层轴） | 先验证；可用则分工 |
+| 支线 | 同行评议 | `nature-reviewer` | **❌ 不可调用**（不在 allowlist） | `peer-review`（五层轴，已验证可跑） | 用本库 |
 | 支线 | 国自然 | `nature-proposal-writer` | **未见使用记录** | `grant-diagnosis` | 先验证；可用则它出结构，我们诊断 |
 | 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
@@ -68,6 +68,52 @@
 | 11 | `nature-ref-verifier` | 核一条已知错误的引用 | 能指出错在哪 |
 
 跑完把结果填回本表的状态列。**通过才接线，不通过就从推荐里删掉**——不留「据说可以」。
+
+---
+
+## 三之二、验证记录
+
+### 2026-10-19 · 科研助手实测
+
+**1. nature-academic-search — 可用**
+
+检索 `claustrum clozapine`，产物已落盘（md + json）。
+
+| 源 | 命中 | 说明 |
+|---|---:|---|
+| PubMed（标题摘要） | 1 | `claustrum[TA] AND clozapine[TA]` |
+| Europe PMC（全文） | 223 | 换成全文检索后数量级不同 |
+| OpenAlex | 3 | |
+| CrossRef | 13842 | **相关度匹配，不是布尔 AND，不能当命中数** |
+| Semantic Scholar | 失败 | HTTP 429，重试 3 次仍限流 |
+| Google Scholar | 失败 | fetch failed |
+| arXiv | 365 | 前 20 条无一条同时命中两个主题词 |
+
+对照：`claustrum[TA]` 单独 1527 条，`clozapine[TA]` 单独 15268 条，交集 1 条。**说明不是检索式失效，是两个词在标题摘要层几乎没有共现。**
+
+教训：**「检索到 0 条」要先分清是检索式问题还是主题本身空。** 此处属后者。
+
+**2. nature-downloader — 部分可用**
+
+三条路线，前两条失败，第三条成功：
+
+| # | 路线 | 结果 |
+|---|---|---|
+| 1 | DOI + `--open-access` | `oa_not_found`（元数据说 confirmed_oa，实际取不到） |
+| 2 | 出版商直链（MDPI） | 403 Forbidden |
+| 3 | arXiv 开放获取 | **成功**：15 页 PDF，1,046,055 字节，文件头与文本均校验通过 |
+
+规律：**开放获取直链可用，出版商页面与 DOI 解析经常取不到。**
+
+**3. nature-reviewer — 不可调用**
+
+```
+Skill nature-reviewer is not in this session's skills allowlist
+```
+
+目录里有这个文件夹，但会话允许清单里没有它。**「装了」与「能用」之间还隔着一层 allowlist。**
+
+替代用本库 `peer-review` 跑同一篇，产出 8 条编号意见 + 保密意见，`check_review.py` 六组硬规则全过。**本库审稿链路端到端可用。**
 
 ---
 
