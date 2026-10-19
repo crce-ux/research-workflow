@@ -178,6 +178,37 @@ PARSERS = {
 }
 
 
+# ── 分节与分级 ─────────────────────────────────────────────
+#: 附录类章节：命中不当作正文问题，默认折叠
+APPENDIX_RE = re.compile(r"^#{1,6}\s*.*(附录|销项|对照|引用原文|核查记录|质控表|变更记录)")
+
+#: 三级。硬规则必须处理；建议看情况；信息只供人工核口径。
+LEVEL = {
+    "硬规则": ("排他性断言", "引用编号", "正文引用但文末缺失", "文末条目未被正文引用"),
+    "建议": ("空泛量词", "缩写", "名词化", "伪对立", "套话", "自我削弱", "抽象标签",
+             "演义", "自问自答", "连接词", "回指", "讲者侧"),
+    "信息": ("数字-口径", "隐藏元数据"),
+}
+
+
+def level_of(rule: str, detail: str) -> str:
+    text = (rule or "") + (detail or "")
+    for lv, keys in LEVEL.items():
+        if any(k in text for k in keys):
+            return lv
+    return "建议"
+
+
+def section_map(lines):
+    """行号 → 所在章节类别（正文 / 附录）。"""
+    cur, out = "正文", {}
+    for i, ln in enumerate(lines, 1):
+        if re.match(r"^#{1,6}\s", ln):
+            cur = "附录" if APPENDIX_RE.match(ln) else "正文"
+        out[i] = cur
+    return out
+
+
 def run_checker(name, argv, timeout=60):
     script = Path(argv[0])
     if not script.is_file():
@@ -195,6 +226,7 @@ def run_checker(name, argv, timeout=60):
 def collect(doc: Path, kind: str, only: set[str] | None):
     text = doc.read_text(encoding="utf-8", errors="replace")
     dtype = detect_type(text)
+    secmap = section_map(text.split("\n"))
     kind = "讲稿" if dtype in ("讲稿", "制作稿") else "论文"
     argv_sets = [(name, list(tpl)) for name, tpl in GENERIC]
     for name in TYPE_CHECKS.get(dtype, []):
@@ -214,8 +246,12 @@ def collect(doc: Path, kind: str, only: set[str] | None):
         ran.append(name)
         parser = PARSERS.get(name, parse_marked)
         for hit in parser(out):
+            sec = secmap.get(hit["line"], "正文") if hit.get("line") else "正文"
             findings.append({"file": str(doc), "checker": name,
-                             "label": LABEL.get(name, name), **hit})
+                             "label": LABEL.get(name, name),
+                             "section": sec,
+                             "level": level_of(hit.get("rule", ""), hit.get("detail", "")),
+                             **hit})
     return dtype, findings, ran, skipped
 
 
@@ -237,18 +273,57 @@ def pad(s: str, width: int) -> str:
     return s + " " * (width - dw(s))
 
 
-def render(dtype, findings, ran, skipped, files):
+def render(dtype, findings, ran, skipped, files, show_all=False):
     print(f"audit · {files} · 识别为「{dtype}」\n")
     if not findings:
         print("  ✅ 未发现问题")
-    else:
-        print("  " + pad("位置", 8) + pad("检查项", 14) + pad("问题", 46) + "依据")
-        print("  " + "-" * 84)
-        for f in sorted(findings, key=lambda x: (x["line"] is None, x["line"] or 0)):
-            loc = f"L{f['line']}" if f["line"] else "—"
+        print()
+        print(f"  已运行：{'、'.join(ran) if ran else '无'}")
+        if skipped:
+            print(f"  未运行：{'、'.join(skipped)}")
+        return
+
+    def body_of(fs):
+        for f in sorted(fs, key=lambda x: (x["line"] is None, x["line"] or 0)):
+            loc = f"L{f['line']}" if f.get("line") else "—"
             print("  " + pad(loc, 8) + pad(f["label"], 14)
                   + pad(f["detail"], 46) + f["rule"][:20])
-        print(f"\n  共 {len(findings)} 处。命中不等于要改，逐条回原文核对。")
+
+    def head(title, fs):
+        print(f"  {title} · {len(fs)} 处")
+
+    groups = {"硬规则": [], "建议": [], "信息": []}
+    appx = []
+    for f in findings:
+        if f.get("section") == "附录":
+            appx.append(f)
+        else:
+            groups.setdefault(f.get("level", "建议"), []).append(f)
+
+    shown = 0
+    for lv, mark in (("硬规则", "🔴"), ("建议", "·"), ("信息", "ⓘ")):
+        fs = groups.get(lv, [])
+        if not fs:
+            continue
+        if lv == "信息" and not show_all:
+            head(f"{mark} 信息", fs)
+            print("     默认折叠（加 --all 展开）：数字口径等，仅供人工核对")
+            continue
+        head(f"{mark} {lv}", fs)
+        body_of(fs)
+        shown += len(fs)
+        print()
+
+    if appx:
+        head("附录", appx)
+        if show_all:
+            body_of(appx)
+            shown += len(appx)
+        else:
+            print("     默认折叠（加 --all 展开）：附录 / 销项表 / 对照表中的命中")
+        print()
+
+    print(f"  共 {len(findings)} 处 · 显示 {shown} 处。命中不等于要改，逐条回原文核对。")
     print()
     print(f"  已运行：{'、'.join(ran) if ran else '无'}")
     if skipped:
@@ -261,6 +336,7 @@ def main() -> int:
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--only", help="只跑指定检查器，逗号分隔")
     ap.add_argument("--strict", action="store_true", help="有问题时退出码 1")
+    ap.add_argument("--all", action="store_true", help="展开信息级与附录")
     a = ap.parse_args()
 
     p = Path(a.path)
@@ -288,7 +364,7 @@ def main() -> int:
                          ensure_ascii=False, indent=2))
     else:
         for r in report:
-            render(r["type"], r["findings"], r["ran"], r["skipped"], r["file"])
+            render(r["type"], r["findings"], r["ran"], r["skipped"], r["file"], a.all)
     return 1 if (a.strict and all_findings) else 0
 
 

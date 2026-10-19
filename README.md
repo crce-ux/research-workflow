@@ -50,7 +50,7 @@ doctor · 仓 D:\Github\research-workflow · repo-root D:/Github
   副本② 观测库       ✅ 通过
         ✅ 全部一致（11 个已部署 skill）
   单测            ✅ 通过
-        397 passed, 1 skipped
+        402 passed, 1 skipped
 
 ✅ 全绿
 ```
@@ -208,7 +208,7 @@ manuals/                     49 份流程手册原文（已去敏化）
 ## 测试与 CI
 
 ```bash
-uv run --with pytest python -m pytest tests/ -q     # 397 passed, 1 skipped
+uv run --with pytest python -m pytest tests/ -q     # 402 passed, 1 skipped
 ```
 
 | 覆盖什么 | 为什么测它 |

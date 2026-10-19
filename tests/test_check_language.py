@@ -73,3 +73,26 @@ def test_only_selector_limits_scope():
     assert not any(k.startswith("①") for k in only2)
     only1 = cl.check(text, terms=set(), only=[1])
     assert not any(k.startswith("②") for k in only1)
+
+
+# ── ④ 缩写：表格行、姓名缩写不报 ───────────────────────────
+
+def test_author_initials_not_flagged():
+    """「姓 + 两个大写字母 + 逗号」是作者姓名缩写，不是待展开的缩写。"""
+    text = "既往研究（Panicker MH, Smith JA）报告了该现象。"
+    hits = cl.check(text, terms=set(), only=[4])
+    assert "MH" not in _flat(hits, "④ 缩写首次出现·未见展开")
+
+
+def test_table_row_not_flagged():
+    """表格行里的标记（B6 之类）不按首次出现判。"""
+    text = "| B6 | 屏状核 | 结果 |\n上一行是表格。"
+    hits = cl.check(text, terms=set(), only=[4])
+    assert "B6" not in _flat(hits, "④ 缩写首次出现·未见展开")
+
+
+def test_real_abbreviation_still_flagged():
+    """真正的缩写仍要报。"""
+    text = "本研究采用 VBM 方法分析灰质体积。"
+    hits = cl.check(text, terms=set(), only=[4])
+    assert "VBM" in _flat(hits, "④ 缩写首次出现·未见展开")

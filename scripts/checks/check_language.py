@@ -112,6 +112,26 @@ SKIP = {
 }
 # 罗马数字/化学式常见误报
 FALSE_POS = re.compile(r"^(?:I|II|III|IV|V|VI|VII|VIII|IX|X)$")
+# 作者姓名缩写：姓 + 空格 + 1–3 个大写字母 + 逗号/句点（如 "Panicker MH,"）
+AUTHOR_ABBR = re.compile(r"[A-Z][a-z]{2,}\s+([A-Z]{1,3})(?=[,.])")
+# 参考文献行与表格行：行内缩写不按「首次出现」判
+REF_LINE = re.compile(r"^\s*\[\d+\]|^\s*\d+\.\s+[A-Z]")
+
+
+def _skip_abbr(body: str, start: int, end: int) -> str:
+    """返回跳过原因；空串表示不跳过。"""
+    line_start = body.rfind("\n", 0, start) + 1
+    line_end = body.find("\n", end)
+    line = body[line_start: line_end if line_end != -1 else len(body)]
+    if line.lstrip().startswith("|"):
+        return "表格行"
+    if REF_LINE.match(line):
+        return "参考文献行"
+    before = body[max(0, start - 24): start]
+    after = body[end: end + 1]
+    if re.search(r"[A-Z][a-z]{2,}\s+$", before) and after in ",.":
+        return "姓名缩写"
+    return ""
 
 # ── ⑤ 数字-口径 ─────────────────────────────────────────────────
 NUMERIC = re.compile(r"(\d+(?:\.\d+)?)\s*(%|％|倍|例|人|项|篇|mg|mol|Hz|ms)")
@@ -204,10 +224,14 @@ def check(text, terms, only):
 
     # ④ 缩写首次出现
     if 4 in only:
-        out, seen = [], set()
+        out, seen, n_skip = [], set(), {"表格行": 0, "参考文献行": 0, "姓名缩写": 0}
         for m in ABBR.finditer(body):
             tok = m.group(1) or m.group(2) or m.group(3) or ""
             if not tok or tok in seen or tok in SKIP or tok in terms or FALSE_POS.match(tok):
+                continue
+            reason = _skip_abbr(body, m.start(), m.end())
+            if reason:
+                n_skip[reason] += 1
                 continue
             seen.add(tok)
             ctx = nearby(body, m.start(), m.end(), 30)
@@ -215,6 +239,10 @@ def check(text, terms, only):
                 line = body[:m.start()].count("\n") + 1
                 out.append((line, tok, ctx))
         hits["④ 缩写首次出现·未见展开"] = out
+        skipped_n = sum(n_skip.values())
+        if skipped_n:
+            detail = "、".join(f"{k} {v}" for k, v in n_skip.items() if v)
+            hits["④-附 已跳过（非缩写）"] = [(0, f"共 {skipped_n} 处", detail)]
         if terms:
             known = [t for t in terms if t in seen]
             if known:

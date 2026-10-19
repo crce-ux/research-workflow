@@ -70,3 +70,17 @@ def test_only_filters_checkers():
     assert ran == ["phrases"]
     assert all(f["checker"] == "phrases" for f in findings)
     assert any("未选中" in s for s in skipped)
+
+
+def test_level_of():
+    assert audit.level_of("排他性断言·未见出处", "唯一") == "硬规则"
+    assert audit.level_of("数字-口径（人工核对用）", "26%") == "信息"
+    assert audit.level_of("空泛量词（建议换具体数）", "大量") == "建议"
+
+
+def test_section_map_switches_at_appendix():
+    text = "# 正文\n内容\n## 附录 A\n内容\n## 正文续\n内容"
+    m = audit.section_map(text.split("\n"))
+    assert m[2] == "正文"
+    assert m[4] == "附录"
+    assert m[6] == "正文"
