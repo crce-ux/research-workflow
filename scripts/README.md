@@ -129,7 +129,7 @@
 | `check_assets.py` | 死链 / 路径 / 索引覆盖 | 分档 |
 | `check_metadata_leak.py` | **Office/PDF 隐藏元数据**（盲审泄露面） | 硬（对外场景） |
 | `check_skill_structure.py` | **Agent Skill 结构校验**（frontmatter / name / 正文长度 / 深链） | 硬（静态） |
-| `skill_selfcheck.py` | **skill 自检入口**（分发为各 skill 的 `scripts/selfcheck.py`）：结构 + 语法 + 依赖 | 硬（静态） |
+| `skill_selfcheck.py` | **skill 自检入口**（分发到各 skill 时改名为 selfcheck.py）：结构 + 语法 + 依赖 | 硬（静态） |
 | `renumber_refs.py` | 参考文献重新编号 | — |
 
 ### `check_skill_structure.py` —— 唯一可完全 CI 化的层

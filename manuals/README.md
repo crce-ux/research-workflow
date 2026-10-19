@@ -56,7 +56,7 @@
 | 支线 | （审稿方法指南，另存） | [peer-review](https://github.com/crce-ux/peer-review) |
 | 横向 | `writing/文本迭代自查流程` | [text-self-review](https://github.com/crce-ux/text-self-review) |
 
-> **共 11 个 skill**（10 个方法 skill + 1 个 ppt-master 入口）。 完整工序对照（含缺口与外部工具指针）见
+> **共 12 个 skill**（10 个可安装仓 + 2 个内嵌包）。 完整工序对照（含缺口与外部工具指针）见
 > [`docs/skills.md`](../docs/skills.md)。
 
 **手册保留了 skill 里放不下的东西**：具体的命令、实测数据、踩坑记录、以及与具体项目绑定的案例。

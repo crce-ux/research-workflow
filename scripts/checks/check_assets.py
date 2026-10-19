@@ -280,8 +280,8 @@ def iter_skill_dirs(skills_root):
         if not _is_ours(p):
             continue
         if (p / "SKILL.md").is_file():
+            # 一个仓可以既是可安装的 skill，又带内嵌包——两边都算
             out.append(p)
-            continue
         pack = p / "skills"
         if pack.is_dir():
             out += [q for q in sorted(pack.iterdir())
