@@ -2,6 +2,7 @@
 """confirm.py：spec 校验、token 门禁、提交落盘。"""
 import json
 import urllib.error
+import urllib.parse
 import urllib.request
 
 import pytest
@@ -91,3 +92,70 @@ def test_submit_rejects_non_utf8(srv):
     with pytest.raises(urllib.error.HTTPError) as e:
         urllib.request.urlopen(req)
     assert e.value.code == 400
+
+
+# ── 原料上传 ──────────────────────────────────────────────
+
+def _upload(srv, name, data):
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{srv.port}/upload", data=data,
+        headers={"X-Filename": urllib.parse.quote(name)},
+        method="POST")
+    return urllib.request.urlopen(req)
+
+
+@pytest.fixture()
+def srv_in(tmp_path):
+    s = confirm.ConfirmServer(SPEC, tmp_path / "ans.json", 0, tmp_path / "原料")
+    s.start()
+    yield s
+    s.shutdown()
+
+
+def test_upload_creates_dir_and_file(srv_in, tmp_path):
+    resp = json.loads(_upload(srv_in, "内容稿.md", "正文".encode("utf-8")).read())
+    assert resp["saved"] == "内容稿.md"
+    p = tmp_path / "原料" / "内容稿.md"
+    assert p.read_text(encoding="utf-8") == "正文"
+
+
+def test_upload_dedupes_names(srv_in):
+    _upload(srv_in, "a.txt", b"1")
+    r2 = json.loads(_upload(srv_in, "a.txt", b"2").read())
+    assert r2["saved"] == "a-1.txt"
+
+
+def test_upload_strips_paths(srv_in, tmp_path):
+    r = json.loads(_upload(srv_in, "../../evil.txt", b"x").read())
+    assert "/" not in r["saved"] and ".." not in r["saved"]
+    assert not (tmp_path / "evil.txt").exists()
+    assert (tmp_path / "原料" / "evil.txt").exists()
+
+
+def test_upload_rejects_oversize(srv_in, monkeypatch):
+    monkeypatch.setattr(confirm, "MAX_BYTES", 4)
+    with pytest.raises(urllib.error.HTTPError) as e:
+        _upload(srv_in, "big.bin", b"12345")
+    assert e.value.code == 413
+
+
+def test_delete_removes_file(srv_in, tmp_path):
+    _upload(srv_in, "x.txt", b"1")
+    payload = json.dumps({"k": srv_in.token, "name": "x.txt"}).encode("utf-8")
+    req = urllib.request.Request(f"http://127.0.0.1:{srv_in.port}/delete",
+                                 data=payload,
+                                 headers={"Content-Type": "application/json"})
+    urllib.request.urlopen(req)
+    assert not (tmp_path / "原料" / "x.txt").exists()
+
+
+def test_submit_writes_manifest(srv_in, tmp_path):
+    _upload(srv_in, "b.png", b"png")
+    payload = json.dumps({"k": srv_in.token, "answers": {"a": "x"}}).encode("utf-8")
+    req = urllib.request.Request(f"http://127.0.0.1:{srv_in.port}/submit",
+                                 data=payload,
+                                 headers={"Content-Type": "application/json"})
+    urllib.request.urlopen(req)
+    assert srv_in.wait(5)
+    manifest = json.loads((tmp_path / "原料" / confirm.MANIFEST).read_text(encoding="utf-8"))
+    assert [m["name"] for m in manifest] == ["b.png"]
