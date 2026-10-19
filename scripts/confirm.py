@@ -205,8 +205,8 @@ if (drop) {
   pick.addEventListener('change', function(){
     Array.from(pick.files).forEach(upload); pick.value = '';
   });
-  fetch('/files').then(function(r){ return r.json(); }).then(function(list){
-    list.forEach(function(f){ addRow(f.name, f.size); });
+  fetch('/files?k=' + encodeURIComponent(TOKEN)).then(function(r){ return r.json(); }).then(function(list){
+    if (Array.isArray(list)) list.forEach(function(f){ addRow(f.name, f.size); });
   });
 }
 

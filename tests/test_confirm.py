@@ -159,3 +159,18 @@ def test_submit_writes_manifest(srv_in, tmp_path):
     assert srv_in.wait(5)
     manifest = json.loads((tmp_path / "原料" / confirm.MANIFEST).read_text(encoding="utf-8"))
     assert [m["name"] for m in manifest] == ["b.png"]
+
+
+def test_files_lists_uploads(srv_in):
+    _upload(srv_in, "c.txt", b"123")
+    body = urllib.request.urlopen(
+        f"http://127.0.0.1:{srv_in.port}/files?k={srv_in.token}").read()
+    files = json.loads(body)
+    assert [f["name"] for f in files] == ["c.txt"]
+    assert files[0]["size"] == 3
+
+
+def test_files_requires_token(srv_in):
+    with pytest.raises(urllib.error.HTTPError) as e:
+        urllib.request.urlopen(f"http://127.0.0.1:{srv_in.port}/files")
+    assert e.value.code == 403
