@@ -9,6 +9,25 @@
 - **一条命令跑通**：`uv run --with pytest python scripts/doctor.py`
 - **适用人群**：同时使用多个 skill 做科研、需要确认工具链没坏的人。
 
+## 五分钟跑一次
+
+```bash
+git clone https://github.com/crce-ux/research-workflow
+cd research-workflow
+python scripts/audit.py examples/bad.md
+```
+
+`examples/bad.md` 是一份故意写错的稿件。输出：
+
+```
+  位置    检查项        问题                          依据
+  L3      语言与断言    唯一：…                      排他性断言·未见出处
+  L7      措辞          不是相关而是                  伪对立
+  —       引用编号      [3]                          正文引用但文末缺失
+```
+
+**不帮你写，帮你查。** 四列分别是位置、检查项、问题、依据。加 `--json` 给机器读，加 `--strict` 进 CI。
+
 **本仓是一套实际在跑的系统**——下面的每一步、每一道门、每一个脚本
 都来自真实的科研工作。
 
@@ -31,7 +50,7 @@ doctor · 仓 D:\Github\research-workflow · repo-root D:/Github
   副本② 观测库       ✅ 通过
         ✅ 全部一致（11 个已部署 skill）
   单测            ✅ 通过
-        387 passed, 1 skipped
+        397 passed, 1 skipped
 
 ✅ 全绿
 ```
@@ -189,7 +208,7 @@ manuals/                     49 份流程手册原文（已去敏化）
 ## 测试与 CI
 
 ```bash
-uv run --with pytest python -m pytest tests/ -q     # 387 passed, 1 skipped
+uv run --with pytest python -m pytest tests/ -q     # 397 passed, 1 skipped
 ```
 
 | 覆盖什么 | 为什么测它 |

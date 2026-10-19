@@ -54,7 +54,7 @@ def find_refs_section(text, refs_start):
         if i != -1:
             return text[:i], text[i:]
     # 宽松匹配任意"参考文献"标题行（支持 ## 七、参考文献、## 参考文献（xxx）、[1]-[N] 等变体）
-    for m in re.finditer(r"^#{1,6}\s*(?:\d+|[一二三四五六七八九十]+)[\.、]?\s*参考文献.*$", text, re.M):
+    for m in re.finditer(r"^#{1,6}\s*(?:(?:\d+|[一二三四五六七八九十]+)[\.、]?\s*)?参考文献.*$", text, re.M):
         return text[:m.start()], text[m.start():]
     sys.exit("未找到参考文献章节，请用 --refs-start 指定")
 

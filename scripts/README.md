@@ -1,6 +1,6 @@
 # 脚本索引
 
-**脚本 58 个（Python 57 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
+**脚本 59 个（Python 58 个 + `ppt/setup.sh` 1 个），按阶段分组。** 多数只用标准库，可直接跑。
 
 > ⚠️ `literature/` 的 `journal_match.py` / `fetch_journal_metrics.py` 需要 `scripts/_journal_data/` 下三份 CSV
 > （中科院分区 / JCR / 预警名单）——**授权数据，本仓不分发**，缺它会直接报出该放哪三份。
@@ -36,6 +36,7 @@
 | `sync_skill_scripts.py` | **正本 → 各 skill 的分发校验 / 同步**（见上「📌 `scripts/` 是正本」）。`--root <含各 skill 的目录>`，默认只校验、`--write` 覆盖 |
 | `deploy_to_vault.py` | **仓 → 观测库 `.claude/skills/` 的第三套副本同步**。默认只校验、`--write` 覆盖。**只增改不删**——库里多出来的由人判断 |
 | `run_checks.py` | **跑一批检查器，把发现写进「待修清单」**。`--target <文件或目录> --ledger <清单.md>` |
+| `audit.py` | **一条命令跑完一份稿件的检查**：识别文档类型 → 跑对应检查器 → 输出「位置 / 检查项 / 问题 / 依据」四列。`--json`、`--only`、`--strict` |
 | `confirm.py` | **网页点选收集输入**：`--spec spec.json --out answers.json`。起本地服务、打印带 token 的地址，用户提交后写成 JSON。只绑 `127.0.0.1`；超时退出码 2 |
 
 > ⚠️ `deploy_to_vault.py` 面对的是**第三套副本**：`sync_skill_scripts.py` 管仓内各 skill 的
