@@ -25,8 +25,8 @@
 | A | 检索 | `nature-academic-search` | **✅ 已验证 2026-10-19**（有产物；两个源失败） | `literature-pipeline` | **调用**：它跑检索，我们算覆盖声明 |
 | A | 全文获取 | `nature-downloader` | **✅ 部分可用 2026-10-19**（arXiv 成功；出版商与 MDPI 403） | 无 | **有条件调用**：开放获取直链走它，其余回落下文 |
 | A | 引用核验 | `nature-ref-verifier` | 已验证（用过） | `check_ref_citations` | **分工**：它查存在性，我们查编号一致性 |
-| B | 成文 / 文体 | `nature-writing` · `paper-spine` | **未见使用记录** | `ai-academic-writing` | 先验证；可用则它管文体，我们管判据 |
-| B | 润色 | `nature-polishing` | **未见使用记录** | 无 | 验证通过后接进 ④ 润色 |
+| B | 成文 / 文体 | `nature-writing` | **✅ 已验证 2026-10-19** | `ai-academic-writing` | **调用**：它出文体，我们管判据；`paper-spine` 仍未验证 |
+| B | 润色 | `nature-polishing` | **✅ 已验证 2026-10-19** | 无 | **调用**：接进 ④ 润色 |
 | B | 配图 | `nature-figure` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | C | 出片 | `ppt-master` | 已验证（出过 pptx） | `academic-slides` 内容侧 | 保持：它出片，我们管讲者侧 |
 | C | 讲稿 / 幻灯片体检 | 无 | — | `academic-slides` | 本库独有 |
@@ -38,7 +38,7 @@
 | E7 | 成果台账 | 无 | — | `submission` | 本库独有 |
 | E7 | 审稿回复 | `nature-response` | **未见使用记录** | 无 | 验证通过后接进 `submission` |
 | 支线 | 同行评议 | `nature-reviewer` | **❌ 不可调用**（不在 allowlist） | `peer-review`（五层轴，已验证可跑） | 用本库 |
-| 支线 | 国自然 | `nature-proposal-writer` | **未见使用记录** | `grant-diagnosis` | 先验证；可用则它出结构，我们诊断 |
+| 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
 | 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
 
@@ -140,6 +140,24 @@ Skill nature-reviewer is not in this session's skills allowlist
 **5. nature-experiment-log — 可用**
 
 产物 153 行，字段分八组：标识 / 受试者 / 设备 / 范式 / 数据文件 / 质控 / 正文段落 / 异常与下一步。给的是可填的空模板，不是编造的记录。
+
+---
+
+### 2026-10-19 · 第三批（写作组）
+
+**6. nature-polishing — 可用**
+
+产物 251 词、4 段，另附术语台账与 6 条修订说明。润色带修订记录这一点值得保留。
+
+**7. nature-writing — 可用**
+
+产物 113 词，四个小节：Participants / EEG recording and MMN measurement / Outcome / Statistical analysis。字数落在要求的 100–150 区间内，分节符合 IMRaD。
+
+**8. nature-proposal-writer — 可用**
+
+产物是完整的国自然章节框架：立项依据与研究内容（1.1–1.5）、研究基础与工作条件（2.1–2.4）、其他需要说明的问题、附件、参考文献。
+
+> ⚠️ **分工要守住**：它出框架，`grant-diagnosis` 做诊断。国自然明文禁止用生成式 AI 直接生成申请书正文，**框架可以，正文不行**。
 
 ---
 
