@@ -27,22 +27,25 @@
 | A | 引用核验 | `nature-ref-verifier` | 已验证（用过） | `check_ref_citations` | **分工**：它查存在性，我们查编号一致性 |
 | B | 成文 / 文体 | `nature-writing` · `paper-spine` | **未见使用记录** | `ai-academic-writing` | 先验证；可用则它管文体，我们管判据 |
 | B | 润色 | `nature-polishing` | **未见使用记录** | 无 | 验证通过后接进 ④ 润色 |
-| B | 配图 | `nature-figure` | 已接入 | 无 | 保持 |
-| C | 出片 | `ppt-master` | 已接入 | `academic-slides` 内容侧 | 保持：它出片，我们管讲者侧 |
+| B | 配图 | `nature-figure` | 已接入·**未验证产物** | 无 | 先各跑一次 |
+| C | 出片 | `ppt-master` | 已验证（出过 pptx） | `academic-slides` 内容侧 | 保持：它出片，我们管讲者侧 |
 | C | 讲稿 / 幻灯片体检 | 无 | — | `academic-slides` | 本库独有 |
 | D | 研究设计 | 无 | — | `study-design` | 本库独有 |
-| E1–E4 | 数据管线 | `nature-statistics`（只管方法） | 已接入 | `data-pipeline`（管流程与留痕） | 保持分工 |
-| E1 | 实验记录 | `nature-experiment-log` | 已接入 | 无 | 保持 |
+| E1–E4 | 数据管线 | `nature-statistics`（只管方法） | 已接入·**未验证产物** | `data-pipeline`（管流程与留痕） | 先各跑一次 |
+| E1 | 实验记录 | `nature-experiment-log` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | E5 | 投稿前核查 | `academic-paper-reviewer` | **未见使用记录** | `text-self-review` | 先验证 |
 | E6 | 选刊 | 无 | — | `submission` | 本库独有 |
 | E7 | 成果台账 | 无 | — | `submission` | 本库独有 |
 | E7 | 审稿回复 | `nature-response` | **未见使用记录** | 无 | 验证通过后接进 `submission` |
 | 支线 | 同行评议 | `nature-reviewer` · `academic-paper-reviewer` | **未见使用记录** | `peer-review`（五层轴） | 先验证；可用则分工 |
 | 支线 | 国自然 | `nature-proposal-writer` | **未见使用记录** | `grant-diagnosis` | 先验证；可用则它出结构，我们诊断 |
-| 支线 | 专利 | `nature-paper-to-patent` | 已接入 | 无 | 保持 |
+| 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
 
-**「未见使用记录」= 装了，但没有任何一次产物或日志证明它跑通过。** 在验证之前，不得写进任何 skill 的分工节。
+**「未见使用记录」= 装了，但没有任何一次产物或日志证明它跑通过。**
+**「已接入」= 文档里写了要调用它，但同样没有产物证据。**
+
+按现有记录，11 个外部工具里只有 `nature-ref-verifier` 有明确的使用记录；`ppt-master` 出过 pptx。其余九个都没有产物证明。在验证之前，不得写进任何 skill 的分工节。
 
 ---
 
