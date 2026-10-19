@@ -81,7 +81,8 @@ body{margin:0;background:var(--bg);color:var(--ink);
 h1{font-size:22px;margin:0 0 6px}
 .intro{color:var(--mute);margin:0 0 28px}
 .q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 18px 14px;margin:0 0 14px}
-.q h2{font-size:15px;margin:0 0 10px;font-weight:600}
+.q h2{font-size:15px;margin:0 0 4px;font-weight:600}
+.effect{color:var(--mute);font-size:13px;margin:0 0 12px;line-height:1.5}
 .opts{display:grid;gap:8px}
 label.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);
  border-radius:9px;cursor:pointer;transition:.12s}
@@ -114,7 +115,7 @@ code{background:#eef1f6;border-radius:5px;padding:1px 6px;font-size:13px}
 <div id="qs"></div>
 __DROP__
 </div>
-<div class="bar"><span id="msg"></span><button class="main" id="go">提交</button></div>
+<div class="bar"><span id="msg"></span><button class="main" id="go">提交确认</button></div>
 <script>
 const SPEC = __SPEC__;
 const INTAKE = __INTAKE__;
@@ -124,6 +125,10 @@ const box = document.getElementById('qs');
 SPEC.questions.forEach(function(q){
   const d = document.createElement('div'); d.className='q';
   const h = document.createElement('h2'); h.textContent = q.label; d.appendChild(h);
+  if (q.effect) {
+    const e = document.createElement('div'); e.className='effect'; e.textContent = q.effect;
+    d.appendChild(e);
+  }
   if (q.type === 'text') {
     const t = document.createElement('input');
     t.type = 'text'; t.placeholder = q.placeholder || '';
@@ -220,7 +225,7 @@ function missing(){
 function refresh(){
   const m = missing();
   document.getElementById('go').disabled = m.length > 0;
-  document.getElementById('msg').textContent = m.length ? ('还差：' + m.join('、')) : '';
+  document.getElementById('msg').textContent = m.length ? ('以下必填项尚未填写：' + m.join('、')) : '';
 }
 document.getElementById('go').addEventListener('click', function(){
   if (missing().length) return;
@@ -229,9 +234,9 @@ document.getElementById('go').addEventListener('click', function(){
    .then(function(r){ return r.json(); })
    .then(function(){
      const files = Array.from(document.querySelectorAll('#files li span:first-child')).map(function(x){ return x.textContent; });
-     let html = '<h1>已提交</h1><p class="intro ok">回到对话即可，我会接着做。</p>';
+     let html = '<h1>确认已提交</h1><p class="intro ok">请返回对话界面，制作将据此继续。</p>';
      if (INTAKE) {
-       html += '<p class="note">文件已存到 <code>' + INTAKE + '</code>，共 ' + files.length + ' 个。还缺的我会在对话里点名。</p>';
+       html += '<p class="note">文件已存至 <code>' + INTAKE + '</code>，共 ' + files.length + ' 项。缺失的材料将在对话中逐项列出。</p>';
      }
      document.querySelector('.wrap').innerHTML = html;
      document.getElementById('go').disabled = true;
@@ -242,8 +247,8 @@ refresh();
 </script></body></html>"""
 
 DROP_HTML = """<div class="drop" id="drop">
-  <div><b>把内容稿 / 图片 / 表格拖进来</b></div>
-  <div>也可以点这里选文件 · 单文件上限 100 MB</div>
+  <div><b>将内容稿、图像或表格文件拖入此区域</b></div>
+  <div>亦可点击选择文件 · 单一文件上限 100 MB</div>
   <div id="dropnote" class="note" style="margin:8px 0 0"></div>
   <input type="file" id="pick" multiple hidden>
 </div>

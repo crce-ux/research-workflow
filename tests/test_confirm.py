@@ -174,3 +174,16 @@ def test_files_requires_token(srv_in):
     with pytest.raises(urllib.error.HTTPError) as e:
         urllib.request.urlopen(f"http://127.0.0.1:{srv_in.port}/files")
     assert e.value.code == 403
+
+
+def test_effect_is_carried_to_page(tmp_path):
+    spec = {"title": "t", "intro": "i",
+            "questions": [{"id": "a", "type": "text", "label": "A",
+                           "effect": "此项决定后续动作"}]}
+    s = confirm.ConfirmServer(spec, tmp_path / "a.json", 0)
+    s.start()
+    try:
+        body = urllib.request.urlopen(s.url).read().decode("utf-8")
+        assert "此项决定后续动作" in body
+    finally:
+        s.shutdown()
