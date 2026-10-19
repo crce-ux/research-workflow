@@ -76,7 +76,7 @@ def set_footer(text):
 
 
 def get_footer():
-    """读当前页脚文字（`ppt_check --docs` / 项目核对用）"""
+    """读当前页脚文字（项目核对用）"""
     return _style.FOOTER_TEXT
 
 
