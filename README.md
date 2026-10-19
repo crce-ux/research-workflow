@@ -5,8 +5,38 @@
 
 **一套从文献检索到成果交付的科研工作流**——带工具、门禁与判据。
 
+- **解决什么问题**：科研流程里每一步该用哪个 skill、判据有没有真的执行——一条命令给出体检结论。
+- **一条命令跑通**：`uv run --with pytest python scripts/doctor.py`
+- **适用人群**：同时使用多个 skill 做科研、需要确认工具链没坏的人。
+
 **本仓是一套实际在跑的系统**——下面的每一步、每一道门、每一个脚本
 都来自真实的科研工作。
+
+## 一条命令看到什么
+
+```
+doctor · 仓 D:\Github\research-workflow · repo-root D:/Github
+  项             判定
+  结构            ✅ 通过
+        汇总：13 个 skill · 错误 0 · 警告 3
+  资产            ✅ 通过
+        ✅ 硬门禁通过 ｜ 文档引用有效性（提示级） 48
+  路由            ✅ 通过
+        ✅ 全过
+  手册            ✅ 通过
+        ✅ 全过
+  副本① 仓内        ✅ 通过
+        ✅ 全部副本与正本一致
+        不一致 0 · 无正本 0
+  副本② 观测库       ✅ 通过
+        ✅ 全部一致（11 个已部署 skill）
+  单测            ✅ 通过
+        366 passed, 1 skipped in 8.61s
+
+✅ 全绿
+```
+
+七项任一未过，按输出逐条处置。
 
 ---
 
@@ -109,7 +139,7 @@ scripts/
   evidence/                  证据表生成、日常文献表、一致性核查
   data/                      数据管线（缺失率报告）
   design/                    研究设计（样本量 → 需招募 → 可招募）
-  checks/                    **20 个门禁机检** + 辅助比对与整理工具
+  checks/                    **22 个门禁机检**（1 个在 evidence/）+ 辅助比对与整理工具
   ppt/                       PPT 生成与质检工具链
 manuals/                     49 份流程手册原文（已去敏化）
   workflow/                  各阶段流程手册
@@ -161,7 +191,7 @@ templates/
 ## 测试与 CI
 
 ```bash
-uv run --with pytest python -m pytest tests/ -q     # 43 个测试
+uv run --with pytest python -m pytest tests/ -q     # 366 passed, 1 skipped
 ```
 
 | 覆盖什么 | 为什么测它 |
