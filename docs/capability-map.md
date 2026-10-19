@@ -40,7 +40,7 @@
 | 支线 | 同行评议 | `nature-reviewer` ❌ ／ `academic-paper-reviewer` **✅ 已验证 2026-10-19** | 前者不在 allowlist；后者可调用 | `peer-review`（五层轴，已验证可跑） | **三选一**：自有五层轴、ARS 多席位、两者并用 |
 | E5 | 投稿前自审 | `academic-paper-reviewer` | **✅ 同上一行** | `text-self-review` | 同上 |
 | 支线 | 全管线编排 | `academic-pipeline` | **⚠️ 可调用但安装缺件** | 无 | **不接**：缺 `shared/` 与 `scripts/`，Stage 3′ 的强制检查脚本不存在 |
-| 支线 | 论文编排 | `academic-paper` | 可调用·未跑 | 无 | 视二轮验证结果 |
+| 支线 | 论文编排 | `academic-paper` | **✅ 可调用·部分适用 2026-10-19** | `ai-academic-writing` | **只用于英文路线**：不支持 GB/T 7714，无简体中文 |
 | 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
 | 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
@@ -247,6 +247,23 @@ Skill nature-reviewer is not in this session's skills allowlist
 > 另有版本号自相矛盾：标题写 v3.15.0，frontmatter 写 3.19.0。
 
 **结论：不接。** 要跑完整管线得先补齐安装包；现阶段的用法是直接调用它依赖的三个子技能。
+
+---
+
+**14. academic-paper — 可调用，但对中文投稿不适用**
+
+| 项 | 事实 |
+|---|---|
+| 可调用 | 是 |
+| 模式 | 11 种：full / outline-only / plan / revision / abstract-only / lit-review / format-convert / citation-check / revision-coach / disclosure / rebuttal-audit |
+| 最轻模式 | `outline-only`（Phase 0–2），但仍要求先确认 Paper Configuration Record |
+| **子代理** | **0 个**。12 个「agents」是 `agents/` 下的人设文件，不是并行子代理 |
+| **引用格式** | 只支持 APA 7 / Chicago / MLA 9 / IEEE / Vancouver，**不支持 GB/T 7714-2015** |
+| **语言** | EN / zh-TW / Bilingual，**没有简体中文**；双语摘要固定 zh-TW + EN |
+| 版本 | 元数据 3.2.0，正文多处写 v3.9.2 |
+
+> **对陈晨的路线含义**：中文期刊投稿不能用它做格式转换与摘要。英文路线可以用。
+> 另注意：`academic-paper-reviewer` 实测起了 2 个并行子代理，`academic-paper` 一个都没有——**两个技能的「多 agent」不是一回事**。
 
 ---
 
