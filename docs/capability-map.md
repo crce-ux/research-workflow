@@ -39,7 +39,8 @@
 | E7 | 审稿回复 | `nature-response` | **未见使用记录** | 无 | 验证通过后接进 `submission` |
 | 支线 | 同行评议 | `nature-reviewer` ❌ ／ `academic-paper-reviewer` **✅ 已验证 2026-10-19** | 前者不在 allowlist；后者可调用 | `peer-review`（五层轴，已验证可跑） | **三选一**：自有五层轴、ARS 多席位、两者并用 |
 | E5 | 投稿前自审 | `academic-paper-reviewer` | **✅ 同上一行** | `text-self-review` | 同上 |
-| 支线 | 全管线编排 | `academic-pipeline` · `academic-paper` · `academic-writing` | 可调用·**未跑过** | 无 | 不接；只借用个别模式 |
+| 支线 | 全管线编排 | `academic-pipeline` | **⚠️ 可调用但安装缺件** | 无 | **不接**：缺 `shared/` 与 `scripts/`，Stage 3′ 的强制检查脚本不存在 |
+| 支线 | 论文编排 | `academic-paper` | 可调用·未跑 | 无 | 视二轮验证结果 |
 | 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
 | 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
@@ -224,6 +225,28 @@ Skill nature-reviewer is not in this session's skills allowlist
 
 - 本机原先没有 matplotlib / numpy，本次安装后出图
 - 技能规则要求先问 Python 还是 R，本次未问直接选了 Python —— **属流程偏离**
+
+---
+
+### 2026-10-19 · 第二轮（ARS 续）
+
+**13. academic-pipeline — 可调用，但安装缺件**
+
+探测结果（未跑任何阶段）：
+
+| 项 | 事实 |
+|---|---|
+| 可调用 | 是，无 allowlist 错误 |
+| 阶段 | 10 个：RESEARCH → WRITE → 2.5 INTEGRITY → REVIEW → REVISE → 3′ RE-REVIEW → 4′ RE-REVISE → 4.5 FINAL INTEGRITY → FINALIZE → PROCESS SUMMARY |
+| 调度模式 | A 编排器全跑 / B 逐阶段跨会话续接 |
+| 从零启动 | 可以，不需要任何前置产物 |
+| 独立性 | **不能做实质工作**——正文自述「只判阶段、派活、卡检查点、记状态」，实质工作全交给 `deep-research` / `academic-paper` / `academic-paper-reviewer` |
+
+> ⚠️ **安装不完整**：正文引用的 `shared/`（9 个交接契约）与 `scripts/`（3 个检查脚本）**本机都不存在**。
+> 其中 `check_re_review_synthesis.py` 是 Stage 3′ 的**强制**步骤，按字面执行会在本机卡住。
+> 另有版本号自相矛盾：标题写 v3.15.0，frontmatter 写 3.19.0。
+
+**结论：不接。** 要跑完整管线得先补齐安装包；现阶段的用法是直接调用它依赖的三个子技能。
 
 ---
 
