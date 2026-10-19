@@ -126,7 +126,8 @@ python scripts/confirm.py --spec references/confirm-spec.json \
 |---|---|---|
 | 要一轮**系统性深度调研**（不止检索，要成报告） | `deep-research` | ✅ **用过 2 次**，结论直接改过研究设计（三思路 → 五思路） |
 | 引用交叉核对 | `nature-ref-verifier` | ✅ 用过 |
-| 合法获取全文 | `nature-downloader` | ⚪ 未验证 |
+| 合法获取全文 | `nature-downloader` | ✅ **已验证 2026-10-19**（部分可用，见下） |
+| 多库检索执行 | `nature-academic-search` | ✅ **已验证 2026-10-19** |
 
 ### ⛔ 不要用
 
@@ -135,12 +136,16 @@ python scripts/confirm.py --spec references/confirm-spec.json \
 | `pyzotero` | **试过、失败**——本机未装且临时装包超时，已改用**标准库直连 Zotero Web API** |
 | `opencite` · `nature-literature-pipeline` | 据技能精简决策（2026-08-31）关闭。⚠️ **该清单此后有变动**，用前先确认 |
 
-### ⚪ 装了但**没有任何使用痕迹**
+### ✅ 已验证（2026-10-19 实测）
 
-`nature-academic-search` · `nature-reader` · `nature-paper-card`
+| 工具 | 能做什么 | 已知限制 |
+|---|---|---|
+| `nature-academic-search` | 多库检索，出 md + json 两份产物 | Semantic Scholar 429、Google Scholar 失败；**CrossRef 返回的是相关度匹配，不能当命中数** |
+| `nature-downloader` | 取开放获取全文 | **只对直链稳定**（arXiv 成功）；出版商 DOI 路线的元数据可能标 `confirmed_oa` 而实际取不到；MDPI 直链 403 |
 
-> **别因为「装了」就以为「能用」。** nature-academic-search、nature-reader、nature-paper-card 这三个找不到产物或日志记录——
-> 真要用，**先自己验一遍**，别当成熟件。
+**分工**：它跑检索与下载；**去重、逐库计数、覆盖声明 N→M→K 仍由本 skill 出**。它不给逐库计数，拿不到就写「未报告」，不许按「已覆盖」处理。
+
+**失败时的回落**：下载失败 → 先试 Europe PMC 的 OA 副本，再试机构权限，最后标注「未取得全文」并把该条排除出证据表。
 
 ---
 
