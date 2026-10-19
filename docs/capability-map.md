@@ -21,13 +21,13 @@
 
 | 阶段 | 能力 | 现成工具 | 状态 | 本库实现 | 动作 |
 |---|---|---|---|---|---|
-| P | 单篇精读 | `nature-reader` · `nature-paper-card` | **未见使用记录** | `paper-reading` | 先验证；不可用则只用本库五态 |
+| P | 单篇精读 | `nature-reader` · `nature-paper-card` | **✅ 均已验证 2026-10-19** | `paper-reading` | **分工**：它们读，我们定口径与回填 |
 | A | 检索 | `nature-academic-search` | **✅ 已验证 2026-10-19**（有产物；两个源失败） | `literature-pipeline` | **调用**：它跑检索，我们算覆盖声明 |
 | A | 全文获取 | `nature-downloader` | **✅ 部分可用 2026-10-19**（arXiv 成功；出版商与 MDPI 403） | 无 | **有条件调用**：开放获取直链走它，其余回落下文 |
 | A | 引用核验 | `nature-ref-verifier` | 已验证（用过） | `check_ref_citations` | **分工**：它查存在性，我们查编号一致性 |
 | B | 成文 / 文体 | `nature-writing` | **✅ 已验证 2026-10-19** | `ai-academic-writing` | **调用**：它出文体，我们管判据；`paper-spine` 仍未验证 |
 | B | 润色 | `nature-polishing` | **✅ 已验证 2026-10-19** | 无 | **调用**：接进 ④ 润色 |
-| B | 配图 | `nature-figure` | 已接入·**未验证产物** | 无 | 先各跑一次 |
+| B | 配图 | `nature-figure` | **✅ 已验证 2026-10-19** | 无 | **调用**；需 matplotlib/numpy，首次会装包 |
 | C | 出片 | `ppt-master` | 已验证（出过 pptx） | `academic-slides` 内容侧 | 保持：它出片，我们管讲者侧 |
 | C | 讲稿 / 幻灯片体检 | 无 | — | `academic-slides` | 本库独有 |
 | D | 研究设计 | 无 | — | `study-design` | 本库独有 |
@@ -199,6 +199,34 @@ Skill nature-reviewer is not in this session's skills allowlist
 
 ---
 
+### 2026-10-19 · 第五批（阅读与配图）
+
+**10. nature-reader — 可用**
+
+| 项 | 事实 |
+|---|---|
+| 产物 | `paper.md` 122,044 字节；`source_map.json` 49 块；`translation_notes.md`；`assets/` 5 张 300dpi 图 |
+| 覆盖 | 正文 35 组中英对照、图注 5 组、图 5 幅、表 3 张、参考文献 87 条（照录未译） |
+| 对齐 | 逐段一一对应；双栏跨栏段落合并；图表放在首次实质提及处 |
+| 额外价值 | 标注了原文 3 处缺陷：摘要拼写、p.8 语法残缺、三处体积合计口径不一致 |
+
+**11. nature-paper-card — 可用，但有一个坑**
+
+16/16 模块齐全，内置审计 14 项全通过，检出 111 个 `[Paper: PDF p. N]` 指针。
+
+> ⚠️ **坑**：`prepare_paper.py` 自动识别图为 0、表为 0（PDF 图注匹配不到）。卡内的 5 图 3 表是人工补入的。**用它时不要相信自动图表识别，先核一遍。**
+
+**12. nature-figure — 可用**
+
+产出三格式：PNG（2102×1653，600dpi）、SVG（89×70mm，文字可编辑）、PDF（TrueType），另附绘图源码、源数据、QA 说明。自检 13 通过、1 警告（未导 TIFF）。
+
+两条环境事实：
+
+- 本机原先没有 matplotlib / numpy，本次安装后出图
+- 技能规则要求先问 Python 还是 R，本次未问直接选了 Python —— **属流程偏离**
+
+---
+
 ## 四、为什么不直接全接
 
 装了不等于能用。`literature-pipeline` 里已经记过一次教训：
@@ -214,3 +242,29 @@ Skill nature-reviewer is not in this session's skills allowlist
 - 每次用外部工具完成一次真实任务，回来更新状态列，写上日期
 - 外部工具的 README 改版后，原记录可能失效，改版即降级为「未验证」
 - 本表只收录**自己验证过**的工具；索引里的其他同类放 `external-skills.md`，不进本表
+
+
+---
+
+## 六、2026-10-19 验证总账
+
+| 工具 | 状态 | 关键限制 |
+|---|---|---|
+| `nature-academic-search` | ✅ 可用 | Semantic Scholar 429、Google Scholar 失败；CrossRef 数是相关度不是命中 |
+| `nature-downloader` | ⚠️ 部分 | 只对开放获取直链稳定；出版商 DOI 与 MDPI 403 |
+| `nature-reader` | ✅ 可用 | — |
+| `nature-paper-card` | ✅ 可用 | **自动图表识别为 0，需人工补** |
+| `nature-writing` | ✅ 可用 | — |
+| `nature-polishing` | ✅ 可用 | 附带修订说明与术语台账 |
+| `nature-figure` | ✅ 可用 | 依赖 matplotlib/numpy；会先问 Python/R |
+| `nature-statistics` | ✅ 可用 | 42 例只能检出 d≈0.88 以上 |
+| `nature-experiment-log` | ✅ 可用 | — |
+| `nature-proposal-writer` | ✅ 可用 | **只出框架，不出正文** |
+| `nature-reviewer` | ❌ 不可用 | 不在 allowlist |
+| `academic-paper-reviewer` | ✅ 可用 | 约 3 分钟；多席位并行 |
+| `academic-paper` · `academic-pipeline` · `academic-writing` | 可调用·未跑 | — |
+| `nature-ref-verifier` | 曾用过·未复验 | — |
+| `nature-paper-to-patent` · `nature-paper2ppt` · `paper-spine` | 未验证 | — |
+| `ppt-master` | ✅ 出过 pptx | — |
+
+**十四项已验证通过，一项确认不可用（`nature-reviewer`），六项未验。**
