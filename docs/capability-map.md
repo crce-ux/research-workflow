@@ -37,7 +37,9 @@
 | E6 | 选刊 | 无 | — | `submission` | 本库独有 |
 | E7 | 成果台账 | 无 | — | `submission` | 本库独有 |
 | E7 | 审稿回复 | `nature-response` | **未见使用记录** | 无 | 验证通过后接进 `submission` |
-| 支线 | 同行评议 | `nature-reviewer` | **❌ 不可调用**（不在 allowlist） | `peer-review`（五层轴，已验证可跑） | 用本库 |
+| 支线 | 同行评议 | `nature-reviewer` ❌ ／ `academic-paper-reviewer` **✅ 已验证 2026-10-19** | 前者不在 allowlist；后者可调用 | `peer-review`（五层轴，已验证可跑） | **三选一**：自有五层轴、ARS 多席位、两者并用 |
+| E5 | 投稿前自审 | `academic-paper-reviewer` | **✅ 同上一行** | `text-self-review` | 同上 |
+| 支线 | 全管线编排 | `academic-pipeline` · `academic-paper` · `academic-writing` | 可调用·**未跑过** | 无 | 不接；只借用个别模式 |
 | 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
 | 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
@@ -158,6 +160,42 @@ Skill nature-reviewer is not in this session's skills allowlist
 产物是完整的国自然章节框架：立项依据与研究内容（1.1–1.5）、研究基础与工作条件（2.1–2.4）、其他需要说明的问题、附件、参考文献。
 
 > ⚠️ **分工要守住**：它出框架，`grant-diagnosis` 做诊断。国自然明文禁止用生成式 AI 直接生成申请书正文，**框架可以，正文不行**。
+
+---
+
+### 2026-10-19 · 第四批（ARS）
+
+**9. ARS 组件 — 可调用**
+
+本机可调用的 ARS 技能五个（按实测调用，不按目录）：
+
+| 技能 | 可调用 | 说明 |
+|---|---|---|
+| `academic-writing` | 是 | |
+| `academic-paper` | 是 | |
+| `academic-paper-reviewer` | 是 | 已实跑 |
+| `academic-pipeline` | 是 | 未跑 |
+| `academic-slides` | 是 | **本库自有，不是 ARS 的** |
+
+没有名为 `academic-research-skills` 的独立技能；ARS 是这组技能的共同前缀。
+
+**实跑：`academic-paper-reviewer`，`methodology-focus` 模式**
+
+| 项 | 事实 |
+|---|---|
+| 输入 | arXiv:2503.01761v3，15 页，抽取 77,102 字符 |
+| 用时 | 约 3 分钟（技能探测另计 3–4 分钟） |
+| 多 agent | **有**：方法学席位 112 秒、EIC 席位 27 秒，两个子代理并行、互不可见 |
+| 产出 | 3 条方法学意见 + 2 份独立席位报告 |
+
+它找到的具体问题（对同一篇论文）：
+
+1. 摘要写 `ICC >0.89, DSC >0.85`，Table 2 左半球为 ICC 0.863、DSC 0.837–0.839 —— **摘要与主表冲突**
+2. Table 2 的亚区「inter-rater reliability」实际是固定同一 whole-claustrum mask 后的 landmark 放置一致性；Table 1 三列亚区体积可逐列加总回 1693.0 / 1729.0，证明没有独立分割
+3. 亚区 DSC 0.925–0.948 反高于 whole 0.838 —— 方向不合理
+
+> **判断**：ARS 的审稿席位是真能找问题的，不是泛泛而谈。
+> 怎么用（当结论 / 当线索 / 不用）待定，不作预设。
 
 ---
 
