@@ -30,6 +30,10 @@ CANON_DIRS = ["scripts/checks", "scripts/literature", "scripts/evidence",
               "scripts/data", "scripts/design", "scripts/ppt"]
 CANON_REPO = "research-workflow"        # 正本所在的仓名
 
+# 根目录下**要分发**的脚本。维护工具（doctor / sync / deploy / run_checks / audit_manuals）
+# 不进分发集，所以根目录不整体扫，只认这份白名单。
+CANON_ROOT_FILES = ["confirm.py"]
+
 # ⚠️ 唯一一处改名映射：正本 skill_selfcheck.py → 分发名 selfcheck.py
 RENAME = {"skill_selfcheck.py": "selfcheck.py"}
 
@@ -48,6 +52,10 @@ def build_index(canon):
             continue
         for f in sorted(cd.glob("*.py")):
             index[RENAME.get(f.name, f.name)] = f
+    for name in CANON_ROOT_FILES:
+        f = canon / "scripts" / name
+        if f.is_file():
+            index[RENAME.get(name, name)] = f
     return index
 
 
