@@ -29,6 +29,7 @@
 | B | 润色 | `nature-polishing` | **✅ 已验证 2026-10-19** | 无 | **调用**：接进 ④ 润色 |
 | B | 配图 | `nature-figure` | **✅ 已验证 2026-10-19** | 无 | **调用**；需 matplotlib/numpy，首次会装包 |
 | C | 出片 | `ppt-master` | 已验证（出过 pptx） | `academic-slides` 内容侧 | 保持：它出片，我们管讲者侧 |
+| C | 论文转 PPT | `nature-paper2ppt` | **✅ 已验证 2026-10-19**（14 页可编辑 pptx） | 无 | 论文直接转汇报时优先用它 |
 | C | 讲稿 / 幻灯片体检 | 无 | — | `academic-slides` | 本库独有 |
 | D | 研究设计 | 无 | — | `study-design` | 本库独有 |
 | E1–E4 | 数据管线 | `nature-statistics` | **✅ 已验证 2026-10-19** | `data-pipeline`（管流程与留痕） | **调用**：方法问它，留痕问我们 |
@@ -40,6 +41,7 @@
 | 支线 | 同行评议 | `nature-reviewer` ❌ ／ `academic-paper-reviewer` **✅ 已验证 2026-10-19** | 前者不在 allowlist；后者可调用 | `peer-review`（五层轴，已验证可跑） | **三选一**：自有五层轴、ARS 多席位、两者并用 |
 | E5 | 投稿前自审 | `academic-paper-reviewer` | **✅ 同上一行** | `text-self-review` | 同上 |
 | 支线 | 全管线编排 | `academic-pipeline` | **⚠️ 可调用但安装缺件** | 无 | **不接**：缺 `shared/` 与 `scripts/`，Stage 3′ 的强制检查脚本不存在 |
+| 支线 | 论文改写编排 | `paper-spine` | **✅ 可调用 2026-10-19**（12 阶段，Stage 4 需人工确认） | `ai-academic-writing` | 视需要；门禁硬，一次跑不完 |
 | 支线 | 论文编排 | `academic-paper` | **✅ 可调用·部分适用 2026-10-19** | `ai-academic-writing` | **只用于英文路线**：不支持 GB/T 7714，无简体中文 |
 | 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
 | 支线 | 专利 | `nature-paper-to-patent` | **✅ 已验证 2026-10-19**（md + docx） | 无 | **调用**；需 python-docx |
@@ -289,6 +291,31 @@ Skill nature-reviewer is not in this session's skills allowlist
 前序技术与链接是**待填占位，没有虚构**——这一点符合本库对 AI 写文书的要求。
 
 环境：需 `python-docx`（已装 1.2.0）；`mmdc`、`pandoc` 未装，本轮未出 Mermaid 图。
+
+---
+
+**17. paper-spine — 可调用，门禁硬**
+
+12 个阶段：Intake → Research → Citation Support Bank → Motivation Confirmation → Humanize → Writing → Integrity Audit → LaTeX/PDF/Word → Submission → Translation → Review Response → Final Audit。
+
+实测执行到第 3 阶段，Stage 4 要求用户确认研究动机，**设计内阻塞**，未往下跑。产物 10 份，含配置、来源图、研究卷宗、SOTA 缺口图、引用支撑库。
+
+规模：16 条检索式，去重 444 条题录，278 条 2023+ 带 DOI；引用候选池 42 行，近期占 85.7%，门禁通过（要求 ≥29 行）。
+
+**它顺手查出的两件事**：
+
+1. `claustrum[TA] AND (clozapine[TA] OR antipsychotic[TA])` 全库仅 **4 条**，逐条看**无一条是人体屏状核 × 氯氮平疗效研究**
+2. 本地那份 `kang2025.pdf` 是**人工分割协议预印本**，不是体积研究那篇（PMID 40801969）——两份文献被混过
+
+**18. nature-paper2ppt — 可用，产物接近成品**
+
+| 项 | 事实 |
+|---|---|
+| 产物 | `final_presentation_cn.pptx`，708,499 字节，16:9，**14 页** |
+| 内容 | 5 张图、3 个原生表格、1 个原生柱形图，14 页均有演讲者备注 |
+| 可编辑 | 文字 / 表格 / 图表 / 版式均可编辑；5 张图为位图，不可编辑 |
+| 审计 | 初稿 high=0 / medium=2；修订后 **high=0 / medium=0** |
+| 未做 | 本机无 LibreOffice，**未做渲染级目视复核**，观感需在 PowerPoint 里看 |
 
 ---
 
