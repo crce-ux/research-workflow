@@ -33,6 +33,7 @@
 |---|---|
 | [`pipeline.md`](pipeline.md) | **流程走到哪、该过哪道门**——P→A→B→C→D→E + 五门 + 六轴 + 闭环 |
 | [`skills.md`](skills.md) | **该用谁**——自研 10 个 × 已装外部，以及哪里还空着 |
+| [`stage-artifacts.md`](stage-artifacts.md) | **外部工具换成什么都要产出同一种格式**——中间格式表与三档转换 |
 | [`capability-map.md`](capability-map.md) | **动手前先查**——能力 × 工具 × 状态；「装了不等于能用」 |
 | [`external-skills.md`](external-skills.md) | **外部同类项目的许可与运行足迹**——复制前先看许可列 |
 | [`runtime.md`](runtime.md) | **工具怎么接**——能力 → 候选工具；以及为什么不写死工具 ID |
