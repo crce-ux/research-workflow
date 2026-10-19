@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""pptx_shapes.py —— 模板拆解 · pptx 前端（零依赖）
+"""pptx_shapes.py —— pptx 形状级读取（零依赖）
 
 【干什么】
-    直接读 `.pptx`（其实是个 zip），出与 `tpl_reader.py` 同一套形状级记录。
-    有了本文件，模板拆解不再需要 ppt-master——`zipfile` + `ElementTree` 就够。
+    直接读 `.pptx`（其实是个 zip），逐形状读出几何、形状族与颜色角色。
+    `zipfile` + `ElementTree` 就够，不依赖 ppt-master。
 
 【为什么可以自己读】
     模板拆解只要三样：**几何、形状族、颜色角色**。
@@ -16,8 +16,7 @@
 【两处要小心】
     ① 组合 `p:grpSp` 的子形状坐标在组自己的坐标系里，要按 `chOff` / `chExt` 换算。
     ② 没有 `a:xfrm` 的占位符继承母版的帧。本文件**不求继承**——
-       母版与版式形状另走一遍，标 `scope=master` / `layout`，
-       由 `tpl_reader` 分到 INHERIT 桶。ppt-master 的做法相同。
+       母版与版式形状另走一遍，标 `scope=master` / `layout`。ppt-master 的做法相同。
 
 【单位】
     坐标 `a:off/@x`、`a:ext/@cx` 是 EMU（914400 EMU = 1 英寸）。

@@ -35,6 +35,13 @@ PPT 一律走 ppt-master。**不自建模板、不用自建骨架与配方。**
 - **版式跟着信息结构走**——表格页要表格版式，不能把表压成方框。
 - **导出后用 PowerPoint 渲染逐页看**——Chrome 渲 SVG 不反映换行，会误判。
 
+## Anti-Patterns
+
+- **Never** 自建模板、自建骨架或版式配方——出片一律走 ppt-master 自带模板
+- **Never** 拿 `replication_mode: mirror` 的模板装新内容
+- **Never** 只看 Chrome 渲出的 SVG 判断换行，导出后必须用 PowerPoint 逐页渲染看过
+- **Never** 跳过 `svg_quality_checker --template-mode` 直接交付
+
 ## 上下游接口
 
 - **上游给我什么**：内容稿与每页要点（来自 ai-academic-writing）、讲稿与制作稿（来自 academic-slides）

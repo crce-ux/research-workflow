@@ -18,7 +18,7 @@
 doctor · 仓 D:\Github\research-workflow · repo-root D:/Github
   项             判定
   结构            ✅ 通过
-        汇总：13 个 skill · 错误 0 · 警告 3
+        汇总：13 个 skill · 错误 0 · 警告 1
   资产            ✅ 通过
         ✅ 硬门禁通过 ｜ 文档引用有效性（提示级） 48
   路由            ✅ 通过
@@ -31,7 +31,7 @@ doctor · 仓 D:\Github\research-workflow · repo-root D:/Github
   副本② 观测库       ✅ 通过
         ✅ 全部一致（11 个已部署 skill）
   单测            ✅ 通过
-        366 passed, 1 skipped in 8.61s
+        366 passed, 1 skipped
 
 ✅ 全绿
 ```
@@ -144,14 +144,12 @@ scripts/
 manuals/                     49 份流程手册原文（已去敏化）
   workflow/                  各阶段流程手册
   checklists/                出稿清单（含「出稿检查总表」）
-  templates/                 骨架与模板
+  templates/                 文档模板
   ppt/                       PPT 工具链
   writing/                   写作质量（含「文本迭代自查」）
   funding/                   基金与投稿
   notes/                     调研与评估记录
   取数/                      取数手册
-templates/
-  ppt-skeletons/             整页 SVG 骨架（可直接复制填内容）
 ```
 
 > 📖 **`docs/` 讲整体运转，`manuals/` 讲每一步具体怎么做、当时踩了什么坑。**

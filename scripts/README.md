@@ -159,23 +159,13 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `ppt_init.py` | 新项目初始化 |
 | `ppt_style.py` | **样式真相源**（改本文件，全库统一） |
 | `ppt_kit.py` | 组件库 |
-| `make_svg_skeletons.py` | 生成 SVG 骨架 |
 | `ppt_build.py` | **一条命令出片**（讲稿→分镜→渲染→导出） |
 | `ppt_check.py` | 源体检（ERROR=0 才导出） |
 | `render_svg.py` / `render_templates.py` | 渲染 |
 | `render_and_qa_pptx.py` | 成品像素体检 |
 | `make_notes.py` | 讲稿 → PPT 备注 |
 | `slide_fit.py` | **画之前的版面算术**：容量、带高预算、**配图可读性**（图内字号 × 显示宽 ÷ 图宽 < 9px 即不可读） |
-| `pptx_shapes.py` | **模板拆解·pptx 前端**：zipfile + ElementTree 直读 OOXML；组变换、主题色、占位符帧继承 |
-| `tpl_reader.py` | **模板拆解·输入层**：svg-flat / pptx → 形状级台账；跨画布折算；背景层与继承件分桶 |
-| `tpl_parts.py` | **模板拆解·判据层**：A 判定 · B 候选 · C 证据；指纹与 deck 去重；收录判据 |
-| `tpl_decompose.py` | **模板拆解·命令**：跑完出报告；勾选后 `--accept` 写进配方库 |
-| `tpl_pagetypes.py` | **页型**：检测 / 从模板量参数 / 用参数重画整页。一个页型一对函数 |
-| `tpl_build.py` | **页型·命令**：`extract`（模板→参数）/ `render`（参数+内容→页）/ `list` |
-| `tpl_cells.py` | **格子层**（试验中）：递归切行切列 → 每格判形态。不问「本页是哪一种页型」，判据与模板无关 |
-| `tpl_modules.py` | **模块层**（试验中）：区块级 extract/render，**装饰一起量**。矢量装饰量参数重画，位图装饰从背景图裁片 |
-| `tpl_slots.py` | **槽位层**（试验中）：一页的文字件各是什么角色（标题 / 标签 / 正文 / 编号 / 数值 / 页脚）。自动提取模块的缺口 |
-| `tpl_record.py` | **模块记录**（试验中）：一块区域 → 一条记录（几何 + 装饰 + 槽位）→ 通用重放。`--deck` 走整份文件。区域切分两式：`page` 整片 / `blocks` 按大块空白 |
+| `pptx_shapes.py` | **pptx 形状级读取**：zipfile + ElementTree 直读 OOXML；组变换、主题色、占位符帧继承 |
 
 > ⚠️ **做 PPT 走全链路**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 

@@ -421,85 +421,6 @@ def check_svg(path):
     return E, Wn, I
 
 
-# ══════════════════════════════════════════════════════════
-#  --docs：跨文档口径核对（防"改一处漏一处"）
-# ══════════════════════════════════════════════════════════
-#: 仓库根 = `科研/`（本文件在 科研/_系统/_流程与工具/_scripts/，向上三层）
-ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    "..", "..", ".."))
-
-#: (文件, 正则, 期望值的来源键, 人类可读名)
-#: 每项 = (文档相对路径, 抓数字的正则, 事实键, 显示名)
-#
-# ⚠️ **本表只登记「应当写出数字」的位置。**
-# 若某文档已刻意改为「指向单一出处、不复述数字」（见 全流程总纲 §「改一处漏一处」的诊断），
-# 就**不该**在本表登记——否则会恒报「写 None」。
-# 2026-09-22 清理：删除 3 条此类过期登记
-#   · 全流程总纲「脚本数」「配方数」——该文已改为指向 `_scripts/README.md`
-#   · 科研工作总览「脚本数」——该行已改为「总数见 `_scripts/README.md`」
-DOC_CLAIMS = [
-    (r"_系统\_流程与工具\_scripts\README.md", r"脚本清单（(\d+) 个）", "scripts", "脚本数"),
-    # ⚠️ README **在两处写了脚本数**（§一 标题 + 页脚）。
-    #    `check_assets` 只读页脚处，本脚本原先只读标题处 ——
-    #    2026-09-26 因此出现「一个说 25、一个说 26，谁都没发现两处打架」。
-    #    两处都登记，才能各自对得上。
-    (r"_系统\_流程与工具\_scripts\README.md", r"脚本 \*\*(\d+) 个\*\*", "scripts", "脚本数·页脚"),
-    (r"_系统\科研工作总览.md", r"\*\*(\d+) 个\*\*可套用配方", "recipes", "配方数"),
-    (r"_系统\_流程与工具\PPT视觉规范_国自然风格_20260915.md", r"\*\*(\d+) 个\*\*具体版式", "recipes", "配方数"),
-    (r"_系统\科研工作总览.md", r"\*\*(\d+) 个整页 SVG 骨架\*\*", "skeletons", "骨架数"),
-    (r"_系统\_流程与工具\PPT工具链速查_20260915.md", r"\*\*(\d+) 个\*\*整页 SVG", "skeletons", "骨架数"),
-    # ── 2026-09-26 补登：以下 4 处此前**只靠人工同步**，加配方 32 时全部需要手改。
-    #    「人工同步的落点」= 下次必然漏的落点 —— 一并纳入机器核对。
-    (r"_系统\_流程与工具\PPT工具链速查_20260915.md", r"\*\*(\d+) 个\*\*版式配方", "recipes", "配方数·速查"),
-    (r"_系统\_流程与工具\PPT工具链手册.md", r"\*\*(\d+) 个版式配方\*\*", "recipes", "配方数·手册"),
-    (r"_系统\_流程与工具\PPT工具链手册.md", r"\*\*(\d+) 个骨架（可复制）\*\*", "skeletons", "骨架数·手册"),
-    (r"_系统\_流程与工具\_scripts\README.md", r"生成 (\d+) 个整页版式骨架", "skeletons", "骨架数·脚本README"),
-    # ── 再补 3 处：加配方 32 时靠 grep 才找出来的"顺手提到骨架数"的地方。
-    #    这类「顺带一提的数字」最容易漏 —— 登记进来，下次自动报。
-    #    （dated 快照如《诊断_画面单调_20260922》《迁移检查_20260924》**刻意不登记**：
-    #      它们记的是当时的实况，改了反而失真。）
-    (r"_系统\_流程与工具\汇报PPT产出流程手册.md", r"（(\d+) 个整页骨架，复制即用", "skeletons", "骨架数·产出流程"),
-    (r"_系统\_流程与工具\Token消耗估算_20260919.md", r"（(\d+) 个整页骨架，复制即用", "skeletons", "骨架数·Token估算"),
-    (r"_系统\_流程与工具\核查方法\04_演讲产物审查协议.md", r"PPT版式配方库\s+(\d+) 个整页骨架", "skeletons", "骨架数·审查协议"),
-]
-
-
-def count_facts():
-    """实测当前数量（唯一真相）"""
-    S = os.path.join(ROOT, "_系统", "_流程与工具")
-    # ⚠️ 用通配而不是写死日期后缀 —— 目录改名（PPT骨架模板_YYYYMMDD）不该把检查弄断
-    n_svg = 0
-    for d in glob.glob(os.path.join(S, "PPT骨架模板*")):
-        n_svg += len([f for f in glob.glob(os.path.join(d, "*.svg"))])
-    libs = sorted(glob.glob(os.path.join(S, "PPT版式配方库*.md")))
-    n_rec = len(re.findall(r"^### 配方 (\d+)｜", open(libs[-1], encoding="utf-8").read(), re.M)) \
-        if libs else 0
-    n_scr = len([f for f in glob.glob(os.path.join(S, "_scripts", "*.py"))
-                 if not os.path.basename(f).startswith("_")])
-    return {"scripts": n_scr, "recipes": n_rec, "skeletons": n_svg}
-
-
-def check_docs():
-    facts = count_facts()
-    print("═══ 跨文档口径核对 ═══\n")
-    print("  实测：" + " ｜ ".join(f"{k} {v}" for k, v in facts.items()) + "\n")
-    bad = 0
-    for rel, pat, key, label in DOC_CLAIMS:
-        p = os.path.join(ROOT, rel.replace("\\", os.sep))
-        if not os.path.exists(p):
-            print(f"  ⚠️  缺文件 {rel}"); bad += 1; continue
-        m = re.search(pat, open(p, encoding="utf-8").read())
-        got = int(m.group(1)) if m else None
-        want = facts[key]
-        ok = got == want
-        if not ok:
-            bad += 1
-        print(f"  {'✅' if ok else '❌'} {label:<5} {os.path.basename(rel):<34} "
-              f"写 {got}，应为 {want}")
-    print(f"\n{'✅ 全库口径一致' if not bad else f'❌ {bad} 处不一致'}")
-    return bad
-
-
 def print_contrast_matrix():
     """调色板配对矩阵 —— **改配色后跑一次**。
 
@@ -643,8 +564,6 @@ def run_fix(files, dry):
 
 def main():
     ap = argparse.ArgumentParser(description="PPT 单页/整册体检（查 SVG 源）")
-    ap.add_argument("--docs", action="store_true",
-                    help="只做跨文档口径核对（脚本数/配方数/骨架数），不需要传路径")
     ap.add_argument("--contrast", action="store_true",
                     help="只打印调色板配对对比度矩阵（改配色后跑一次）")
     ap.add_argument("paths", nargs="*", help="SVG 文件或目录")
@@ -658,11 +577,8 @@ def main():
     if a.contrast:
         print_contrast_matrix()
         return 0
-    if a.docs:
-        n = check_docs()
-        return 1 if (a.strict and n) else 0
     if not a.paths:
-        ap.error("需要给出 SVG 路径，或用 --docs 做跨文档核对")
+        ap.error("需要给出 SVG 路径")
 
     files = []
     for p in a.paths:
