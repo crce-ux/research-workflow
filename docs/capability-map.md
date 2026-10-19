@@ -24,7 +24,7 @@
 | P | 单篇精读 | `nature-reader` · `nature-paper-card` | **✅ 均已验证 2026-10-19** | `paper-reading` | **分工**：它们读，我们定口径与回填 |
 | A | 检索 | `nature-academic-search` | **✅ 已验证 2026-10-19**（有产物；两个源失败） | `literature-pipeline` | **调用**：它跑检索，我们算覆盖声明 |
 | A | 全文获取 | `nature-downloader` | **✅ 部分可用 2026-10-19**（arXiv 成功；出版商与 MDPI 403） | 无 | **有条件调用**：开放获取直链走它，其余回落下文 |
-| A | 引用核验 | `nature-ref-verifier` | 已验证（用过） | `check_ref_citations` | **分工**：它查存在性，我们查编号一致性 |
+| A | 引用核验 | `nature-ref-verifier` | **✅ 复验通过 2026-10-19**（能抓「能解析但指向别的论文」） | `check_ref_citations` | **分工**：它查存在与匹配，我们查编号一致性 |
 | B | 成文 / 文体 | `nature-writing` | **✅ 已验证 2026-10-19** | `ai-academic-writing` | **调用**：它出文体，我们管判据；`paper-spine` 仍未验证 |
 | B | 润色 | `nature-polishing` | **✅ 已验证 2026-10-19** | 无 | **调用**：接进 ④ 润色 |
 | B | 配图 | `nature-figure` | **✅ 已验证 2026-10-19** | 无 | **调用**；需 matplotlib/numpy，首次会装包 |
@@ -42,7 +42,7 @@
 | 支线 | 全管线编排 | `academic-pipeline` | **⚠️ 可调用但安装缺件** | 无 | **不接**：缺 `shared/` 与 `scripts/`，Stage 3′ 的强制检查脚本不存在 |
 | 支线 | 论文编排 | `academic-paper` | **✅ 可调用·部分适用 2026-10-19** | `ai-academic-writing` | **只用于英文路线**：不支持 GB/T 7714，无简体中文 |
 | 支线 | 国自然 | `nature-proposal-writer` | **✅ 已验证 2026-10-19** | `grant-diagnosis` | **分工**：它出章节框架，我们做诊断；**不代写正文** |
-| 支线 | 专利 | `nature-paper-to-patent` | 已接入·**未验证产物** | 无 | 先各跑一次 |
+| 支线 | 专利 | `nature-paper-to-patent` | **✅ 已验证 2026-10-19**（md + docx） | 无 | **调用**；需 python-docx |
 | 横向 | 文本自查 | 无 | — | `text-self-review` | 本库独有 |
 
 **「未见使用记录」= 装了，但没有任何一次产物或日志证明它跑通过。**
@@ -264,6 +264,31 @@ Skill nature-reviewer is not in this session's skills allowlist
 
 > **对陈晨的路线含义**：中文期刊投稿不能用它做格式转换与摘要。英文路线可以用。
 > 另注意：`academic-paper-reviewer` 实测起了 2 个并行子代理，`academic-paper` 一个都没有——**两个技能的「多 agent」不是一回事**。
+
+---
+
+**15. nature-ref-verifier — 可用，且抓到了一类险情**
+
+输入 3 条引用，其中 1 条人为改错 DOI 末位。
+
+| 结果 | 条数 | 说明 |
+|---|---:|---|
+| Verified | 2 | 只有 Info 级提示（缺文章号、缺副标题） |
+| Needs fix | 1 | 见下 |
+| Unverifiable | 0 | |
+
+**那个错 DOI 能正常解析，不返回 404**，却指向 Meyers 2023 的另一篇论文。它靠标题 / 作者 / 页码比对捕获了错配，CrossRef 与 PubMed 双源一致。
+
+> **教训**：「DOI 打得开」不等于「引用是对的」。
+> 本库 `check_ref_citations` 只查编号一致性，**不查存在与匹配**——这一步交给它。
+
+**16. nature-paper-to-patent — 可用**
+
+把 kang2025 论文转成技术交底书骨架：`.md` 11,188 字节 + `.docx` 42,690 字节（121 段、2 表、18 标题，中文回读无乱码）。14 个节点：技术背景 / 现有技术及其缺点 / 要解决的技术问题 / 技术方案 / 优点 / 关键点与欲保护点 / 其它。
+
+前序技术与链接是**待填占位，没有虚构**——这一点符合本库对 AI 写文书的要求。
+
+环境：需 `python-docx`（已装 1.2.0）；`mmdc`、`pandoc` 未装，本轮未出 Mermaid 图。
 
 ---
 
