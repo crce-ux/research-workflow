@@ -165,7 +165,7 @@ frontmatter 白名单字段 · 正文 < 500 行 · 引用只走一层 · 是否�
 | `render_and_qa_pptx.py` | 成品像素体检 |
 | `make_notes.py` | 讲稿 → PPT 备注 |
 | `slide_fit.py` | **画之前的版面算术**：容量、带高预算、**配图可读性**（图内字号 × 显示宽 ÷ 图宽 < 9px 即不可读） |
-| `pptx_shapes.py` | **pptx 形状级读取**：zipfile + ElementTree 直读 OOXML；组变换、主题色、占位符帧继承 |
+| `pptx_shapes.py` | **pptx 形状级读取**：zipfile + ElementTree 直读 OOXML；组变换、主题色、占位符帧继承。独立工具，当前无自动调用方 |
 
 > ⚠️ **做 PPT 走全链路**——见 [`academic-slides`](https://github.com/crce-ux/academic-slides)。
 

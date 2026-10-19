@@ -137,10 +137,7 @@ def filter_pool(pool, args, warn):
             except ValueError:
                 continue
         if args.min_if and it["if"]:
-            try:
-                if float(it["if"]) < float(args.min_if):
-                    continue
-            except ValueError:
+            if ifnum(it["if"]) < float(args.min_if):
                 continue
         if args.min_if and not it["if"]:
             continue                      # 要求了 IF 但查不到 → 排除，不硬凑
@@ -151,11 +148,22 @@ def filter_pool(pool, args, warn):
     return out
 
 
+def ifnum(s):
+    """IF 取数值。JCR 里有 `<0.1` 这类写法，取区间端点。"""
+    if not s:
+        return 0.0
+    t = str(s).strip().lstrip("<≈~＜")
+    try:
+        return float(t)
+    except ValueError:
+        return 0.0
+
+
 def sort_pool(pool, key):
     if key == "if":
-        return sorted(pool, key=lambda x: float(x["if"] or 0), reverse=True)
+        return sorted(pool, key=lambda x: ifnum(x["if"]), reverse=True)
     if key == "zone":
-        return sorted(pool, key=lambda x: (int(x["zone"] or 9), -float(x["if"] or 0)))
+        return sorted(pool, key=lambda x: (int(x["zone"] or 9), -ifnum(x["if"])))
     return sorted(pool, key=lambda x: x["name"])
 
 

@@ -61,7 +61,29 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(os.path.dirname(HERE), "_journal_data")
+
+
+def _resolve_data_dir():
+    """按序取第一个存在的期刊数据目录。
+
+    ① 环境变量 `JOURNAL_DATA_DIR`
+    ② `CHEN_VAULT_RESEARCH/_系统/_流程与工具/_journal_data`（本机观测库）
+    ③ 仓内 `scripts/_journal_data`（自备数据时）
+    """
+    cands = []
+    if os.environ.get("JOURNAL_DATA_DIR"):
+        cands.append(os.environ["JOURNAL_DATA_DIR"])
+    vault = os.environ.get("CHEN_VAULT_RESEARCH")
+    if vault:
+        cands.append(os.path.join(vault, "_系统", "_流程与工具", "_journal_data"))
+    cands.append(os.path.join(os.path.dirname(HERE), "_journal_data"))
+    for c in cands:
+        if os.path.isdir(c):
+            return c
+    return cands[-1]
+
+
+DATA_DIR = _resolve_data_dir()
 CAS_CSV = os.path.join(DATA_DIR, "FQBJCR2025-UTF8.csv")
 JCR_CSV = os.path.join(DATA_DIR, "JCR2024-UTF8.csv")
 WARN_CSV = os.path.join(DATA_DIR, "GJQKYJMD2025.csv")
