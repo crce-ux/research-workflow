@@ -44,8 +44,10 @@ CHECKS = HERE / "checks"
 # ── 文档类型识别 ───────────────────────────────────────────
 # 判据看内容，不看文件名。
 TYPE_RULES = [
-    ("制作稿", [r"①", r"②", r"页面文字", r"版式建议"]),
-    ("讲稿", [r"口播", r"讲稿", r"逐字稿"]),
+    # 制作稿与内容稿都有 ①②，按各自的专属字段分开判
+    ("制作稿", [r"版式建议", r"图注", r"表格数据", r"讲稿备注"]),
+    ("内容稿", [r"内容稿", r"页面文字", r"这一页要说什么", r"为什么放它"]),
+    ("讲稿", [r"口播", r"逐字稿", r"讲稿"]),
     ("精读笔记", [r"\[Paper", r"\[Analysis", r"\[Hypothesis", r"精读笔记"]),
     ("证据表", [r"PICO", r"证据表", r"效应量\s*\|"]),
     ("设计书", [r"G1", r"G2", r"研究设计书", r"样本量估算"]),
@@ -55,14 +57,18 @@ TYPE_RULES = [
 
 # 每个类型追加的检查器（通用四件之外）
 TYPE_CHECKS = {
-    "制作稿": ["talk"],
-    "讲稿": ["talk"],
-    "精读笔记": ["note"],
-    "证据表": ["lit"],
-    "设计书": ["design"],
-    "数据/SAP": ["data"],
-    "审稿意见": ["review"],
+    "制作稿": [("talk", ["{doc}", "--kind", "制作稿"])],
+    "内容稿": [("talk", ["{doc}", "--kind", "内容稿"])],
+    "讲稿": [("talk", ["{doc}", "--kind", "讲稿"])],
+    "精读笔记": [("note", ["{doc}"])],
+    "证据表": [("lit", ["{doc}"])],
+    "设计书": [("design", ["{doc}"])],
+    "数据/SAP": [("data", ["{doc}"])],
+    "审稿意见": [("review", ["{doc}"])],
 }
+
+#: 可手动指定的类型
+TYPES = ["论文/综述"] + list(TYPE_CHECKS)
 
 # 检查器名 → 脚本名
 SCRIPT = {
@@ -100,13 +106,18 @@ LABEL = {
 }
 
 
-def detect_type(text: str) -> str:
+def detect_type_detail(text: str):
+    """返回 (类型, 命中标记数)。命中 ≤1 时把握低。"""
     best, score = "论文/综述", 0
     for name, pats in TYPE_RULES:
         s = sum(1 for p in pats if re.search(p, text))
         if s > score:
             best, score = name, s
-    return best
+    return best, score
+
+
+def detect_type(text: str) -> str:
+    return detect_type_detail(text)[0]
 
 
 # ── 解析器：各检查器输出 → 统一结构 ────────────────────────
@@ -223,14 +234,15 @@ def run_checker(name, argv, timeout=60):
         return None, "超时"
 
 
-def collect(doc: Path, kind: str, only: set[str] | None):
+def collect(doc: Path, kind: str, only: set[str] | None, forced: str | None = None):
     text = doc.read_text(encoding="utf-8", errors="replace")
-    dtype = detect_type(text)
+    auto, score = detect_type_detail(text)
+    dtype = forced or auto
     secmap = section_map(text.split("\n"))
-    kind = "讲稿" if dtype in ("讲稿", "制作稿") else "论文"
+    kind = "讲稿" if dtype in ("讲稿", "制作稿", "内容稿") else "论文"
     argv_sets = [(name, list(tpl)) for name, tpl in GENERIC]
-    for name in TYPE_CHECKS.get(dtype, []):
-        argv_sets.append((name, ["{doc}"]))
+    for name, tpl in TYPE_CHECKS.get(dtype, []):
+        argv_sets.append((name, list(tpl)))
 
     findings, ran, skipped = [], [], []
     for name, base in argv_sets:
@@ -252,7 +264,7 @@ def collect(doc: Path, kind: str, only: set[str] | None):
                              "section": sec,
                              "level": level_of(hit.get("rule", ""), hit.get("detail", "")),
                              **hit})
-    return dtype, findings, ran, skipped
+    return dtype, findings, ran, skipped, {"auto": auto, "score": score, "forced": forced}
 
 
 def dw(s: str) -> int:
@@ -273,8 +285,13 @@ def pad(s: str, width: int) -> str:
     return s + " " * (width - dw(s))
 
 
-def render(dtype, findings, ran, skipped, files, show_all=False):
-    print(f"audit · {files} · 识别为「{dtype}」\n")
+def render(dtype, findings, ran, skipped, files, show_all=False, meta=None):
+    head = f"audit · {files} · 识别为「{dtype}」"
+    if meta and meta.get("forced"):
+        head += "（手动指定）"
+    elif meta and meta.get("score", 0) <= 1:
+        head += f"（自动识别把握低：{meta.get('score', 0)} 个标记，可用 --type 指定）"
+    print(head + "\n")
     if not findings:
         print("  ✅ 未发现问题")
         print()
@@ -337,6 +354,7 @@ def main() -> int:
     ap.add_argument("--only", help="只跑指定检查器，逗号分隔")
     ap.add_argument("--strict", action="store_true", help="有问题时退出码 1")
     ap.add_argument("--all", action="store_true", help="展开信息级与附录")
+    ap.add_argument("--type", choices=TYPES, help="手动指定文档类型，跳过自动识别")
     a = ap.parse_args()
 
     p = Path(a.path)
@@ -354,9 +372,9 @@ def main() -> int:
     only = set(x.strip() for x in a.only.split(",")) if a.only else None
     all_findings, report = [], []
     for doc in docs:
-        dtype, findings, ran, skipped = collect(doc, "", only)
+        dtype, findings, ran, skipped, meta = collect(doc, "", only, a.type)
         all_findings += findings
-        report.append({"file": str(doc), "type": dtype,
+        report.append({"file": str(doc), "type": dtype, "meta": meta,
                        "findings": findings, "ran": ran, "skipped": skipped})
 
     if a.json:
@@ -364,7 +382,8 @@ def main() -> int:
                          ensure_ascii=False, indent=2))
     else:
         for r in report:
-            render(r["type"], r["findings"], r["ran"], r["skipped"], r["file"], a.all)
+            render(r["type"], r["findings"], r["ran"], r["skipped"], r["file"],
+                   a.all, r["meta"])
     return 1 if (a.strict and all_findings) else 0
 
 

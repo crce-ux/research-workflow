@@ -56,7 +56,7 @@ def test_parse_ref():
 
 
 def test_end_to_end_on_sample():
-    dtype, findings, ran, _ = audit.collect(ROOT / "examples" / "bad.md", "", None)
+    dtype, findings, ran, _, meta = audit.collect(ROOT / "examples" / "bad.md", "", None)
     assert dtype == "论文/综述"
     assert {"language", "phrases", "ref_citations"} <= set(ran)
     assert len(findings) >= 8
@@ -65,7 +65,7 @@ def test_end_to_end_on_sample():
 
 
 def test_only_filters_checkers():
-    _, findings, ran, skipped = audit.collect(
+    _, findings, ran, skipped, _ = audit.collect(
         ROOT / "examples" / "bad.md", "", {"phrases"})
     assert ran == ["phrases"]
     assert all(f["checker"] == "phrases" for f in findings)
@@ -84,3 +84,25 @@ def test_section_map_switches_at_appendix():
     assert m[2] == "正文"
     assert m[4] == "附录"
     assert m[6] == "正文"
+
+
+def test_detect_content_vs_slide_draft():
+    content = "页面文字：……\n这一页要说什么：……"
+    draft = "版式建议：左图右文\n图注：……\n表格数据：……"
+    assert audit.detect_type(content) == "内容稿"
+    assert audit.detect_type(draft) == "制作稿"
+
+
+def test_forced_type_overrides_detection(tmp_path):
+    f = tmp_path / "x.md"
+    f.write_text("随便一段文字", encoding="utf-8")
+    dtype, _, ran, _, meta = audit.collect(f, "", None, "讲稿")
+    assert dtype == "讲稿" and meta["forced"] == "讲稿"
+    assert "talk" in ran
+
+
+def test_low_confidence_reported(tmp_path):
+    f = tmp_path / "x.md"
+    f.write_text("随便一段文字", encoding="utf-8")
+    _, _, _, _, meta = audit.collect(f, "", None)
+    assert meta["auto"] == "论文/综述" and meta["score"] == 0
