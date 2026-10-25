@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""check_phrases.py —— 措辞层的词表 / 句式机检
+"""check_phrases.py —— 措辞层与防御性写作的词表 / 句式机检
 
 【它管什么】
     `ai-academic-writing` 里的**词表与句式**规则——自我削弱、套话、抽象标签、
@@ -57,7 +57,65 @@ GROUPS = [
     (9, "连接词堆砌", {"论文", "标书", "幻灯片"},
      [r"首先[^。]{0,60}其次[^。]{0,60}(最后|再次)", r"因此[^。]{0,40}从而[^。]{0,40}进而"],
      "连接词成串出现——靠结构表达顺序，不靠连接词"),
+    # ── 防御性写作（2026-10-25 吸收自 MIT 项目 anti-defensive-writing 与
+    #    academic-defensive-writing-auditor 的 D1–D9 分类；只收可判定的句式）
+    (10, "面向审稿人的预辩护（D1）", {"论文", "标书"},
+     [r"(?i)We (?:emphasize|note|stress|highlight) that",
+      r"(?i)It (?:should|must) be (?:noted|emphasized|stressed) that",
+      r"(?i)To (?:avoid|prevent) (?:misunderstanding|confusion)",
+      r"(?i)(?:One|A reader) might (?:argue|counter|object)",
+      r"(?i)A (?:potential|likely) (?:concern|objection) is",
+      r"(?:需要|值得)(?:指出|强调)的是", r"为避免(?:误解|混淆)", r"可能有人会(?:说|问)", r"一个(?:可能|潜在)的质疑是"],
+     "面向想象中的审稿人先辩一句——直接陈述事实即可"),
+    (11, "否认式声明（D2）", {"论文", "标书"},
+     [r"(?i)We (?:do not|make no) claim",
+      r"(?i)(?:should|must) not be (?:interpreted|construed|read) as",
+      r"(?i)does not (?:establish|imply|prove|demonstrate)",
+      r"本文不(?:主张|声称)", r"不应(?:被)?(?:理解为|解读为)", r"并不能(?:说明|证明|推出)", r"不代表"],
+     "用「不主张」替代「主张」——正面写一次范围，不重复否认"),
+    (12, "为省略辩护（D5）", {"论文", "标书"},
+     [r"(?i)We (?:did not|do not) (?:include|report|compare)[^.]{0,30}because",
+      r"(?i)(?:is|are) (?:unnecessary|not needed) because",
+      r"(?i)would be (?:unfair|biased)",
+      r"未(?:纳入|报告|比较)[^。]{0,20}因为", r"没有(?:必要|理由)[^。]{0,12}因为", r"这样的比较不公平"],
+     "为「没做什么」辩护——要么写成一次限制，要么直接描述评价方案"),
+    (13, "公平性自我辩护（D6）", {"论文", "标书"},
+     [r"(?i)For a fair comparison", r"(?i)To (?:ensure|maintain) fairness", r"(?i)provides? a fair (?:setting|comparison)",
+      r"为(?:保证|确保)公平", r"为了公平(?:比较)?", r"公平起见"],
+     "直接写控制了什么变量，不解释「为什么这样才公平」"),
 ]
+
+
+# ── 需要计数的两类（不是单句正则）──────────────────────────
+HEDGE_EN = re.compile(
+    r"\b(?:although|while|whereas|despite|may|might|could|potentially|possibly|"
+    r"perhaps|arguably|somewhat)\b", re.I)
+HEDGE_ZH = re.compile(r"可能|或许|也许|似乎|一定程度上|某种程度上")
+PRELIM = re.compile(
+    r"\b(?:preliminary|initial|initially|suggestive|exploratory|proof[- ]of[- ]concept|"
+    r"indicative)\b|初步|探索性|提示性|概念验证", re.I)
+
+
+def _special(text, only):
+    """D3 限定词堆叠、D7 初步标签重复——按句或按篇计数，不是单点正则。"""
+    out = []
+    if not only or 14 in only:
+        found = []
+        for i, line in enumerate(text.splitlines(), 1):
+            for sent in re.split(r"(?<=[。！？!?])\s*", line):
+                n = len(HEDGE_EN.findall(sent)) + len(HEDGE_ZH.findall(sent))
+                if n >= 3:
+                    found.append((i, f"限定词 {n} 个：{sent.strip()[:26]}"))
+        if found:
+            out.append((14, "限定词堆叠（D3）", {"论文", "标书", "讲稿"},
+                        "一句里叠三层以上限定，断言强度被稀释", found[:8]))
+    if not only or 15 in only:
+        ms = list(PRELIM.finditer(text))
+        if len(ms) >= 3:
+            found = [(text[:m.start()].count("\n") + 1, m.group(0)) for m in ms]
+            out.append((15, "初步标签重复（D7）", {"论文", "标书"},
+                        "同一标签用三次以上，读者会认为全部结论都待定", found[:8]))
+    return out
 
 
 def scan(text, only=None):
@@ -72,6 +130,7 @@ def scan(text, only=None):
                 found.append((ln, m.group(0)[:30]))
         if found:
             hits.append((num, name, kinds, note, found))
+    hits += _special(text, only)
     return hits
 
 
@@ -95,7 +154,7 @@ def main():
 
     print(f"check_phrases · {a.doc} · 文体={a.kind or '未指定（全部按适用计）'}")
     if not hits:
-        print("  ✅ 全过（十组词表）")
+        print("  ✅ 全过（十五组词表/句式）")
         return 0
     for num, name, kinds, note, found in inscope:
         print(f"  ❌ {num} {name}：{len(found)} 处 — {note}")

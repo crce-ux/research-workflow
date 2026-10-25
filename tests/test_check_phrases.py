@@ -62,3 +62,42 @@ def test_out_of_scope_group_is_reported_separately():
     """越级引用只在审稿/回导师场景算，幻灯片里命中不计入退出码。"""
     found = {n: kinds for n, _name, kinds, _note, _f in cp.scan("按 CONSORT 报告")}
     assert "幻灯片" not in found[8]
+
+
+# ── 防御性写作（D1/D2/D5/D6/D3/D7）──────────────────────────
+
+def test_d1_prebuttal():
+    assert 10 in groups("It should be noted that the sample is small.")
+
+
+def test_d2_non_claim():
+    assert 11 in groups("We do not claim that this generalizes.")
+
+
+def test_d5_omission_defense():
+    assert 12 in groups("We did not include a healthy control group because of recruitment limits.")
+
+
+def test_d6_fairness_defense():
+    assert 13 in groups("For a fair comparison, all methods use the same backbone.")
+
+
+def test_d7_preliminary_repetition():
+    text = "初步结果显示有效性。初步分析提示趋势。初步证据支持该假设。"
+    assert 15 in groups(text)
+
+
+def test_d7_two_mentions_not_flagged():
+    assert 15 not in groups("初步结果显示有效性。初步分析提示趋势。")
+
+
+def test_d3_caveat_stacking():
+    text = "结果虽然可能在一定程度上提示该指标或许与疗效有关。"
+    assert 14 in groups(text)
+
+
+def test_necessary_limitation_not_flagged():
+    """真正的方法学局限不该被防御性规则误伤。"""
+    text = "本研究为单中心设计，样本量有限，结论外推需谨慎。"
+    hit = groups(text)
+    assert not (hit & {10, 11, 12, 13, 14, 15})
