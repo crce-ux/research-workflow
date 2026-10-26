@@ -77,7 +77,7 @@ GROUPS = [
      [r"(?i)We (?:did not|do not) (?:include|report|compare)[^.]{0,30}because",
       r"(?i)(?:is|are) (?:unnecessary|not needed) because",
       r"(?i)would be (?:unfair|biased)",
-      r"未(?:纳入|报告|比较)[^。]{0,20}因为", r"没有(?:必要|理由)[^。]{0,12}因为", r"这样的比较不公平"],
+      r"(?:未|没有)(?:纳入|报告|比较|设置)[^。]{0,20}因为", r"没有(?:必要|理由)[^。]{0,12}因为", r"这样的比较不公平"],
      "为「没做什么」辩护——要么写成一次限制，要么直接描述评价方案"),
     (13, "公平性自我辩护（D6）", {"论文", "标书"},
      [r"(?i)For a fair comparison", r"(?i)To (?:ensure|maintain) fairness", r"(?i)provides? a fair (?:setting|comparison)",

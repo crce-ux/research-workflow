@@ -101,3 +101,9 @@ def test_necessary_limitation_not_flagged():
     text = "本研究为单中心设计，样本量有限，结论外推需谨慎。"
     hit = groups(text)
     assert not (hit & {10, 11, 12, 13, 14, 15})
+
+
+def test_d5_colloquial_negation():
+    """「没有纳入…因为」与「未报告…因为」都算省略辩护。"""
+    assert 12 in groups("我们没有纳入健康对照组，因为招募困难。")
+    assert 12 in groups("本研究未报告该指标，因为采集流程不支持。")
