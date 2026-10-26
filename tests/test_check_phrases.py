@@ -254,3 +254,15 @@ def test_long_sentence():
 def test_frontmatter_is_skipped():
     t = "---\n标题: " + "很长的元数据" * 25 + "\n---\n正文一句。"
     assert "长句" not in hit_names(t, 25)
+
+
+# ── 转折词（组 26）───────────────────────────────────────
+
+def test_contrastive_but_is_flagged():
+    assert 26 in groups("样本量偏小，但效应量稳定。")
+
+
+def test_budan_and_danfan_are_not_flagged():
+    """「不但…而且」「但凡」不是转折。"""
+    assert 26 not in groups("该方案不但有效，而且安全。")
+    assert 26 not in groups("但凡纳入的病例都做了核对。")
