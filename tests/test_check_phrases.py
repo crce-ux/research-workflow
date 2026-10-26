@@ -266,3 +266,24 @@ def test_budan_and_danfan_are_not_flagged():
     """「不但…而且」「但凡」不是转折。"""
     assert 26 not in groups("该方案不但有效，而且安全。")
     assert 26 not in groups("但凡纳入的病例都做了核对。")
+
+
+# ── 短句（组 27）────────────────────────────────────────
+
+def test_short_sentence_density():
+    t = ("第一句短。第二句也短。第三句短。第四句短。第五句短。"
+         "第六句短。第七句短。第八句短。第九句短。第十句短。"
+         "这一句写得足够长，用来说明短句连成串时才需要并回主句，否则读起来一顿一顿。")
+    assert 27 in groups(t)
+
+
+def test_normal_sentences_not_flagged():
+    t = ("这一句长度适中，包含足够多的汉字，不会被算作短句。"
+         "这里再给一句差不多长的，用来把短句比例压到阈值以下。")
+    assert 27 not in groups(t)
+
+
+def test_list_and_heading_lines_are_skipped():
+    t = ("| 短 |\n| 句 |\n- 短\n# 短\n\n"
+         "正文只有一句正常长度的话，写满了二十个汉字以上，用来稀释比例。")
+    assert 27 not in groups(t)

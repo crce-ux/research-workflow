@@ -12,7 +12,7 @@
     · 口语动词 / 程度词 / 第一人称 / 指示代词 / 口头连接词 → `check_persona.py` 的 **C8**
     · 引用自足 / 排他性断言 / 数字口径 → `check_language.py`
     · 「这句话像不像人写的」整体判断 → 人工
-    **混着查会互相误报**——本脚本只做上表列出的二十六组。
+    **混着查会互相误报**——本脚本只做上表列出的二十七组。
 
 【词表来源】
     `manuals/checklists/写作禁用词与句式清单.md`（权威）+ `references/` 各轴。
@@ -197,7 +197,48 @@ def _special(text, only):
         out += _novelty_words(text)
     if not only or 25 in only:
         out += _rhythm(text)
+    if not only or 27 in only:
+        out += _short_sentences(text)
     return out
+
+
+# ── 短句（组 27）────────────────────────────────────────
+SHORT_MAX = 10        # 汉字数上限
+SHORT_RATE = 0.08     # 短句率提示线
+SHORT_SKIP = ("#", "|", "-", "*", "`")
+
+
+def _short_sentences(text):
+    """散文里的短句占比。表格、列表、标题、纪律块不算。"""
+    raw = text.splitlines()
+    if raw and raw[0].strip() == "---":          # 跳过 YAML frontmatter
+        for j in range(1, len(raw)):
+            if raw[j].strip() == "---":
+                raw = [""] * (j + 1) + raw[j + 1:]
+                break
+    sents = []
+    for i, line in enumerate(raw, 1):
+        s = re.sub(r"^>\s?", "", line.strip())
+        if not s or s.startswith(SHORT_SKIP) or "本页纪律" in s:
+            continue
+        s = s.replace("**", "")
+        for part in re.split(r"(?<=[。！？])", s):
+            part = part.strip()
+            n = len(re.findall(r"[一-鿿]", part))
+            if n:
+                sents.append((i, n, part))
+    if not sents:
+        return []
+    short = [x for x in sents if x[1] <= SHORT_MAX]
+    rate = len(short) / len(sents)
+    if rate <= SHORT_RATE:
+        return []
+    found = [(ln, f"{n} 字：{s[:26]}") for ln, n, s in short[:8]]
+    found.append((0, f"全篇短句 {len(short)} / {len(sents)} 句"
+                     f"（{rate * 100:.0f}%，上限 {SHORT_RATE * 100:.0f}%）"))
+    return [(27, "短句过密", {"论文", "标书", "讲稿", "幻灯片"},
+             "短句连成串时，读起来一顿一顿；把能并的并回主句，"
+             "用逗号或分号承接，只保留确实需要停顿的", found)]
 
 
 # ── 句子节奏（组 25）────────────────────────────────────
@@ -405,7 +446,7 @@ def main():
 
     print(f"check_phrases · {a.doc} · 文体={a.kind or '未指定（全部按适用计）'}")
     if not hits:
-        print("  ✅ 全过（二十六组词表/句式）")
+        print("  ✅ 全过（二十七组词表/句式）")
         return 0
     for num, name, kinds, note, found in inscope:
         print(f"  ❌ {num} {name}：{len(found)} 处 — {note}")
