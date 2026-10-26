@@ -205,15 +205,20 @@ def _special(text, only):
 # ── 句长画像（组 27）────────────────────────────────────
 # 单一短句率会奖励「把短句改成中等句」，结果是段内句长趋同。
 # 两个指标一起看：短句率防碎，段落 CV 防匀。
-# 参考：zh-academic-deai 用真人语料算参考区间；humanize-mba-text-skill
-# 以段落内句长 CV < 0.30 判「过匀」。
+# 参考：zh-academic-deai（40 篇 CSSCI：句均 58–75 字，>90 字 15–28%，<15 字 1–9%）；
+# humanize-mba-text-skill 以段落内句长 CV < 0.30 判「过匀」；
+# 汉语整句平均句长：小说 18.42 词、散文 21.34、新闻 25.87、社论 26.45；
+# 零句 4.94–8.24 词；上限 20–25 词（左思民 1992）。讲稿按口语，取小说一档。
 SHORT_MAX = 15        # 短句线：参考项目都用 15 字
 #: 短句率上限，按文体分。口语稿天然多短句，标准放宽。
 #: 讲稿的 15% 由本库两份讲稿实测得出；论文的 12% 尚未用真实语料校准。
 SHORT_RATE = {"讲稿": 0.15, "幻灯片": 0.15, "论文": 0.12, "标书": 0.12}
-PARA_MIN_SENTS = 4    # 少于四句的段不评 CV
+PARA_MIN_SENTS = 4    # 少于四句的段不评 CV——三句的样本算 CV 不稳
 PARA_CV = 0.30        # 段内句长变异系数下限
 PARA_UNIFORM = 0.20   # 过匀段落占比上限
+#: 清单式段落（编号行、成串加粗条目、字段行）不评 CV——等长是结构，不是文风。
+LIST_LINE = re.compile(r"^\s*(?:\d+[.、]|[-*+]\s|>\s*\*\*)")
+FIELD_HEAD = re.compile(r"^\s*>?\s*\*\*[^*]{2,8}\*\*\s*[：:]")
 SHORT_SKIP = ("#", "|", "-", "*", "`")
 #: 只有取值的字段行（**可行性：高。**）是结构，不是散文；
 #: 「**表述**：……正文……」是散文，照常计
@@ -230,14 +235,16 @@ def _prose_paragraphs(text):
             if raw[j].strip() == "---":
                 raw = [""] * (j + 1) + raw[j + 1:]
                 break
-    paras, cur, start = [], [], 0
+    paras, cur, start, marks = [], [], 0, 0
     for i, line in enumerate(raw, 1):
         s = line.strip()
         if s in ("", ">"):
-            if cur:
+            if cur and marks < 2:
                 paras.append((start, cur))
-                cur = []
+            cur, marks = [], 0
             continue
+        if LIST_LINE.match(s) or FIELD_HEAD.match(s):
+            marks += 1
         s = re.sub(r"^>\s?", "", s)
         if "本页纪律" in s or SHORT_FIELD.match(s) or s.startswith(SHORT_MARK):
             continue
@@ -248,7 +255,7 @@ def _prose_paragraphs(text):
         if not cur:
             start = i
         cur.append(s.replace("**", ""))
-    if cur:
+    if cur and marks < 2:
         paras.append((start, cur))
     return paras
 
