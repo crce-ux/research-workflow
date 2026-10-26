@@ -204,8 +204,13 @@ def _special(text, only):
 
 # ── 短句（组 27）────────────────────────────────────────
 SHORT_MAX = 10        # 汉字数上限
-SHORT_RATE = 0.08     # 短句率提示线
+SHORT_RATE = 0.05     # 短句率提示线（2026-10-26 由 8% 收紧到 5%）
 SHORT_SKIP = ("#", "|", "-", "*", "`")
+#: 只有取值的字段行（**可行性：高。**）是结构，不是散文；
+#: 「**表述**：……正文……」是散文，照常计
+SHORT_FIELD = re.compile(r"^\*\*[^*]{2,14}[：:][^*]*\*\*\s*$")
+#: 批注行（🔴 ⚠️ ❌ ✅）是说明，不是散文
+SHORT_MARK = ("🔴", "⚠️", "❌", "✅", "📖", "🔌")
 
 
 def _short_sentences(text):
@@ -219,7 +224,11 @@ def _short_sentences(text):
     sents = []
     for i, line in enumerate(raw, 1):
         s = re.sub(r"^>\s?", "", line.strip())
-        if not s or s.startswith(SHORT_SKIP) or "本页纪律" in s:
+        if not s or "本页纪律" in s or SHORT_FIELD.match(s) or s.startswith(SHORT_MARK):
+            continue
+        if s.startswith(("#", "|", "-", "`")):
+            continue
+        if s.startswith("*") and not s.startswith("**"):     # * 列表项，非加粗
             continue
         s = s.replace("**", "")
         for part in re.split(r"(?<=[。！？])", s):
