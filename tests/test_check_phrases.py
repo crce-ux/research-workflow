@@ -216,3 +216,41 @@ def test_optimal_without_conditions():
 def test_novelty_word_repetition():
     assert 24 in groups("首次报道。首次发现。首次验证。")
     assert 24 not in groups("首次报道。首次发现。")
+
+
+# ── 句子节奏（组 25）─────────────────────────────────────
+
+def hit_names(text, num):
+    return [h[1] for h in cp.scan(text) if h[0] == num]
+
+
+def test_adjacent_same_skeleton():
+    t = "研究一纳入 120 例患者，随访六个月。研究二纳入 118 例患者，随访六个月。"
+    assert "相邻句同款" in hit_names(t, 25)
+
+
+def test_ordinal_clauses_are_not_same_skeleton():
+    """序数编号的并列条款是结构，不是同款句。"""
+    t = "第一，两组基线一致，样本量相同。第二，两组随访相同，失访率接近。"
+    assert "相邻句同款" not in hit_names(t, 25)
+
+
+def test_entry_lists_are_not_same_skeleton():
+    """「妄想：Cascella 2011…」这类条目式并列是数据。"""
+    t = "妄想：Cascella 2011 报告了颞叶。幻听：Mallikarjun 2023 报告了颞上回。"
+    assert "相邻句同款" not in hit_names(t, 25)
+
+
+def test_semicolon_density():
+    assert "分号过密" in hit_names("模型分为三部分；测量模型；结构模型；", 25)
+    assert "分号过密" not in hit_names("模型分为两部分；测量模型与结构模型。", 25)
+
+
+def test_long_sentence():
+    t = "本研究在三个中心招募了接受氯氮平治疗的精神分裂症患者共三百例，" * 3 + "并随访。"
+    assert "长句" in hit_names(t, 25)
+
+
+def test_frontmatter_is_skipped():
+    t = "---\n标题: " + "很长的元数据" * 25 + "\n---\n正文一句。"
+    assert "长句" not in hit_names(t, 25)

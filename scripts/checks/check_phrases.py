@@ -12,7 +12,7 @@
     · 口语动词 / 程度词 / 第一人称 / 指示代词 / 口头连接词 → `check_persona.py` 的 **C8**
     · 引用自足 / 排他性断言 / 数字口径 → `check_language.py`
     · 「这句话像不像人写的」整体判断 → 人工
-    **混着查会互相误报**——本脚本只做上表列出的二十四组。
+    **混着查会互相误报**——本脚本只做上表列出的二十五组。
 
 【词表来源】
     `manuals/checklists/写作禁用词与句式清单.md`（权威）+ `references/` 各轴。
@@ -191,6 +191,76 @@ def _special(text, only):
         out += _claim_strength(text)
     if not only or 24 in only:
         out += _novelty_words(text)
+    if not only or 25 in only:
+        out += _rhythm(text)
+    return out
+
+
+# ── 句子节奏（组 25）────────────────────────────────────
+RHY_LONG = 90        # 单句汉字上限
+RHY_PAIR_MIN = 15    # 相邻句同款的最短句长
+RHY_PAIR_TOL = 0.20  # 相邻两句的长度容差
+#: 序数编号开头的并列条款
+ENUM_HEAD = re.compile(r"^(?:第[一二三四五六七八九十]+[，、．.]|[一二三四五六七八九十]+、|[①②③④⑤⑥⑦⑧⑨⑩]|[（(]\d+[)）])")
+
+
+def _rhythm(text):
+    """相邻句同款、分号过密、长句——看的是句子与段落，不是词。"""
+    out = []
+    raw = text.splitlines()
+    if raw and raw[0].strip() == "---":          # 跳过 YAML frontmatter
+        for j in range(1, len(raw)):
+            if raw[j].strip() == "---":
+                raw = [""] * (j + 1) + raw[j + 1:]
+                break
+    plain = [re.sub(r"^\s*>\s?", "", l).replace("**", "") for l in raw]
+    plain = [re.sub(r"^\s*[-*+•]\s+", "", l) for l in plain]
+    sents = []
+    for i, line in enumerate(plain, 1):
+        for s in re.split(r"(?<=[。！？])", line):
+            s = s.strip()
+            if s:
+                sents.append((i, s))
+
+    pairs = []
+    for (la, a), (lb, b) in zip(sents, sents[1:]):
+        ca, cb = a.count("，"), b.count("，")
+        x, y = len(a), len(b)
+        if ca != cb or ca < 1 or min(x, y) < RHY_PAIR_MIN:
+            continue
+        if abs(x - y) / max(x, y) >= RHY_PAIR_TOL:
+            continue
+        # 「妄想：Cascella 2011…」这类条目式并列是数据，不是同款句
+        if re.match(r"^[^：，。]{2,20}：", a) and re.match(r"^[^：，。]{2,20}：", b):
+            continue
+        # 序数编号的并列条款是结构，不是同款句
+        if ENUM_HEAD.match(a) and ENUM_HEAD.match(b):
+            continue
+        pairs.append((la, f"第 {la} / {lb} 行：{a[:16]}… ｜ {b[:16]}…"))
+    if pairs:
+        out.append((25, "相邻句同款", {"论文", "标书", "讲稿", "幻灯片"},
+                    "相邻两句结构一样、长度接近，读起来像填表；"
+                    "改其中一句的句法：合并、拆分、换语序", pairs[:6]))
+
+    semi, pos = [], 0
+    for block in re.split(r"(\n\s*\n)", text):
+        if not block.strip():
+            pos += len(block)
+            continue
+        n = block.count("；") + block.count(";")
+        if n >= 2:
+            ln = text[:pos].count("\n") + 1
+            semi.append((ln, f"第 {ln} 段 {n} 个分号"))
+        pos += len(block)
+    if semi:
+        out.append((25, "分号过密", {"论文", "标书", "讲稿"},
+                    "一段两个以上分号，说明句子该拆；拆成完整句子", semi[:6]))
+
+    longs = [(ln, f"{len(re.findall('[一-鿿]', s))} 字：{s[:26]}…")
+             for ln, s in sents if len(re.findall("[一-鿿]", s)) > RHY_LONG]
+    if longs:
+        out.append((25, "长句", {"论文", "标书", "讲稿"},
+                    f"单句超过 {RHY_LONG} 个汉字，拆成两句，拆完仍要衔接", longs[:6]))
     return out
 
 
@@ -331,7 +401,7 @@ def main():
 
     print(f"check_phrases · {a.doc} · 文体={a.kind or '未指定（全部按适用计）'}")
     if not hits:
-        print("  ✅ 全过（二十四组词表/句式）")
+        print("  ✅ 全过（二十五组词表/句式）")
         return 0
     for num, name, kinds, note, found in inscope:
         print(f"  ❌ {num} {name}：{len(found)} 处 — {note}")

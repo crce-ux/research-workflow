@@ -72,3 +72,29 @@ def test_number_with_unit_is_its_own_kind():
 def test_file_path_token_preserved():
     ks = keys("脚本在 scripts/check_data.py，配置见 FACT.md。")
     assert any(tok.endswith(".py") for _, tok in ks)
+
+
+# ── 限定词去留（2026-10-26 吸收 Academic-Humanizer 的 compare）────
+
+def test_qualifier_lost_is_detected():
+    """「可能」被删掉——把话说满了一分，要报出来。"""
+    a = ctd.extract_quals("该指标可能反映屏状核活动。")
+    b = ctd.extract_quals("该指标反映屏状核活动。")
+    lost = a - b
+    assert lost["可能"] == 1
+
+
+def test_qualifier_count_reduction_is_detected():
+    a = ctd.extract_quals("可能升高，也可能不变。")
+    b = ctd.extract_quals("可能升高。")
+    assert (a - b)["可能"] == 1
+
+
+def test_qualifier_preserved_has_no_diff():
+    t = "结果提示该关联可能与样本量有关。"
+    assert ctd.extract_quals(t) - ctd.extract_quals(t) == {}
+
+
+def test_english_qualifier_detected():
+    assert (ctd.extract_quals("This may suggest an effect.")
+            - ctd.extract_quals("This suggests an effect."))["may"] == 1

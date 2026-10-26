@@ -55,6 +55,15 @@ STOP_UPPER = {"AND", "OR", "NOT", "THE", "FOR", "WITH", "MRI", "CT", "EEG", "RCT
               "ITT", "PP", "CI", "SD", "SE", "NSFC", "DOI", "URL", "AI", "CDSS",
               "PANSS", "SANS", "CGI", "SAS", "AIMS", "BARS", "MCCB", "PSP"}
 
+# ── 限定词：表达真实不确定性的词，去掉就把话说满了 ──────────
+# 参考 junbolian/Academic-Humanizer（MIT）的 compare 输出：限定词减少要逐条列出。
+QUAL_PATTERN = re.compile(
+    r"可能|或许|也许|大概|大致|通常|一般而言|一般来说|往往|多数情况下|在某些情况下|"
+    r"在一定程度上|提示|显示|表明|与[^。]{0,6}一致|"
+    r"\b(?:may|might|could|likely|unlikely|possibly|potentially|perhaps|probably|"
+    r"suggest|suggests|indicate|indicates|appear|appears|seem|seems|consistent with)\b",
+    re.I)
+
 
 def extract(text):
     """返回 {(类别, token): 次数}。"""
@@ -71,6 +80,11 @@ def extract(text):
     return out
 
 
+def extract_quals(text):
+    """返回限定词的多重集。"""
+    return Counter(m.group(0) for m in QUAL_PATTERN.finditer(text))
+
+
 def compare(a, b):
     lost = [(k, n) for k, n in (a - b).items() for _ in range(n)]
     added = [(k, n) for k, n in (b - a).items() for _ in range(n)]
@@ -82,6 +96,8 @@ def main():
     ap.add_argument("before")
     ap.add_argument("after")
     ap.add_argument("--quiet", action="store_true", help="只报数字与单位类的差异")
+    ap.add_argument("--strict-quals", action="store_true",
+                    help="限定词的丢失也计入退出码（默认只提示）")
     a = ap.parse_args()
 
     for f in (a.before, a.after):
@@ -109,12 +125,31 @@ def main():
     n1 = show("原文有、改写后没了", lost, "🔴")
     n2 = show("改写后多出来的", added, "🟡")
 
+    qa, qb = extract_quals(ta), extract_quals(tb)
+    q_lost = [(k, n) for k, n in (qa - qb).items() for _ in range(n)]
+    q_add = [(k, n) for k, n in (qb - qa).items() for _ in range(n)]
+    total_a, total_b = sum(qa.values()), sum(qb.values())
+    print(f"\n  ◇ 限定词：{total_a} → {total_b}")
+    if q_lost:
+        print("      LOST（每一条都把话说满一分，除非是有意改动）：")
+        for (tok, _n) in q_lost[:20]:
+            ln = ta[:ta.find(tok)].count("\n") + 1 if tok in ta else 0
+            print(f"        {tok}  ← 原第 {ln} 行")
+        if len(q_lost) > 20:
+            print(f"        … 另有 {len(q_lost) - 20} 处")
+    if q_add:
+        print("      ADDED（新增的限定词同样要能指出来源）：")
+        print("        " + "、".join(t for t, _ in q_add[:20]))
+
     if not lost and not added:
         print("  ✅ token 零 diff")
     else:
         print(f"\n  ⚠️ 丢失的必须逐个解释：**只改表达，不改事实**——")
         print(f"     无法证明零损失 → 恢复原句，并标「人工确认」。")
-    return n1 + n2
+    if q_lost:
+        print("  ⚠️ 限定词的丢失同样要逐条解释：删在已证明的结果上是有意改动，"
+              "删在无证据支撑的断言上就是提高了结论强度。")
+    return n1 + n2 + (len(q_lost) if a.strict_quals else 0)
 
 
 if __name__ == "__main__":
