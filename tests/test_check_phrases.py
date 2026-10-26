@@ -107,3 +107,10 @@ def test_d5_colloquial_negation():
     """「没有纳入…因为」与「未报告…因为」都算省略辩护。"""
     assert 12 in groups("我们没有纳入健康对照组，因为招募困难。")
     assert 12 in groups("本研究未报告该指标，因为采集流程不支持。")
+
+
+def test_d1_chinese_variants():
+    """「需要说明的是」「常被问的一个问题」也是 D1。"""
+    assert 10 in groups("需要说明的是，该研究是横断面设计。")
+    assert 10 in groups("常被问的一个问题是：两个都加会不会重复。")
+    assert 10 in groups("这里需要强调，参数按 AMP 协议执行。")
