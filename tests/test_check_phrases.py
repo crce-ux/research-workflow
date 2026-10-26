@@ -156,3 +156,63 @@ def test_postcomma_negation_ignores_positive_text():
 def test_postcomma_negation_tolerates_bold():
     """讲稿里「，**不是**」的加粗写法不能被漏掉。"""
     assert 17 in groups("这是全脑分析里的一个脑区，**不是**事先指定的感兴趣区。")
+
+
+# ── 2026-10-26 吸收 Academic-Humanizer 的六组 ──────────────
+
+def test_cue_colon_group():
+    assert 18 in groups("一句话总结：这个方法在三个数据集上都有效。")
+    assert 18 in groups("核心是：把两个模型放在同一批人上比较。")
+
+
+def test_cue_colon_allows_definition_colon():
+    """引出定义、原话的冒号是规范用法。"""
+    assert 18 not in groups("模型包括两部分：测量模型和结构模型。")
+
+
+def test_translationese_group():
+    assert 19 in groups("对于野外调查人员来说，该方法更容易实施。")
+    assert 19 in groups("在数据质量方面，两组的处理相同。")
+
+
+def test_meta_narrative_group():
+    assert 20 in groups("本节将介绍主要的数值结果。")
+    assert 20 in groups("本章小结：三条假设都设有证伪条件。")
+
+
+def test_worklog_group():
+    assert 21 in groups("经过健全性检查，流水线继续执行下一步。")
+    assert 21 in groups("随机种子固定为 42，求解器容差取 1e-8。")
+
+
+def test_coined_label_group():
+    assert 22 in groups("本文建立了一套质量保障机制。")
+    assert 22 in groups("该研究提出了模型认证协议与治理闭环。")
+
+
+def test_coined_label_skips_established_terms():
+    """领域内已有定义的组合、普通形容词修饰的通用名词不报。"""
+    assert 22 not in groups("本文使用了注意力机制与评价指标体系。")
+    assert 22 not in groups("这属于病理机制的一部分。")
+    assert 22 not in groups("该方法属于研究框架的一部分。")
+    assert 22 not in groups("作者提到统一协议尚未建立。")
+
+
+def test_coined_label_skips_defined_terms():
+    """同句给出定义的标签不算杜撰。"""
+    assert 22 not in groups("本文提出的质量保障机制，是指对每批数据做三项核对。")
+
+
+def test_significance_without_test():
+    assert 23 in groups("治疗组症状显著改善，两组差异明显。")
+    assert 23 not in groups("治疗组症状显著改善（t 检验，p = 0.003）。")
+
+
+def test_optimal_without_conditions():
+    assert 23 in groups("该方案是最优的。")
+    assert 23 not in groups("在命题 2 的假设下，该方案是最优的。")
+
+
+def test_novelty_word_repetition():
+    assert 24 in groups("首次报道。首次发现。首次验证。")
+    assert 24 not in groups("首次报道。首次发现。")
