@@ -114,3 +114,16 @@ def test_d1_chinese_variants():
     assert 10 in groups("需要说明的是，该研究是横断面设计。")
     assert 10 in groups("常被问的一个问题是：两个都加会不会重复。")
     assert 10 in groups("这里需要强调，参数按 AMP 协议执行。")
+
+
+def test_pseudo_contrast_with_comma():
+    """「不是 A，而是 B」带逗号的常见写法要能抓到。"""
+    assert 6 in groups("选这两项，不是因为它们流行，而是因为它们各回答一个不同的问题。")
+    assert 6 in groups("这不是降低它的价值，而是把证据强度说清楚。")
+
+
+def test_necessary_distinction_not_flagged():
+    """「是 A，不是 B」式的必要区分不该算伪对立。"""
+    assert 6 not in groups("屏状核是脑区，不是受体。")
+    assert 6 not in groups("该研究是横断面诊断分类，不是治疗预测。")
+    assert 6 not in groups("这是历史假说，不是证据。")
