@@ -287,3 +287,24 @@ def test_list_and_heading_lines_are_skipped():
     t = ("| 短 |\n| 句 |\n- 短\n# 短\n\n"
          "正文只有一句正常长度的话，写满了二十个汉字以上，用来稀释比例。")
     assert 27 not in groups(t)
+
+
+
+def test_uniform_paragraph_is_flagged():
+    """一段里四句一样长，CV 低于 0.30，单独报「段落句长太匀」。"""
+    s = "这是一句长度约三十个字的话用来测试段落内的均匀程度。"
+    names = [h[1] for h in cp._short_sentences(s * 4)]
+    assert "段落句长太匀" in names
+
+
+def test_varied_paragraph_not_flagged():
+    """长短不一时不报「段落句长太匀」。"""
+    t = ("第一句写得比较长，用两个分句交代这一段的背景与讨论范围。"
+         "第二句把条件说清楚，包括时间、来源、适用人群与排除标准。"
+         "第三句短。"
+         "第四句把前面三个说法收拢成一个判断，并交代这个判断成立的条件与边界。"
+         "第五句补上对照组的处理方式。"
+         "第六句给出结果的方向与强度，不夸大也不缩小，并注明检验方法。"
+         "第七句收尾，把落点放回开头的那个问题上，交代它对临床的意义。")
+    names = [h[1] for h in cp._short_sentences(t)]
+    assert "段落句长太匀" not in names

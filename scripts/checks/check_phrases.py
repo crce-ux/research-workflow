@@ -202,9 +202,18 @@ def _special(text, only):
     return out
 
 
-# ── 短句（组 27）────────────────────────────────────────
-SHORT_MAX = 10        # 汉字数上限
-SHORT_RATE = 0.05     # 短句率提示线（2026-10-26 由 8% 收紧到 5%）
+# ── 句长画像（组 27）────────────────────────────────────
+# 单一短句率会奖励「把短句改成中等句」，结果是段内句长趋同。
+# 两个指标一起看：短句率防碎，段落 CV 防匀。
+# 参考：zh-academic-deai 用真人语料算参考区间；humanize-mba-text-skill
+# 以段落内句长 CV < 0.30 判「过匀」。
+SHORT_MAX = 15        # 短句线：参考项目都用 15 字
+#: 短句率上限，按文体分。口语稿天然多短句，标准放宽。
+#: 讲稿的 15% 由本库两份讲稿实测得出；论文的 12% 尚未用真实语料校准。
+SHORT_RATE = {"讲稿": 0.15, "幻灯片": 0.15, "论文": 0.12, "标书": 0.12}
+PARA_MIN_SENTS = 4    # 少于四句的段不评 CV
+PARA_CV = 0.30        # 段内句长变异系数下限
+PARA_UNIFORM = 0.20   # 过匀段落占比上限
 SHORT_SKIP = ("#", "|", "-", "*", "`")
 #: 只有取值的字段行（**可行性：高。**）是结构，不是散文；
 #: 「**表述**：……正文……」是散文，照常计
@@ -213,41 +222,104 @@ SHORT_FIELD = re.compile(r"^\*\*[^*]{2,14}[：:][^*]*\*\*\s*$")
 SHORT_MARK = ("🔴", "⚠️", "❌", "✅", "📖", "🔌")
 
 
-def _short_sentences(text):
-    """散文里的短句占比。表格、列表、标题、纪律块不算。"""
+def _prose_paragraphs(text):
+    """返回 [(起始行号, [句子…])]。跳过 frontmatter、表格、列表、标题、纪律块。"""
     raw = text.splitlines()
-    if raw and raw[0].strip() == "---":          # 跳过 YAML frontmatter
+    if raw and raw[0].strip() == "---":
         for j in range(1, len(raw)):
             if raw[j].strip() == "---":
                 raw = [""] * (j + 1) + raw[j + 1:]
                 break
-    sents = []
+    paras, cur, start = [], [], 0
     for i, line in enumerate(raw, 1):
-        s = re.sub(r"^>\s?", "", line.strip())
-        if not s or "本页纪律" in s or SHORT_FIELD.match(s) or s.startswith(SHORT_MARK):
+        s = line.strip()
+        if s in ("", ">"):
+            if cur:
+                paras.append((start, cur))
+                cur = []
+            continue
+        s = re.sub(r"^>\s?", "", s)
+        if "本页纪律" in s or SHORT_FIELD.match(s) or s.startswith(SHORT_MARK):
             continue
         if s.startswith(("#", "|", "-", "`")):
             continue
         if s.startswith("*") and not s.startswith("**"):     # * 列表项，非加粗
             continue
-        s = s.replace("**", "")
-        for part in re.split(r"(?<=[。！？])", s):
-            part = part.strip()
-            n = len(re.findall(r"[一-鿿]", part))
-            if n:
-                sents.append((i, n, part))
-    if not sents:
+        if not cur:
+            start = i
+        cur.append(s.replace("**", ""))
+    if cur:
+        paras.append((start, cur))
+    return paras
+
+
+def _profile(text):
+    """句长画像。返回 (句数, 长度列表, 段落列表)。"""
+    lens, paras = [], []
+    for ln, parts in _prose_paragraphs(text):
+        ps = []
+        for part in parts:
+            for sent in re.split(r"(?<=[。！？])", part):
+                n = len(re.findall(r"[一-鿿]", sent))
+                if n:
+                    ps.append(n)
+        if ps:
+            lens.extend(ps)
+            paras.append((ln, ps))
+    return lens, paras
+
+
+def _short_sentences(text):
+    """短句率与段落 CV。表格、列表、标题、纪律块不算。"""
+    lens, paras = _profile(text)
+    if not lens:
         return []
-    short = [x for x in sents if x[1] <= SHORT_MAX]
-    rate = len(short) / len(sents)
-    if rate <= SHORT_RATE:
-        return []
-    found = [(ln, f"{n} 字：{s[:26]}") for ln, n, s in short[:8]]
-    found.append((0, f"全篇短句 {len(short)} / {len(sents)} 句"
-                     f"（{rate * 100:.0f}%，上限 {SHORT_RATE * 100:.0f}%）"))
-    return [(27, "短句过密", {"论文", "标书", "讲稿", "幻灯片"},
-             "短句连成串时，读起来一顿一顿；把能并的并回主句，"
-             "用逗号或分号承接，只保留确实需要停顿的", found)]
+    out = []
+    n = len(lens)
+    short = sum(1 for x in lens if x <= SHORT_MAX)
+    rate = short / n
+    p25 = sorted(lens)[int(n * 0.25)]
+    p75 = sorted(lens)[int(n * 0.75)]
+    median = sorted(lens)[n // 2]
+    cv = (sum((x - sum(lens) / n) ** 2 for x in lens) / n) ** 0.5 / (sum(lens) / n)
+
+    def detail(head, extra):
+        return [
+            (0, f"四档 ≤{SHORT_MAX} {short / n * 100:.0f}% ｜ "
+                f"{SHORT_MAX + 1}–30 {sum(1 for x in lens if SHORT_MAX < x <= 30) / n * 100:.0f}% ｜ "
+                f"31–50 {sum(1 for x in lens if 30 < x <= 50) / n * 100:.0f}% ｜ "
+                f">50 {sum(1 for x in lens if x > 50) / n * 100:.0f}%"),
+            (0, f"中位 {median} 字 ｜ P25–P75 {p25}–{p75} 字 ｜ 句长 CV {cv:.2f}"),
+            (0, head),
+        ] + extra
+
+    for kinds, limit in ((frozenset({"讲稿", "幻灯片"}), SHORT_RATE["讲稿"]),
+                         (frozenset({"论文", "标书"}), SHORT_RATE["论文"])):
+        if rate > limit:
+            out.append((27, "短句过密", set(kinds),
+                        "短句连成串时，读起来一顿一顿；把能并的并回主句，"
+                        "用逗号或分号承接，只保留确实需要停顿的",
+                        detail(f"短句 {short} / {n} 句（{rate * 100:.0f}%，"
+                               f"上限 {limit * 100:.0f}%）", [])))
+
+    uniform = []
+    for ln, ps in paras:
+        if len(ps) < PARA_MIN_SENTS:
+            continue
+        m = sum(ps) / len(ps)
+        sd = (sum((x - m) ** 2 for x in ps) / len(ps)) ** 0.5
+        if m and sd / m < PARA_CV:
+            uniform.append((ln, f"第 {ln} 行起 {len(ps)} 句，"
+                                f"CV {sd / m:.2f}，长度 {'/'.join(map(str, ps))}"))
+    judged = sum(1 for _ln, ps in paras if len(ps) >= PARA_MIN_SENTS)
+    if judged and len(uniform) / judged > PARA_UNIFORM:
+        out.append((27, "段落句长太匀", {"论文", "讲稿"},
+                    "一段里每句都一样长，读起来平；留一句短的做停顿，"
+                    "其余的用从句撑开",
+                    detail(f"过匀段落 {len(uniform)} / {judged} 段"
+                           f"（{len(uniform) / judged * 100:.0f}%，"
+                           f"上限 {PARA_UNIFORM * 100:.0f}%）", uniform[:4])))
+    return out
 
 
 # ── 句子节奏（组 25）────────────────────────────────────
