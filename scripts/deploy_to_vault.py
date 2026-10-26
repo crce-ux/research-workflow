@@ -15,6 +15,12 @@
     python deploy_to_vault.py                # 报告差异，有差异退出码 1
     python deploy_to_vault.py --write        # 把差异覆盖过去（以仓为准）
 
+【写到哪】
+    ① 各库的 `.claude/skills/`（项目级）；
+    ② 科研助手的私有 `.claude/skills/`（agent 级）。
+    ⚠️ **两处同名时旧的那份可能先被读到**——只同步一处等于没部署。
+    个人助手（a04fe676）默认不同步，需要时加 --agent-dir。
+
 ⚠️ **方向是仓 → 库**。库里的目录**不回流到仓**——改了库里的副本不会自动回去。
    改内容请改仓，再跑本脚本。
 """
@@ -39,6 +45,12 @@ VAULT_ENVS = [
     ("CHEN_VAULT_RESEARCH", "D:/obsidian/2026/5/科研"),
     ("CHEN_VAULT_PRIVATE", "D:/obsidian/2026/5/私人"),
 ]
+# Agent 私有 skill 目录。Cherry Studio 每个 agent 各有一份，与库里的项目级目录并存。
+# ⚠️ **同名时旧的那份可能先被读到**——不一起同步，就等于没部署。
+# 只放科研助手。个人助手（a04fe676）的 skill 是另一套，需要时用 --agent-dir 显式加。
+DEFAULT_AGENT_SKILLS = [
+    "C:/Users/Chen Chen/AppData/Roaming/CherryStudio/Data/Agents/pubmed-zotero/.claude/skills",
+]
 
 
 def vault_skill_dirs():
@@ -49,6 +61,27 @@ def vault_skill_dirs():
         if d.is_dir():
             out.append(d)
     return out
+
+
+def agent_skill_dirs(extra=None):
+    """Agent 私有目录。环境变量 CHEN_AGENT_SKILLS（多值用 ; 分隔）优先。"""
+    out = []
+    cands = []
+    env = os.environ.get("CHEN_AGENT_SKILLS")
+    if env:
+        cands += [p for p in env.split(";") if p.strip()]
+    cands += DEFAULT_AGENT_SKILLS
+    cands += list(extra or [])
+    for c in cands:
+        d = pathlib.Path(c)
+        if d.is_dir() and d not in out:
+            out.append(d)
+    return out
+
+
+def label_of(target):
+    """科研/.claude/skills/X 或 Agents/pubmed-zotero/.claude/skills/X → 上层名字。"""
+    return target.parent.parent.parent.name
 
 
 def iter_files(root):
@@ -104,56 +137,63 @@ def skill_dirs(root):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="仓 → 库 的 skill 副本同步")
+    ap = argparse.ArgumentParser(description="仓 → 库与 agent 的 skill 副本同步")
     ap.add_argument("--repo-root", default=DEFAULT_REPO_ROOT)
-    ap.add_argument("--write", action="store_true", help="把差异覆盖到库里")
+    ap.add_argument("--write", action="store_true", help="把差异覆盖到库与 agent 目录")
     ap.add_argument("--only", default=None, help="只处理某个 skill（目录名）")
+    ap.add_argument("--agent-dir", action="append", default=None,
+                    help="额外或替代的 agent skill 目录，可重复")
     a = ap.parse_args()
 
     repo_root = pathlib.Path(a.repo_root)
     if not repo_root.is_dir():
         raise SystemExit(f"找不到 {repo_root}")
     vaults = vault_skill_dirs()
-    if not vaults:
-        raise SystemExit("找不到任何库的 .claude/skills（查了 CHEN_VAULT_RESEARCH / "
-                         "CHEN_VAULT_PRIVATE 与默认路径）")
+    agents = agent_skill_dirs(a.agent_dir)
+    if not vaults and not agents:
+        raise SystemExit("找不到任何 .claude/skills（查了 CHEN_VAULT_RESEARCH / "
+                         "CHEN_VAULT_PRIVATE / CHEN_AGENT_SKILLS 与默认路径）")
 
     repos = skill_dirs(repo_root)
     if a.only:
         repos = [d for d in repos if d.name == a.only]
 
-    print(f"deploy_to_vault · 仓 {repo_root} · 库 {len(vaults)} 处")
+    targets = vaults + agents
+    print(f"deploy_to_vault · 仓 {repo_root} · 目标 {len(vaults)} 个库 + "
+          f"{len(agents)} 个 agent")
     dirty = undeployed = 0
     for src in repos:
-        target = next((v / src.name for v in vaults if (v / src.name).is_dir()), None)
-        if target is None:
-            print(f"  · {src.name:<22} 未部署到任何库（跳过）")
+        found = [(d / src.name) for d in targets if (d / src.name).is_dir()]
+        if not found:
+            print(f"  · {src.name:<22} 未部署到任何目标（跳过）")
             undeployed += 1
             continue
-        only_src, only_dst, changed = diff_one(src, target)
-        if not (only_src or only_dst or changed):
-            print(f"  ✅ {src.name:<22} 一致 → {target.parent.parent.parent.name}库")
-            continue
-        dirty += 1
-        print(f"  ⚠️ {src.name:<22} 与库不一致 → {target}")
-        for r in only_src:
-            print(f"       仓有库无：{r}")
-        for r in only_dst:
-            print(f"       库有仓无：{r}")
-        for r in changed:
-            print(f"       内容不同：{r}")
-        if a.write:
-            copy_tree(src, target)
-            print("       ✍️ 已覆盖")
+        for target in found:
+            lab = label_of(target)
+            only_src, only_dst, changed = diff_one(src, target)
+            if not (only_src or only_dst or changed):
+                print(f"  ✅ {src.name:<22} 一致 → {lab}")
+                continue
+            dirty += 1
+            print(f"  ⚠️ {src.name:<22} 与 {lab} 不一致")
+            for r in only_src:
+                print(f"       仓有副本无：{r}")
+            for r in only_dst:
+                print(f"       副本有仓无：{r}")
+            for r in changed:
+                print(f"       内容不同：{r}")
+            if a.write:
+                copy_tree(src, target)
+                print("       ✍️ 已覆盖")
 
     print()
     if dirty == 0:
-        print(f"✅ 全部一致（{len(repos) - undeployed} 个已部署 skill）")
+        print(f"✅ 全部一致（{len(repos) - undeployed} 个已部署 skill × {len(targets)} 处）")
         return 0
     if a.write:
-        print(f"✍️ 已覆盖 {dirty} 个")
+        print(f"✍️ 已覆盖 {dirty} 处")
         return 0
-    print(f"❌ {dirty} 个不一致——加 --write 覆盖（方向：仓 → 库）")
+    print(f"❌ {dirty} 处不一致——加 --write 覆盖（方向：仓 → 副本）")
     return 1
 
 

@@ -60,3 +60,18 @@ def test_copy_tree_不删库里的多余文件(tmp_path):
     dst = _mk(tmp_path / "vault", {"SKILL.md": "v1", "local-only.md": "keep"})
     DV.copy_tree(src, dst)
     assert (dst / "local-only.md").is_file()
+
+
+def test_agent_dir_can_be_added(tmp_path, monkeypatch):
+    """--agent-dir 能追加目标目录，且去重。"""
+    a = tmp_path / "Agent" / "pubmed-zotero" / ".claude" / "skills"
+    a.mkdir(parents=True)
+    monkeypatch.setenv("CHEN_AGENT_SKILLS", "")
+    got = DV.agent_skill_dirs([str(a), str(a)])
+    assert got.count(a) == 1
+
+
+def test_label_of_reads_grandparent_name(tmp_path):
+    """科研/.claude/skills/X → 科研；Agents/pubmed-zotero/.claude/skills/X → pubmed-zotero。"""
+    x = tmp_path / "科研" / ".claude" / "skills" / "paper-reading"
+    assert DV.label_of(x) == "科研"
