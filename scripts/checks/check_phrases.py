@@ -10,7 +10,7 @@
     · 口语动词 / 程度词 / 第一人称 / 指示代词 / 口头连接词 → `check_persona.py` 的 **C8**
     · 引用自足 / 排他性断言 / 数字口径 → `check_language.py`
     · 「这句话像不像人写的」整体判断 → 人工
-    **混着查会互相误报**——本脚本只做上表列出的十组。
+    **混着查会互相误报**——本脚本只做上表列出的十七组。
 
 【词表来源】
     `manuals/checklists/写作禁用词与句式清单.md`（权威）+ `references/` 各轴。
@@ -86,6 +86,11 @@ GROUPS = [
      [r"(?i)For a fair comparison", r"(?i)To (?:ensure|maintain) fairness", r"(?i)provides? a fair (?:setting|comparison)",
       r"为(?:保证|确保)公平", r"为了公平(?:比较)?", r"公平起见"],
      "直接写控制了什么变量，不解释「为什么这样才公平」"),
+    # ── 主次（2026-10-26）：正面内容承担叙述，否定与限定落在次要位置
+    (17, "句内后置否定（主次）", {"论文", "标书", "讲稿", "幻灯片"},
+     [r"[，,；;]\s*\*{0,2}\s*(?:不是|并非|而非|而不是)"],
+     "正面主张说完，同一句的后半又用否定占去等量篇幅。主句只写正面内容，"
+     "限定另起一句，或移到页末边界段；同一限制全文只说一次"),
 ]
 
 
@@ -168,7 +173,7 @@ def main():
 
     print(f"check_phrases · {a.doc} · 文体={a.kind or '未指定（全部按适用计）'}")
     if not hits:
-        print("  ✅ 全过（十五组词表/句式）")
+        print("  ✅ 全过（十七组词表/句式）")
         return 0
     for num, name, kinds, note, found in inscope:
         print(f"  ❌ {num} {name}：{len(found)} 处 — {note}")

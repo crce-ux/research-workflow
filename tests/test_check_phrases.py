@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """check_phrases 的规则测试。
 
-锁的是**九组词表/句式**。每组都要有一个「会响」的用例——
+锁的是**十七组词表/句式**。每组都要有一个「会响」的用例——
 否则某组可能写了正则却永远匹配不上（真实素材不一定恰好含对应词）。
 
 注：原来的「降智解释」组已并回 `check_persona.py` 的 C8（一条规则一个家），故不在此测。
@@ -133,3 +133,26 @@ def test_neg_contrast_density():
     """全篇「不是」≥3 次 → 辩驳腔提示。"""
     assert 16 in groups("不是甲。不是乙。不是丙。")
     assert 16 not in groups("不是甲。不是乙。")
+
+
+# ── 主次 ──────────────────────────────────────────────────
+
+def test_postcomma_negation_group():
+    """正面主张之后用否定收尾——否定占了句子的后半。"""
+    assert 17 in groups("六种方法的差别，不是「先进与落后」，而是「所得信息的层级」。")
+    assert 17 in groups("这是一份关于研究空白的调研，不是文献综述。")
+
+
+def test_postcomma_negation_ignores_sentence_initial():
+    """否定在句首不算后置；那种写法的处理在组 6 与组 16。"""
+    assert 17 not in groups("不是方法问题，而是数据问题。")
+
+
+def test_postcomma_negation_ignores_positive_text():
+    assert 17 not in groups("本研究比较了两组的应答率，差异有统计学意义。")
+    assert 17 not in groups("屏状核的胆碱能输入以烟碱型受体为主：α4、α5、α7。")
+
+
+def test_postcomma_negation_tolerates_bold():
+    """讲稿里「，**不是**」的加粗写法不能被漏掉。"""
+    assert 17 in groups("这是全脑分析里的一个脑区，**不是**事先指定的感兴趣区。")
