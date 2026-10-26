@@ -127,3 +127,9 @@ def test_necessary_distinction_not_flagged():
     assert 6 not in groups("屏状核是脑区，不是受体。")
     assert 6 not in groups("该研究是横断面诊断分类，不是治疗预测。")
     assert 6 not in groups("这是历史假说，不是证据。")
+
+
+def test_neg_contrast_density():
+    """全篇「不是」≥3 次 → 辩驳腔提示。"""
+    assert 16 in groups("不是甲。不是乙。不是丙。")
+    assert 16 not in groups("不是甲。不是乙。")

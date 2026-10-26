@@ -94,6 +94,9 @@ HEDGE_EN = re.compile(
     r"\b(?:although|while|whereas|despite|may|might|could|potentially|possibly|"
     r"perhaps|arguably|somewhat)\b", re.I)
 HEDGE_ZH = re.compile(r"可能|或许|也许|似乎|一定程度上|某种程度上")
+#: 辩驳腔：全篇「不是」的最低计数量。达到即提示，不计对错。
+NEG_CONTRAST = re.compile(r"不是")
+CONTRAST_MIN = 3
 PRELIM = re.compile(
     r"\b(?:preliminary|initial|initially|suggestive|exploratory|proof[- ]of[- ]concept|"
     r"indicative)\b|初步|探索性|提示性|概念验证", re.I)
@@ -118,6 +121,14 @@ def _special(text, only):
             found = [(text[:m.start()].count("\n") + 1, m.group(0)) for m in ms]
             out.append((15, "初步标签重复（D7）", {"论文", "标书"},
                         "同一标签用三次以上，读者会认为全部结论都待定", found[:8]))
+    if not only or 16 in only:
+        n = len(NEG_CONTRAST.findall(text))
+        if n >= CONTRAST_MIN:
+            density = n / max(1, len(text)) * 1000
+            out.append((16, "辩驳腔（全篇「不是」计数）", {"论文", "标书", "讲稿", "幻灯片"},
+                        "全篇「不是」过密时，每句都在否定一个不在场的人；"
+                        "改为一次说清：陈述是什么，边界另起一句",
+                        [(0, f"全篇「不是」{n} 次（{density:.1f} 次/千字）")]))
     return out
 
 
@@ -162,7 +173,8 @@ def main():
     for num, name, kinds, note, found in inscope:
         print(f"  ❌ {num} {name}：{len(found)} 处 — {note}")
         for ln, s in found[:6]:
-            print(f"        第 {ln} 行：{s}")
+            where = "全篇" if ln == 0 else f"第 {ln} 行"
+            print(f"        {where}：{s}")
     for num, name, kinds, note, _f in outscope:
         print(f"  ○  {num} {name}：不属本文体（{'/'.join(sorted(kinds))}），未计")
     if inscope:
